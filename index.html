@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sanxing English Village Interactive Whiteboard</title>
 
-    <!-- PRELOADER: Forces the browser to download the images immediately in the background -->
-    <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg">
-    <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg">
-    <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/3.jpg">
-    <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/4.jpg">
+    <!-- PRELOADER: Forces the browser to download your specific GitHub images immediately -->
+    <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg" as="image">
+    <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg" as="image">
+    <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/3.jpg" as="image">
+    <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/4.jpg" as="image">
 
     <style>
         /* ==========================================
            1. GLOBAL AESTHETICS & CONSTRAINTS
            ========================================== */
         :root { --bg: #0F0C29; --c1: #302B63; --c2: #F5AF19; --c3: #24243E; --c4: #F10086; --text: #FFFFFF; --shadow: 0 8px 20px rgba(0,0,0,0.3); }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Century Gothic', sans-serif; font-weight: bold; background: var(--bg); overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; color: var(--text); transition: background 0.5s; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Century Gothic', sans-serif; font-weight: bold; background-color: var(--bg); overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; color: var(--text); transition: background-color 0.5s, background-image 0.5s; background-repeat: no-repeat; }
         * { box-sizing: border-box; }
         button, select, input, textarea { font-family: 'Century Gothic', sans-serif; font-weight: bold; }
         button { cursor: pointer; border: 4px solid #FFF; border-radius: 15px; background: #FFF; padding: 10px 20px; font-size: 1.1rem; color: #2D3436; box-shadow: 0 5px 0 rgba(0,0,0,0.1); transition: transform 0.1s; text-transform: uppercase; }
@@ -39,7 +39,6 @@
         @keyframes floatUp { 0% {transform: translateY(110vh) rotate(0deg); opacity: 0.8;} 100% {transform: translateY(-10vh) rotate(360deg); opacity: 0;} }
         .bubble { position: absolute; background: rgba(255,255,255,0.3); border-radius: 50%; z-index: 1; pointer-events: none; }
 
-        #app-bg-img { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; display: none; }
         #app { display: none; width: 100%; height: 100%; position: relative; }
 
         #theme-btn { position: absolute; top: 20px; right: 20px; z-index: 3000; width: 60px; height: 60px; font-size: 1.8rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; background: var(--c4); }
@@ -129,9 +128,6 @@
     </style>
 </head>
 <body>
-
-    <!-- Main Background Image covers app -->
-    <img id="app-bg-img" src="">
 
     <div id="start-screen">
         <div id="bubble-container"></div>
@@ -240,7 +236,7 @@
             <div class="widget-content" id="score-container"></div>
         </div>
 
-        <!-- PICKER (Name & Group Tabs) -->
+        <!-- PICKER -->
         <div class="widget" id="w-picker" style="width: 400px; min-height: 380px;">
             <div class="widget-header">
                 <span>🎯 Picker</span>
@@ -323,7 +319,7 @@
             </div>
         </div>
 
-        <!-- LEARNING (With Auto-Scaling & Fullscreen) -->
+        <!-- LEARNING -->
         <div class="widget" id="w-learning" style="width: 700px; height: 500px;">
             <div class="widget-header"><span style="background:var(--c2); padding:5px 15px; border-radius:15px; color:#222;">📚 Learning</span><button class="widget-close" onclick="toggleW('w-learning')">X</button></div>
             <div class="widget-content">
@@ -417,12 +413,12 @@
 
     <script>
         // --- 1. STATE & DATA ---
-        // EXACT verbatim raw file URLs from GitHub
+        // INJECTED YOUR EXACT GITHUB RAW LINKS HERE
         const palettes = {
-            space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: 'https://github.com/teachercristw/crisboard/blob/main/1.jpg?raw=true' },
-            sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: 'https://github.com/teachercristw/crisboard/blob/main/2.jpg?raw=true' },
-            neon: { bg: '#1A1A2E', c1: '#5F27CD', c2: '#FECA57', c3: '#1DD1A1', c4: '#FF9FF3', img: 'https://github.com/teachercristw/crisboard/blob/main/3.jpg?raw=true' },
-            pastel: { bg: '#B5EAEA', c1: '#FFB6B9', c2: '#FFE082', c3: '#C8E3D4', c4: '#D1C4E9', img: 'https://github.com/teachercristw/crisboard/blob/main/4.jpg?raw=true' }
+            space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg' },
+            sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg' },
+            neon: { bg: '#1A1A2E', c1: '#5F27CD', c2: '#FECA57', c3: '#1DD1A1', c4: '#FF9FF3', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/3.jpg' },
+            pastel: { bg: '#B5EAEA', c1: '#FFB6B9', c2: '#FFE082', c3: '#C8E3D4', c4: '#D1C4E9', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/4.jpg' }
         };
 
         // EMPTIED DEFAULT CLASSES
@@ -479,7 +475,7 @@
 
         window.onload = () => {
             generateBubbles();
-            applyPalette('space'); // Loads Galaxy Background immediately on Start Screen
+            applyPalette('space'); 
             updateClassDropdowns();
             updateDrops();
         };
@@ -503,15 +499,17 @@
 
         function handleUpload(e, key, apply) { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onload = (ev) => { state[key] = ev.target.result; alert("Loaded!"); if(apply) applyCoreSettings(); }; r.readAsDataURL(f); } }
         
+        // FIXED BACKGROUND LOGIC: Applies directly to the CSS body style, making it immune to z-index bugs
         function applyCoreSettings() { 
-            document.body.style.backgroundColor = state.appBgColor;
-            const aBg = document.getElementById('app-bg-img'); 
             if(state.appBgImage) {
-                // Fixed Cache Buster logic to properly append to URLs that already contain query parameters (like ?raw=true)
-                aBg.src = state.appBgImage.includes('data:image') ? state.appBgImage : state.appBgImage + (state.appBgImage.includes('?') ? '&v=' : '?v=') + new Date().getTime(); 
-                aBg.style.display = 'block';
+                document.body.style.backgroundImage = `url('${state.appBgImage}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundAttachment = 'fixed';
+                document.body.style.backgroundColor = 'transparent';
             } else {
-                aBg.style.display = 'none';
+                document.body.style.backgroundImage = 'none';
+                document.body.style.backgroundColor = state.appBgColor;
             } 
             const wBg = document.getElementById('wb-bg-img'); 
             if(state.wbBgImage){wBg.src=state.wbBgImage; wBg.style.display='block';}else{wBg.style.display='none';} 
