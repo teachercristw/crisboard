@@ -268,18 +268,24 @@
             </div>
         </div>
 
-        <!-- MUSIC BOX: Updated with Play/Pause/Stop Buttons -->
-        <div class="widget" id="w-music" style="width: 320px; min-height: 200px;">
+        <!-- MUSIC BOX: Modified for Hidden YouTube Embedding -->
+        <div class="widget" id="w-music" style="width: 320px; min-height: 180px;">
             <div class="widget-header"><span>🎵 Music Box</span><button class="widget-close" onclick="toggleW('w-music')">X</button></div>
-            <div class="widget-content">
-                <select id="music-select" onchange="loadMedia('music', 'audio-player')"></select>
-                <audio id="audio-player" controls loop style="width:100%; margin-bottom:10px;"></audio>
+            <div class="widget-content" style="align-items:center; justify-content:center;">
+                <select id="music-select" onchange="loadMedia('music', 'music-yt-frame')" style="width:100%; margin-bottom:15px;"></select>
                 
-                <div style="display:flex; gap:5px; width:100%;">
-                    <button onclick="document.getElementById('audio-player').play()" style="flex:1; background:var(--c2); font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">▶ Play</button>
-                    <button onclick="document.getElementById('audio-player').pause()" style="flex:1; background:var(--c1); color:#FFF; font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">⏸ Pause</button>
-                    <button onclick="let a=document.getElementById('audio-player'); a.pause(); a.currentTime=0;" style="flex:1; background:var(--c4); color:#FFF; font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">⏹ Stop</button>
+                <!-- Hidden YouTube Iframe -->
+                <div style="width:0; height:0; overflow:hidden;">
+                    <iframe id="music-yt-frame" src="" allow="autoplay" allowfullscreen></iframe>
                 </div>
+
+                <!-- Custom Controls for the hidden video -->
+                <div style="display:flex; gap:5px; width:100%;">
+                    <button onclick="controlYTMusic('play')" style="flex:1; background:var(--c2); font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">▶ Play</button>
+                    <button onclick="controlYTMusic('pause')" style="flex:1; background:var(--c1); color:#FFF; font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">⏸ Pause</button>
+                    <button onclick="controlYTMusic('stop')" style="flex:1; background:var(--c4); color:#FFF; font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">⏹ Stop</button>
+                </div>
+                <p style="font-size:0.8rem; color:#888; text-align:center; margin:10px 0 0 0;">Add any YouTube link in Settings</p>
             </div>
         </div>
 
@@ -325,7 +331,7 @@
             </div>
         </div>
 
-        <!-- LEARNING -->
+        <!-- LEARNING (With Auto-Scaling & Fullscreen) -->
         <div class="widget" id="w-learning" style="width: 700px; height: 500px;">
             <div class="widget-header"><span style="background:var(--c2); padding:5px 15px; border-radius:15px; color:#222;">📚 Learning</span><button class="widget-close" onclick="toggleW('w-learning')">X</button></div>
             <div class="widget-content">
@@ -396,15 +402,15 @@
                     <div>
                         <div class="dash-section" style="background:#EBF4FA;">
                             <h3>Media Library</h3>
-                            <p style="font-size:0.8rem; color:#666; margin-top:0;">*Canva links auto-fix. Paste Google Drive share links for Drive videos/music!</p>
+                            <p style="font-size:0.8rem; color:#666; margin-top:0;">*Canva auto-fixes. Paste standard YouTube links for Videos AND Music!</p>
                             <select id="media-cat" style="background:var(--c2);" onchange="renderMediaList()">
                                 <option value="wbBackgrounds">🖍️ Whiteboard BGs</option>
                                 <option value="learning">📚 Learning (Canva/Web/PDF)</option>
-                                <option value="video">🎬 Videos (YouTube/Drive/MP4)</option>
-                                <option value="music">🎵 Music Tracks</option>
+                                <option value="video">🎬 Videos (YouTube)</option>
+                                <option value="music">🎵 Music Tracks (YouTube Link)</option>
                                 <option value="exit">🚪 Exit Tickets</option>
                             </select>
-                            <input type="text" id="m-title" placeholder="Title (e.g., Space Game)">
+                            <input type="text" id="m-title" placeholder="Title (e.g., Timer Music)">
                             <input type="text" id="m-url" placeholder="Paste URL Link...">
                             <p style="margin:2px 0; text-align:center; font-size:0.8rem; color:#666;">-- OR UPLOAD --</p>
                             <input type="file" id="m-file">
@@ -419,6 +425,7 @@
 
     <script>
         // --- 1. STATE & DATA ---
+        // INJECTED YOUR EXACT GITHUB RAW LINKS HERE
         const palettes = {
             space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg' },
             sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg' },
@@ -446,6 +453,24 @@
         function cheer() { playTone(400, 'square', 0.15); setTimeout(()=>playTone(500, 'square', 0.15), 100); setTimeout(()=>playTone(700, 'square', 0.4), 200); }
         function playAlarm() { let i=0; let int = setInterval(()=>{ playTone(900, 'square', 0.2, 0.5); i++; if(i>5) clearInterval(int); }, 400); }
         function speak(text) { if('speechSynthesis' in window) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.rate = 0.9; window.speechSynthesis.speak(u); } }
+
+        // YOUTUBE MUSIC CONTROLLER
+        function controlYTMusic(action) {
+            beep();
+            const iframe = document.getElementById('music-yt-frame');
+            if(!iframe.src) return;
+            
+            // Posts messages to the YouTube iframe API to play/pause
+            if(action === 'play') {
+                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            } else if(action === 'pause') {
+                iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            } else if(action === 'stop') {
+                iframe.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
+                // Optional: reload the iframe to completely reset it
+                let src = iframe.src; iframe.src = src; 
+            }
+        }
 
         // --- 3. INIT, NAV & CONTROLS ---
         function generateBubbles() {
@@ -758,23 +783,19 @@
             applyCoreSettings(); resetPicker(); renderGreetings(); document.getElementById('dashboard-modal').style.display = 'none';
         }
 
-        // --- GOOGLE DRIVE INTERCEPTOR ---
         function fmtURL(url, cat) { 
             if(!url) return ""; let f = url.trim(); 
             if(f.includes("canva.com")) { 
                 let b=f.split('?')[0]; if(b.endsWith("/edit")) b=b.replace("/edit","/view"); 
                 if(!b.endsWith("/view")) b+="/view"; f=b+"?embed"; 
             } else if(f.includes("youtube.com/watch?v=")) { 
-                f="https://www.youtube.com/embed/"+new URL(f).searchParams.get("v")+"?rel=0&modestbranding=1"; 
+                // YouTube Links - If it's for Music Box, add the enablejsapi flag so the custom buttons can control it
+                let ytParams = cat === 'music' ? "?enablejsapi=1&autoplay=1" : "?rel=0&modestbranding=1";
+                f="https://www.youtube.com/embed/"+new URL(f).searchParams.get("v")+ytParams; 
             } else if(f.includes("youtu.be/")) { 
-                f="https://www.youtube.com/embed/"+f.split("youtu.be/")[1].split("?")[0]+"?rel=0&modestbranding=1"; 
-            } else if(f.includes("drive.google.com/file/d/")) {
-                let id = f.split("file/d/")[1].split("/")[0];
-                f = (cat === 'music') ? "https://drive.google.com/uc?export=download&id=" + id : "https://drive.google.com/file/d/" + id + "/preview";
-            } else if(f.includes("drive.google.com/open?id=")) {
-                let id = f.split("id=")[1].split("&")[0];
-                f = (cat === 'music') ? "https://drive.google.com/uc?export=download&id=" + id : "https://drive.google.com/file/d/" + id + "/preview";
-            }
+                let ytParams = cat === 'music' ? "?enablejsapi=1&autoplay=1" : "?rel=0&modestbranding=1";
+                f="https://www.youtube.com/embed/"+f.split("youtu.be/")[1].split("?")[0]+ytParams; 
+            } 
             return f; 
         }
         
@@ -796,7 +817,7 @@
         }
         function loadMedia(cat, id, isImg=false) { 
             beep(); const v = document.getElementById(cat === 'wbBackgrounds' ? 'wbBackgrounds-select' : `${cat}-select`).value; const el = document.getElementById(id);
-            if(v === "") { if(isImg) el.style.display = 'none'; else el.src = (cat==='music'?"":"about:blank"); } else { el.src = state.media[cat][v].url; if(isImg) el.style.display = 'block'; } 
+            if(v === "") { if(isImg) el.style.display = 'none'; else el.src = "about:blank"; } else { el.src = state.media[cat][v].url; if(isImg) el.style.display = 'block'; } 
         }
 
         // --- EXPORT/IMPORT ---
