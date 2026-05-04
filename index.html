@@ -105,7 +105,7 @@
         .dd-item.feeling-card { flex-direction: row; gap: 10px; padding: 10px 15px; border-radius: 20px; }
         .dd-clone { position: fixed; z-index: 5000; pointer-events: none; opacity: 0.9; box-shadow: 0 15px 30px rgba(0,0,0,0.3); transform: scale(1.1); }
 
-        /* Iframes */
+        /* Iframes & Scaling */
         .iframe-wrapper { position: relative; flex: 1; width: 100%; display: flex; min-height: 0; border: var(--white-border); border-radius: 15px; overflow: hidden; background: #EEE;}
         .iframe-container { flex: 1; width: 100%; height: 100%; border: none; transform-origin: top left; }
         .iframe-cover { position: absolute; inset: 0; z-index: 10; display: none; } 
@@ -123,6 +123,7 @@
 </head>
 <body>
 
+    <!-- Main Background Image covers app -->
     <img id="app-bg-img" src="">
 
     <div id="start-screen">
@@ -232,7 +233,7 @@
             <div class="widget-content" id="score-container"></div>
         </div>
 
-        <!-- PICKER -->
+        <!-- PICKER (Name & Group Tabs) -->
         <div class="widget" id="w-picker" style="width: 400px; min-height: 380px;">
             <div class="widget-header">
                 <span>🎯 Picker</span>
@@ -315,7 +316,7 @@
             </div>
         </div>
 
-        <!-- LEARNING -->
+        <!-- LEARNING (With Auto-Scaling & Fullscreen) -->
         <div class="widget" id="w-learning" style="width: 700px; height: 500px;">
             <div class="widget-header"><span style="background:var(--c2); padding:5px 15px; border-radius:15px; color:#222;">📚 Learning</span><button class="widget-close" onclick="toggleW('w-learning')">X</button></div>
             <div class="widget-content">
@@ -354,7 +355,7 @@
                             <button onclick="state.appBgImage=null; applyCoreSettings();" style="font-size:0.9rem; padding:5px 10px; text-transform:none;">Clear Image</button>
                         </div>
                         
-                        <!-- NEW CLASS MANAGER: Smart Auto-Saving Paste! -->
+                        <!-- CLASS MANAGER: Emptied defaults as requested -->
                         <div class="dash-section" style="background:#FFF9C4; border-color:#FFF59D;">
                             <h3 style="color:#F57F17;">📚 Class Manager</h3>
                             <div style="display:flex; gap:10px; margin-bottom:10px;">
@@ -363,7 +364,6 @@
                             </div>
                             
                             <p style="font-size:0.8rem; color:#666; margin:0 0 5px 0; line-height:1.2;">Copy your students' names directly from an Excel column and paste them in the box below:</p>
-                            <!-- Auto-saves immediately when you paste or type! -->
                             <textarea id="dash-students" rows="5" placeholder="Paste names from Excel here..." oninput="autoSaveClass()"></textarea>
                             
                             <div style="display:flex; gap:10px; align-items:center; margin-top:5px;">
@@ -411,6 +411,7 @@
 
     <script>
         // --- 1. STATE & DATA ---
+        // EXACT verbatim file names linked here with cache buster logic appended during load
         const palettes = {
             space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: '1.png' },
             sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: '2.png' },
@@ -418,10 +419,11 @@
             pastel: { bg: '#B5EAEA', c1: '#FFB6B9', c2: '#FFE082', c3: '#C8E3D4', c4: '#D1C4E9', img: '4.png' }
         };
 
+        // EMPTIED DEFAULT CLASSES
         let state = {
             appBgColor: "#0F0C29", appBgImage: null, 
-            classes: { "Sanxing Class A": ["ELLA", "ALEX", "JOCE", "ELIZABETH"], "Sanxing Class B": ["APOLLO", "LUNA", "ORION"] },
-            activeClass: "Sanxing Class A",
+            classes: {}, 
+            activeClass: null,
             teams: [{name:"GROUP 1", score:0, rank:null, time:null}, {name:"GROUP 2", score:0, rank:null, time:null}],
             scoreStyle: 'burger', goal: 10,
             feelings: [{ emoji: "😊", word: "happy" }, { emoji: "😢", word: "sad" }, { emoji: "😡", word: "angry" }, { emoji: "😴", word: "sleepy" }, { emoji: "🤢", word: "sick" }, { emoji: "🥶", word: "cold" }],
@@ -499,6 +501,7 @@
             document.body.style.backgroundColor = state.appBgColor;
             const aBg = document.getElementById('app-bg-img'); 
             if(state.appBgImage) {
+                // Cache Buster implementation
                 aBg.src = state.appBgImage.includes('data:image') ? state.appBgImage : state.appBgImage + '?v=' + new Date().getTime(); 
                 aBg.style.display = 'block';
             } else {
@@ -532,7 +535,7 @@
         // --- 5. WIDGET DRAG & SMART SCALER ---
         document.querySelectorAll('.widget').forEach(w => {
             const h = w.querySelector('.widget-header');
-            if(h) { h.addEventListener('pointerdown', (e) => { if(e.target.classList.contains('widget-close') || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return; e.preventDefault(); document.querySelectorAll('.widget').forEach(x=>x.style.zIndex=100); w.style.zIndex=1000; document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='block'); let sX = e.clientX, sY = e.clientY; const move = (ev) => { w.style.left = (w.offsetLeft - (sX - ev.clientX)) + "px"; w.style.top = (w.offsetTop - (sY - ev.clientY)) + "px"; sX = ev.clientX; sY = ev.clientY; }; const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='none'); }; document.addEventListener('pointermove', move); document.addEventListener('pointerup', up); }); }
+            if(h) { h.addEventListener('pointerdown', (e) => { if(e.target.classList.contains('widget-close') || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return; e.preventDefault(); document.querySelectorAll('.widget').forEach(x=>x.style.zIndex=100); w.style.zIndex=1000; document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='block'); let sX = e.clientX, sY = e.clientY; const move = (ev) => { w.style.left = (w.offsetLeft - (sX - ev.clientX)) + "px"; w.style.top = (w.offsetTop - (sY - ev.clientY)) + "px"; sX = ev.clientX; sY = ev.clientY; }; const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='none'); }; document.addEventListener('pointermove', move); document.addEventListener('pointerup', up); }); }
             w.addEventListener('mousedown', (e) => { if(e.offsetX > w.offsetWidth - 20 && e.offsetY > w.offsetHeight - 20) { document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='block'); const up = () => { document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='none'); document.removeEventListener('mouseup', up); }; document.addEventListener('mouseup', up); } });
         });
 
@@ -638,8 +641,19 @@
         function updateClassDropdowns() {
             const pSel = document.getElementById('picker-class-sel'); const dSel = document.getElementById('dash-class-sel');
             pSel.innerHTML = ''; dSel.innerHTML = '';
+            
+            const keys = Object.keys(state.classes);
+            if(keys.length === 0) {
+                // If there are literally no classes, show a placeholder
+                pSel.innerHTML = `<option value="">No Classes</option>`;
+                dSel.innerHTML = `<option value="">No Classes</option>`;
+                state.activeClass = null;
+                document.getElementById('dash-students').value = '';
+                return;
+            }
+
             for(let c in state.classes) { pSel.innerHTML += `<option value="${c}">${c}</option>`; dSel.innerHTML += `<option value="${c}">${c}</option>`; }
-            if(!state.classes[state.activeClass]) state.activeClass = Object.keys(state.classes)[0];
+            if(!state.classes[state.activeClass]) state.activeClass = keys[0];
             pSel.value = state.activeClass; dSel.value = state.activeClass;
             loadDashClass();
         }
@@ -648,24 +662,28 @@
         function autoSaveClass() {
             const cls = document.getElementById('dash-class-sel').value;
             if(cls) {
-                // Splits by commas, newlines (from Excel paste), or tabs (Excel columns)
                 state.classes[cls] = document.getElementById('dash-students').value.split(/[\n,\t]+/).map(s=>s.trim().toUpperCase()).filter(s=>s);
             }
         }
 
         function loadDashClass() { 
             const cls = document.getElementById('dash-class-sel').value; 
-            // Display as a beautiful vertical list (like Excel) instead of commas
-            document.getElementById('dash-students').value = state.classes[cls] ? state.classes[cls].join('\n') : ""; 
+            document.getElementById('dash-students').value = (cls && state.classes[cls]) ? state.classes[cls].join('\n') : ""; 
         }
         
         function addClass() {
             beep(); const n = document.getElementById('new-class-name').value.trim();
             if(n && !state.classes[n]) { state.classes[n] = []; state.activeClass = n; document.getElementById('new-class-name').value = ''; updateClassDropdowns(); } else { buzz(); }
         }
+        
         function deleteClass() {
             beep(); const cls = document.getElementById('dash-class-sel').value;
-            if(Object.keys(state.classes).length > 1 && confirm(`Delete class ${cls}?`)) { delete state.classes[cls]; state.activeClass = Object.keys(state.classes)[0]; updateClassDropdowns(); } else { buzz(); }
+            if(cls && confirm(`Delete class ${cls}?`)) { 
+                delete state.classes[cls]; 
+                const remaining = Object.keys(state.classes);
+                state.activeClass = remaining.length > 0 ? remaining[0] : null; 
+                updateClassDropdowns(); 
+            } else { buzz(); }
         }
 
         // --- 8. PICKER (Name & Groups) ---
