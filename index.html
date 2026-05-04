@@ -39,6 +39,7 @@
         @keyframes floatUp { 0% {transform: translateY(110vh) rotate(0deg); opacity: 0.8;} 100% {transform: translateY(-10vh) rotate(360deg); opacity: 0;} }
         .bubble { position: absolute; background: rgba(255,255,255,0.3); border-radius: 50%; z-index: 1; pointer-events: none; }
 
+        #app-bg-img { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; display: none; }
         #app { display: none; width: 100%; height: 100%; position: relative; }
 
         #theme-btn { position: absolute; top: 20px; right: 20px; z-index: 3000; width: 60px; height: 60px; font-size: 1.8rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; background: var(--c4); }
@@ -267,13 +268,18 @@
             </div>
         </div>
 
-        <!-- MUSIC BOX -->
+        <!-- MUSIC BOX: Updated with Play/Pause/Stop Buttons -->
         <div class="widget" id="w-music" style="width: 320px; min-height: 200px;">
             <div class="widget-header"><span>🎵 Music Box</span><button class="widget-close" onclick="toggleW('w-music')">X</button></div>
             <div class="widget-content">
                 <select id="music-select" onchange="loadMedia('music', 'audio-player')"></select>
                 <audio id="audio-player" controls loop style="width:100%; margin-bottom:10px;"></audio>
-                <button onclick="playSynth()" style="background:var(--c3); color:#FFF; width:100%; font-size:1rem; text-transform:none;">▶ Play Synth Loop</button>
+                
+                <div style="display:flex; gap:5px; width:100%;">
+                    <button onclick="document.getElementById('audio-player').play()" style="flex:1; background:var(--c2); font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">▶ Play</button>
+                    <button onclick="document.getElementById('audio-player').pause()" style="flex:1; background:var(--c1); color:#FFF; font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">⏸ Pause</button>
+                    <button onclick="let a=document.getElementById('audio-player'); a.pause(); a.currentTime=0;" style="flex:1; background:var(--c4); color:#FFF; font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">⏹ Stop</button>
+                </div>
             </div>
         </div>
 
@@ -439,8 +445,6 @@
         function beep() { playTone(600, 'sine', 0.1); } function buzz() { playTone(150, 'sawtooth', 0.5, 0.3); } function pop() { playTone(800, 'triangle', 0.1); }
         function cheer() { playTone(400, 'square', 0.15); setTimeout(()=>playTone(500, 'square', 0.15), 100); setTimeout(()=>playTone(700, 'square', 0.4), 200); }
         function playAlarm() { let i=0; let int = setInterval(()=>{ playTone(900, 'square', 0.2, 0.5); i++; if(i>5) clearInterval(int); }, 400); }
-        function playSynth() { stopSynth(); initAudio(); let step=0; const notes=[261.63, 329.63, 392.00, 523.25]; window.synthInterval=setInterval(()=>{ playTone(notes[step], 'triangle', 0.2, 0.1); step=(step+1)%notes.length; }, 400); }
-        function stopSynth() { if(window.synthInterval) clearInterval(window.synthInterval); }
         function speak(text) { if('speechSynthesis' in window) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.rate = 0.9; window.speechSynthesis.speak(u); } }
 
         // --- 3. INIT, NAV & CONTROLS ---
@@ -765,11 +769,9 @@
             } else if(f.includes("youtu.be/")) { 
                 f="https://www.youtube.com/embed/"+f.split("youtu.be/")[1].split("?")[0]+"?rel=0&modestbranding=1"; 
             } else if(f.includes("drive.google.com/file/d/")) {
-                // Intercepts standard Google Drive share links
                 let id = f.split("file/d/")[1].split("/")[0];
                 f = (cat === 'music') ? "https://drive.google.com/uc?export=download&id=" + id : "https://drive.google.com/file/d/" + id + "/preview";
             } else if(f.includes("drive.google.com/open?id=")) {
-                // Intercepts alternate Google Drive share links
                 let id = f.split("id=")[1].split("&")[0];
                 f = (cat === 'music') ? "https://drive.google.com/uc?export=download&id=" + id : "https://drive.google.com/file/d/" + id + "/preview";
             }
