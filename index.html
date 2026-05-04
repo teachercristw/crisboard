@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sanxing English Village Interactive Whiteboard</title>
-    
+
     <!-- PRELOADER: Forces the browser to download the images immediately in the background -->
-    <link rel="preload" href="1.jpg" as="image">
-    <link rel="preload" href="2.jpg" as="image">
-    <link rel="preload" href="3.jpg" as="image">
-    <link rel="preload" href="4.jpg" as="image">
+    <link rel="preload" href="https://github.com/teachercristw/crisboard/blob/main/1.jpg?raw=true" as="image">
+    <link rel="preload" href="https://github.com/teachercristw/crisboard/blob/main/2.jpg?raw=true" as="image">
+    <link rel="preload" href="https://github.com/teachercristw/crisboard/blob/main/3.jpg?raw=true" as="image">
+    <link rel="preload" href="https://github.com/teachercristw/crisboard/blob/main/4.jpg?raw=true" as="image">
 
     <style>
         /* ==========================================
@@ -362,7 +362,6 @@
                             <button onclick="state.appBgImage=null; applyCoreSettings();" style="font-size:0.9rem; padding:5px 10px; text-transform:none;">Clear Image</button>
                         </div>
                         
-                        <!-- CLASS MANAGER: Emptied defaults as requested -->
                         <div class="dash-section" style="background:#FFF9C4; border-color:#FFF59D;">
                             <h3 style="color:#F57F17;">📚 Class Manager</h3>
                             <div style="display:flex; gap:10px; margin-bottom:10px;">
@@ -418,12 +417,12 @@
 
     <script>
         // --- 1. STATE & DATA ---
-        // EXACT verbatim file names linked here with cache buster logic appended during load
+        // EXACT verbatim raw file URLs from GitHub
         const palettes = {
-            space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: '1.jpg' },
-            sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: '2.jpg' },
-            neon: { bg: '#1A1A2E', c1: '#5F27CD', c2: '#FECA57', c3: '#1DD1A1', c4: '#FF9FF3', img: '3.jpg' },
-            pastel: { bg: '#B5EAEA', c1: '#FFB6B9', c2: '#FFE082', c3: '#C8E3D4', c4: '#D1C4E9', img: '4.jpg' }
+            space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: 'https://github.com/teachercristw/crisboard/blob/main/1.jpg?raw=true' },
+            sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: 'https://github.com/teachercristw/crisboard/blob/main/2.jpg?raw=true' },
+            neon: { bg: '#1A1A2E', c1: '#5F27CD', c2: '#FECA57', c3: '#1DD1A1', c4: '#FF9FF3', img: 'https://github.com/teachercristw/crisboard/blob/main/3.jpg?raw=true' },
+            pastel: { bg: '#B5EAEA', c1: '#FFB6B9', c2: '#FFE082', c3: '#C8E3D4', c4: '#D1C4E9', img: 'https://github.com/teachercristw/crisboard/blob/main/4.jpg?raw=true' }
         };
 
         // EMPTIED DEFAULT CLASSES
@@ -480,7 +479,7 @@
 
         window.onload = () => {
             generateBubbles();
-            applyPalette('space');
+            applyPalette('space'); // Loads Galaxy Background immediately on Start Screen
             updateClassDropdowns();
             updateDrops();
         };
@@ -508,8 +507,8 @@
             document.body.style.backgroundColor = state.appBgColor;
             const aBg = document.getElementById('app-bg-img'); 
             if(state.appBgImage) {
-                // CACHE BUSTER implementation to pull freshest JPGs
-                aBg.src = state.appBgImage.includes('data:image') ? state.appBgImage : state.appBgImage + '?v=' + new Date().getTime(); 
+                // Fixed Cache Buster logic to properly append to URLs that already contain query parameters (like ?raw=true)
+                aBg.src = state.appBgImage.includes('data:image') ? state.appBgImage : state.appBgImage + (state.appBgImage.includes('?') ? '&v=' : '?v=') + new Date().getTime(); 
                 aBg.style.display = 'block';
             } else {
                 aBg.style.display = 'none';
@@ -664,7 +663,6 @@
             loadDashClass();
         }
 
-        // Instantly saves whatever the user types or pastes so it is NEVER lost when switching tabs!
         function autoSaveClass() {
             const cls = document.getElementById('dash-class-sel').value;
             if(cls) {
