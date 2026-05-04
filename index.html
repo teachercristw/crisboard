@@ -20,7 +20,7 @@
            2. SCREENS & MAIN UI
            ========================================== */
         @keyframes gradientShift { 0% {background-position: 0% 50%;} 50% {background-position: 100% 50%;} 100% {background-position: 0% 50%;} }
-        #start-screen { position: absolute; inset: 0; background: linear-gradient(-45deg, #FFB6B9, #FFE082, #C8E3D4, #D1C4E9, #F10086, #F5AF19); background-size: 400% 400%; animation: gradientShift 12s ease infinite; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10000; overflow: hidden; transition: opacity 0.5s ease;}
+        #start-screen { position: absolute; inset: 0; background: linear-gradient(-45deg, #FFB6B9, #FFE082, #C8E3D4, #D1C4E9, #F10086, #F5AF19); background-size: 400% 400%; animation: gradientShift 12s ease infinite; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10000; overflow: hidden;}
         #start-screen h1 { text-align: center; z-index: 2; line-height: 1.1; margin-bottom: 40px; }
         .title-main { font-size: 6rem; background: linear-gradient(to right, #FFF, #FFE082); -webkit-background-clip: text; color: transparent; filter: drop-shadow(0 6px 4px rgba(0,0,0,0.2)); display: block; animation: bounce 2s infinite ease-in-out alternate;}
         .title-sub { font-size: 3.5rem; color: #FFF; text-shadow: 0 4px 0 rgba(0,0,0,0.2); display: block; margin-top: 10px;}
@@ -32,9 +32,8 @@
         @keyframes floatUp { 0% {transform: translateY(110vh) rotate(0deg); opacity: 0.8;} 100% {transform: translateY(-10vh) rotate(360deg); opacity: 0;} }
         .bubble { position: absolute; background: rgba(255,255,255,0.3); border-radius: 50%; z-index: 1; pointer-events: none; }
 
-        /* Fixed background image for the app */
-        #app-bg-img { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; display: none; }
         #app { display: none; width: 100%; height: 100%; position: relative; }
+        #app-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; display: none; }
 
         #theme-btn { position: absolute; top: 20px; right: 20px; z-index: 3000; width: 60px; height: 60px; font-size: 1.8rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; background: var(--c4); }
         #home-btn { position: absolute; bottom: 20px; right: 20px; z-index: 3000; width: 60px; height: 60px; font-size: 1.8rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; background: #FFF; color: var(--c4); border: 4px solid var(--c4); box-shadow: var(--shadow);}
@@ -52,7 +51,7 @@
         .widget-close { background: var(--c4); color: white; width: 30px; height: 30px; border-radius: 50%; font-size: 1rem; padding: 0; border: 2px solid #FFF;}
         .widget-content { padding: 15px; flex: 1; display: flex; flex-direction: column; overflow-y: auto; position: relative; min-height: 0;}
 
-        /* Whiteboard Specifics */
+        /* Whiteboard */
         .wb-tool-row { display: flex; gap: 8px; align-items: center; background: #EEE; padding: 8px; border-radius: 10px; margin-bottom: 10px; flex-wrap: wrap;}
         .wb-color-btn { width: 25px; height: 25px; border: 3px solid #FFF; border-radius: 50%; cursor: pointer; box-shadow: 0 3px 0 rgba(0,0,0,0.1); }
         .wb-color-btn.active { transform: scale(1.2); border-color: #2D3436; }
@@ -67,7 +66,7 @@
         .time-input::-webkit-outer-spin-button, .time-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .time-input:disabled { background: transparent; color: var(--c4); opacity: 1; -webkit-text-fill-color: var(--c4);}
 
-        /* Scoreboard (Grid & Burger CSS) */
+        /* Scoreboard */
         #score-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; padding: 5px;}
         .score-card { background: var(--c3); padding: 15px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; border: 4px solid #FFF; position: relative; overflow: hidden;}
         .score-card input { position: relative; z-index: 20; color: #FFF; text-shadow: 0 2px 0 rgba(0,0,0,0.3); text-align: center; border: none; background: transparent; font-size: 1.4rem; font-family: inherit; font-weight: bold; width: 100%; outline: none; padding: 0;}
@@ -88,7 +87,7 @@
         .ing-10 { height: 35px; border-radius: 40px 40px 10px 10px; background: #E6A15C; width: 80px; margin-bottom: 0; } 
         @keyframes dropIn { 0% { transform: translateY(-40px) scale(0); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
 
-        /* Picker (Name & Group) */
+        /* Picker */
         .picker-tab-btn { background: var(--c2); color: #FFF; flex: 1; padding: 10px; font-size: 1.1rem; border: none; border-radius: 10px;}
         .picker-tab-btn.active { background: var(--c4); }
         .group-result-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 15px; width: 100%;}
@@ -106,7 +105,7 @@
         .dd-item.feeling-card { flex-direction: row; gap: 10px; padding: 10px 15px; border-radius: 20px; }
         .dd-clone { position: fixed; z-index: 5000; pointer-events: none; opacity: 0.9; box-shadow: 0 15px 30px rgba(0,0,0,0.3); transform: scale(1.1); }
 
-        /* Iframes & Scaling */
+        /* Iframes */
         .iframe-wrapper { position: relative; flex: 1; width: 100%; display: flex; min-height: 0; border: var(--white-border); border-radius: 15px; overflow: hidden; background: #EEE;}
         .iframe-container { flex: 1; width: 100%; height: 100%; border: none; transform-origin: top left; }
         .iframe-cover { position: absolute; inset: 0; z-index: 10; display: none; } 
@@ -123,7 +122,7 @@
 </head>
 <body>
 
-    <!-- Main Background Image -->
+    <!-- Main Background Image covers app -->
     <img id="app-bg-img" src="">
 
     <div id="start-screen">
@@ -386,7 +385,7 @@
                     <div>
                         <div class="dash-section" style="background:#EBF4FA;">
                             <h3>Media Library</h3>
-                            <p style="font-size:0.8rem; color:#666; margin-top:0;">*Canva links auto-fix. YouTube Error 153? The video owner disabled embedding. Web/GitHub Links support Camera.</p>
+                            <p style="font-size:0.8rem; color:#666; margin-top:0;">*Canva links auto-fix. Web/GitHub Links support Camera.</p>
                             <select id="media-cat" style="background:var(--c2);" onchange="renderMediaList()">
                                 <option value="wbBackgrounds">🖍️ Whiteboard BGs</option>
                                 <option value="learning">📚 Learning (Canva/Web/PDF)</option>
@@ -409,7 +408,7 @@
 
     <script>
         // --- 1. STATE & DATA ---
-        // EXACT verbatim file names linked here!
+        // EXACT verbatim file names linked here with cache buster logic appended during load
         const palettes = {
             space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: '1.png' },
             sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: '2.png' },
@@ -461,7 +460,7 @@
             setTimeout(() => {
                 document.getElementById('start-screen').style.display = 'none'; 
                 document.getElementById('app').style.display = 'block'; 
-                initCanvas(); renderScores(); resetPicker(); renderGreetings(); document.getElementById('media-cat').addEventListener('change', renderMediaList); initIframeScalers(); 
+                initCanvas(); renderScores(); updateClassDropdowns(); resetPicker(); renderGreetings(); document.getElementById('media-cat').addEventListener('change', renderMediaList); initIframeScalers(); 
             }, 500);
         }
         
@@ -498,7 +497,8 @@
             document.body.style.backgroundColor = state.appBgColor;
             const aBg = document.getElementById('app-bg-img'); 
             if(state.appBgImage) {
-                aBg.src = state.appBgImage; 
+                // CACHE BUSTER: Forces the browser to grab the freshest image from GitHub instead of a broken saved version
+                aBg.src = state.appBgImage.includes('data:image') ? state.appBgImage : state.appBgImage + '?v=' + new Date().getTime(); 
                 aBg.style.display = 'block';
             } else {
                 aBg.style.display = 'none';
