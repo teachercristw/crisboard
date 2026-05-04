@@ -42,13 +42,20 @@
         #app-bg-img { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; display: none; }
         #app { display: none; width: 100%; height: 100%; position: relative; }
 
+        /* Floating App Buttons */
         #theme-btn { position: absolute; top: 20px; right: 20px; z-index: 3000; width: 60px; height: 60px; font-size: 1.8rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; background: var(--c4); }
         #home-btn { position: absolute; bottom: 20px; right: 20px; z-index: 3000; width: 60px; height: 60px; font-size: 1.8rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; background: #FFF; color: var(--c4); border: 4px solid var(--c4); box-shadow: var(--shadow);}
-        
-        #right-sidebar { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 2000; }
+        #focus-btn { position: absolute; bottom: 20px; left: 20px; z-index: 3000; width: 60px; height: 60px; font-size: 1.8rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; background: #FFF; color: var(--c4); border: 4px solid var(--c1); box-shadow: var(--shadow); transition: transform 0.2s;}
+
+        /* Toolbars & Focus Mode Animations */
+        #right-sidebar { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 2000; transition: transform 0.4s ease-in-out; }
         .side-btn { width: 60px; height: 60px; font-size: 1.5rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; }
-        #bottom-bar { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 2000; background: rgba(255,255,255,0.2); padding: 15px; border-radius: 40px; backdrop-filter: blur(10px); }
+        
+        #bottom-bar { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 2000; background: rgba(255,255,255,0.2); padding: 15px; border-radius: 40px; backdrop-filter: blur(10px); transition: transform 0.4s ease-in-out; }
         .bottom-btn { background: #FFF; font-size: 1.1rem; padding: 15px 25px; border-radius: 30px; text-transform: uppercase; color: #2D3436;}
+
+        body.ui-hidden #bottom-bar { transform: translate(-50%, 150px); }
+        body.ui-hidden #right-sidebar { transform: translate(150px, -50%); }
 
         /* ==========================================
            3. WIDGETS
@@ -114,9 +121,9 @@
 
         /* Iframes & Scaling Fixes */
         .iframe-wrapper { position: relative; flex: 1; width: 100%; min-height: 0; border: 4px solid #DDD; border-radius: 15px; overflow: hidden; background: #EEE; }
-        .iframe-container { position: absolute; top: 0; left: 0; border: none; transform-origin: top left; } /* Fixed positioning bug */
+        .iframe-container { position: absolute; top: 0; left: 0; border: none; transform-origin: top left; }
         .iframe-cover { position: absolute; inset: 0; z-index: 10; display: none; } 
-        iframe:fullscreen { border-radius: 0; border: none; background: #FFF; width: 100% !important; height: 100% !important; transform: none !important; position: static !important;} /* Fix native fullscreen scaling */
+        iframe:fullscreen { border-radius: 0; border: none; background: #FFF; width: 100% !important; height: 100% !important; transform: none !important; position: static !important;}
 
         /* Settings Dashboard */
         #dashboard-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px);}
@@ -141,8 +148,10 @@
     </div>
 
     <div id="app">
+        <!-- Floating Corner Buttons -->
         <button id="theme-btn" onclick="toggleW('w-theme')">🎨</button>
         <button id="home-btn" onclick="goHome()" title="Go Home">🏠</button>
+        <button id="focus-btn" onclick="toggleUI()" title="Focus Mode (Hide Menus)">👁️</button>
 
         <div id="right-sidebar">
             <button class="side-btn" style="background:var(--c1); color:#FFF;" onclick="toggleW('w-whiteboard')">🖍️</button>
@@ -222,7 +231,7 @@
             </div>
         </div>
 
-        <!-- SCOREBOARD WITH RANKINGS -->
+        <!-- SCOREBOARD -->
         <div class="widget" id="w-score" style="width: 600px; height: 500px;">
             <div class="widget-header">
                 <span>🍔 Scoreboard</span>
@@ -279,7 +288,6 @@
                     <iframe id="music-yt-frame" src="" allow="autoplay" allowfullscreen></iframe>
                 </div>
 
-                <!-- Custom Controls for the hidden video -->
                 <div style="display:flex; gap:5px; width:100%;">
                     <button onclick="controlYTMusic('play')" style="flex:1; background:var(--c2); font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">▶ Play</button>
                     <button onclick="controlYTMusic('pause')" style="flex:1; background:var(--c1); color:#FFF; font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">⏸ Pause</button>
@@ -425,7 +433,6 @@
 
     <script>
         // --- 1. STATE & DATA ---
-        // INJECTED YOUR EXACT GITHUB RAW LINKS HERE
         const palettes = {
             space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg' },
             sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg' },
@@ -497,6 +504,20 @@
         
         function goHome() { beep(); document.getElementById('app').style.display = 'none'; document.getElementById('start-screen').style.display = 'flex'; document.getElementById('start-screen').style.opacity = '1'; document.querySelectorAll('.widget').forEach(w => w.style.display = 'none'); }
         function makeFullscreen(id) { beep(); let el = document.getElementById(id); if(el.requestFullscreen) { el.requestFullscreen(); } else if(el.mozRequestFullScreen) { el.mozRequestFullScreen(); } else if(el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); } else if(el.msRequestFullscreen) { el.msRequestFullscreen(); } }
+
+        // FOCUS MODE TOGGLE
+        function toggleUI() {
+            beep();
+            document.body.classList.toggle('ui-hidden');
+            const btn = document.getElementById('focus-btn');
+            if(document.body.classList.contains('ui-hidden')) {
+                btn.innerText = '🙈';
+                btn.style.background = '#EEE';
+            } else {
+                btn.innerText = '👁️';
+                btn.style.background = '#FFF';
+            }
+        }
 
         window.onload = () => {
             generateBubbles();
@@ -665,7 +686,7 @@
             }); 
         }
         
-        // --- 7. NEW CLASS MANAGER & SMART PASTE ---
+        // --- 7. CLASS MANAGER & SMART PASTE ---
         function updateClassDropdowns() {
             const pSel = document.getElementById('picker-class-sel'); const dSel = document.getElementById('dash-class-sel');
             pSel.innerHTML = ''; dSel.innerHTML = '';
