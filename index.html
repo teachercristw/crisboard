@@ -343,7 +343,7 @@
             </div>
         </div>
 
-        <!-- LEARNING (With Auto-Scaling & Fullscreen) -->
+        <!-- LEARNING -->
         <div class="widget" id="w-learning" style="width: 700px; height: 500px;">
             <div class="widget-header"><span style="background:var(--c2); padding:5px 15px; border-radius:15px; color:#222;">📚 Learning</span><button class="widget-close" onclick="toggleW('w-learning')">X</button></div>
             <div class="widget-content">
@@ -477,7 +477,7 @@
             
             aPlayer.pause();
             if(ytFrame.contentWindow) {
-                ytFrame.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
+                ytFrame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
             }
             
             aPlayer.src = "";
@@ -509,8 +509,9 @@
                 if(action === 'play') ytFrame.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
                 if(action === 'pause') ytFrame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
                 if(action === 'stop') { 
-                    ytFrame.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*'); 
-                    let src = ytFrame.src; ytFrame.src = src; 
+                    // FIXED: Pauses and rewinds instead of refreshing the iframe!
+                    ytFrame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                    ytFrame.contentWindow.postMessage('{"event":"command","func":"seekTo","args":[0, true]}', '*');
                 }
             } else if(currentMusicType === 'audio') {
                 if(action === 'play') aPlayer.play();
@@ -889,7 +890,6 @@
         // --- EXPORT/IMPORT ---
         function exportJSON() { beep(); const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); a.download = "config.json"; a.click(); }
         
-        // FIXED IMPORT LOGIC
         function importJSON(e) { 
             const f = e.target.files[0]; 
             if(!f) return; 
@@ -902,8 +902,8 @@
                         alert("Loaded successfully!"); 
                         applyCoreSettings(); 
                         updateClassDropdowns(); 
-                        evalRanks();      // <--- The fix: replaced initTeams()
-                        renderScores();   // <--- Added to render the loaded scores
+                        evalRanks(); 
+                        renderScores(); 
                         renderGreetings(); 
                         updateDrops(); 
                         document.getElementById('dashboard-modal').style.display='none'; 
@@ -916,7 +916,7 @@
                 } 
             }; 
             r.readAsText(f); 
-            e.target.value = ''; // <--- The fix: allows importing the same file again
+            e.target.value = ''; 
         }
     </script>
 </body>
