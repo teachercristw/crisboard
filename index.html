@@ -246,7 +246,7 @@
             <div class="widget-content" id="score-container"></div>
         </div>
 
-        <!-- PICKER (Name & Group Tabs) -->
+        <!-- PICKER -->
         <div class="widget" id="w-picker" style="width: 400px; min-height: 380px;">
             <div class="widget-header">
                 <span>🎯 Picker</span>
@@ -277,23 +277,27 @@
             </div>
         </div>
 
-        <!-- MUSIC BOX -->
+        <!-- HYBRID MUSIC BOX: Supports YouTube AND Google Drive links -->
         <div class="widget" id="w-music" style="width: 320px; min-height: 180px;">
             <div class="widget-header"><span>🎵 Music Box</span><button class="widget-close" onclick="toggleW('w-music')">X</button></div>
             <div class="widget-content" style="align-items:center; justify-content:center;">
-                <select id="music-select" onchange="loadMedia('music', 'music-yt-frame')" style="width:100%; margin-bottom:15px;"></select>
+                <select id="music-select" onchange="loadMusicMedia()" style="width:100%; margin-bottom:15px;"></select>
                 
+                <!-- Google Drive / MP3 Audio Player -->
+                <audio id="audio-player" style="width:100%; display:none; margin-bottom:10px;" controls loop></audio>
+
                 <!-- Hidden YouTube Iframe -->
                 <div style="width:0; height:0; overflow:hidden;">
                     <iframe id="music-yt-frame" src="" allow="autoplay" allowfullscreen></iframe>
                 </div>
 
+                <!-- Custom Controls -->
                 <div style="display:flex; gap:5px; width:100%;">
-                    <button onclick="controlYTMusic('play')" style="flex:1; background:var(--c2); font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">▶ Play</button>
-                    <button onclick="controlYTMusic('pause')" style="flex:1; background:var(--c1); color:#FFF; font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">⏸ Pause</button>
-                    <button onclick="controlYTMusic('stop')" style="flex:1; background:var(--c4); color:#FFF; font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">⏹ Stop</button>
+                    <button onclick="controlMusic('play')" style="flex:1; background:var(--c2); font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">▶ Play</button>
+                    <button onclick="controlMusic('pause')" style="flex:1; background:var(--c1); color:#FFF; font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">⏸ Pause</button>
+                    <button onclick="controlMusic('stop')" style="flex:1; background:var(--c4); color:#FFF; font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">⏹ Stop</button>
                 </div>
-                <p style="font-size:0.8rem; color:#888; text-align:center; margin:10px 0 0 0;">Add any YouTube link in Settings</p>
+                <p style="font-size:0.8rem; color:#888; text-align:center; margin:10px 0 0 0;">Supports YouTube & Google Drive links!</p>
             </div>
         </div>
 
@@ -410,12 +414,12 @@
                     <div>
                         <div class="dash-section" style="background:#EBF4FA;">
                             <h3>Media Library</h3>
-                            <p style="font-size:0.8rem; color:#666; margin-top:0;">*Canva links auto-fix. Paste standard YouTube links for Videos AND Music!</p>
+                            <p style="font-size:0.8rem; color:#666; margin-top:0;">*Canva links auto-fix. Paste standard YouTube OR Google Drive links!</p>
                             <select id="media-cat" style="background:var(--c2);" onchange="renderMediaList()">
                                 <option value="wbBackgrounds">🖍️ Whiteboard BGs</option>
                                 <option value="learning">📚 Learning (Canva/Web/PDF)</option>
-                                <option value="video">🎬 Videos (YouTube)</option>
-                                <option value="music">🎵 Music Tracks (YouTube Link)</option>
+                                <option value="video">🎬 Videos (YouTube/Drive/MP4)</option>
+                                <option value="music">🎵 Music Tracks (YouTube/Drive)</option>
                                 <option value="exit">🚪 Exit Tickets</option>
                             </select>
                             <input type="text" id="m-title" placeholder="Title (e.g., Space Game)">
@@ -433,6 +437,7 @@
 
     <script>
         // --- 1. STATE & DATA ---
+        // INJECTED YOUR EXACT GITHUB RAW LINKS HERE
         const palettes = {
             space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg' },
             sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg' },
@@ -461,19 +466,57 @@
         function playAlarm() { let i=0; let int = setInterval(()=>{ playTone(900, 'square', 0.2, 0.5); i++; if(i>5) clearInterval(int); }, 400); }
         function speak(text) { if('speechSynthesis' in window) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.rate = 0.9; window.speechSynthesis.speak(u); } }
 
-        // YOUTUBE MUSIC CONTROLLER
-        function controlYTMusic(action) {
+        // HYBRID MUSIC CONTROLLER
+        let currentMusicType = 'none';
+
+        function loadMusicMedia() {
             beep();
-            const iframe = document.getElementById('music-yt-frame');
-            if(!iframe.src) return;
+            const v = document.getElementById('music-select').value;
+            const aPlayer = document.getElementById('audio-player');
+            const ytFrame = document.getElementById('music-yt-frame');
             
-            if(action === 'play') {
-                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-            } else if(action === 'pause') {
-                iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-            } else if(action === 'stop') {
-                iframe.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
-                let src = iframe.src; iframe.src = src; 
+            // Stop whatever is currently playing
+            aPlayer.pause();
+            if(ytFrame.contentWindow) {
+                ytFrame.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
+            }
+            
+            aPlayer.src = "";
+            ytFrame.src = "";
+            aPlayer.style.display = "none";
+            
+            if(v === "") {
+                currentMusicType = 'none';
+                return;
+            }
+            
+            const url = state.media['music'][v].url;
+            if(url.includes('youtube.com') || url.includes('youtu.be')) {
+                currentMusicType = 'youtube';
+                ytFrame.src = url;
+            } else {
+                currentMusicType = 'audio';
+                aPlayer.src = url;
+                aPlayer.style.display = "block"; // Show audio player so you can adjust volume
+            }
+        }
+
+        function controlMusic(action) {
+            beep();
+            const aPlayer = document.getElementById('audio-player');
+            const ytFrame = document.getElementById('music-yt-frame');
+            
+            if(currentMusicType === 'youtube') {
+                if(action === 'play') ytFrame.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                if(action === 'pause') ytFrame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                if(action === 'stop') { 
+                    ytFrame.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*'); 
+                    let src = ytFrame.src; ytFrame.src = src; 
+                }
+            } else if(currentMusicType === 'audio') {
+                if(action === 'play') aPlayer.play();
+                if(action === 'pause') aPlayer.pause();
+                if(action === 'stop') { aPlayer.pause(); aPlayer.currentTime = 0; }
             }
         }
 
@@ -802,6 +845,7 @@
             applyCoreSettings(); resetPicker(); renderGreetings(); document.getElementById('dashboard-modal').style.display = 'none';
         }
 
+        // --- THE HYBRID GOOGLE DRIVE / YOUTUBE URL FORMATTER ---
         function fmtURL(url, cat) { 
             if(!url) return ""; let f = url.trim(); 
             if(f.includes("canva.com")) { 
@@ -813,7 +857,13 @@
             } else if(f.includes("youtu.be/")) { 
                 let ytParams = cat === 'music' ? "?enablejsapi=1&autoplay=1" : "?rel=0&modestbranding=1";
                 f="https://www.youtube.com/embed/"+f.split("youtu.be/")[1].split("?")[0]+ytParams; 
-            } 
+            } else if(f.includes("drive.google.com/file/d/")) {
+                let id = f.split("file/d/")[1].split("/")[0];
+                f = (cat === 'music') ? "https://drive.google.com/uc?export=download&id=" + id : "https://drive.google.com/file/d/" + id + "/preview";
+            } else if(f.includes("drive.google.com/open?id=")) {
+                let id = f.split("id=")[1].split("&")[0];
+                f = (cat === 'music') ? "https://drive.google.com/uc?export=download&id=" + id : "https://drive.google.com/file/d/" + id + "/preview";
+            }
             return f; 
         }
         
