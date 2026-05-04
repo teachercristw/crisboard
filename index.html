@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sanxing English Village Interactive Whiteboard</title>
+    
+    <!-- PRELOADER: Forces the browser to download the images immediately in the background -->
+    <link rel="preload" href="1.jpg" as="image">
+    <link rel="preload" href="2.jpg" as="image">
+    <link rel="preload" href="3.jpg" as="image">
+    <link rel="preload" href="4.jpg" as="image">
+
     <style>
         /* ==========================================
            1. GLOBAL AESTHETICS & CONSTRAINTS
@@ -66,7 +73,7 @@
         .time-input::-webkit-outer-spin-button, .time-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .time-input:disabled { background: transparent; color: var(--c4); opacity: 1; -webkit-text-fill-color: var(--c4);}
 
-        /* Scoreboard */
+        /* Scoreboard (Grid & Burger CSS) */
         #score-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; padding: 5px;}
         .score-card { background: var(--c3); padding: 15px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; border: 4px solid #FFF; position: relative; overflow: hidden;}
         .score-card input { position: relative; z-index: 20; color: #FFF; text-shadow: 0 2px 0 rgba(0,0,0,0.3); text-align: center; border: none; background: transparent; font-size: 1.4rem; font-family: inherit; font-weight: bold; width: 100%; outline: none; padding: 0;}
@@ -413,10 +420,10 @@
         // --- 1. STATE & DATA ---
         // EXACT verbatim file names linked here with cache buster logic appended during load
         const palettes = {
-            space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: '1.png' },
-            sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: '2.png' },
-            neon: { bg: '#1A1A2E', c1: '#5F27CD', c2: '#FECA57', c3: '#1DD1A1', c4: '#FF9FF3', img: '3.png' },
-            pastel: { bg: '#B5EAEA', c1: '#FFB6B9', c2: '#FFE082', c3: '#C8E3D4', c4: '#D1C4E9', img: '4.png' }
+            space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: '1.jpg' },
+            sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: '2.jpg' },
+            neon: { bg: '#1A1A2E', c1: '#5F27CD', c2: '#FECA57', c3: '#1DD1A1', c4: '#FF9FF3', img: '3.jpg' },
+            pastel: { bg: '#B5EAEA', c1: '#FFB6B9', c2: '#FFE082', c3: '#C8E3D4', c4: '#D1C4E9', img: '4.jpg' }
         };
 
         // EMPTIED DEFAULT CLASSES
@@ -501,7 +508,7 @@
             document.body.style.backgroundColor = state.appBgColor;
             const aBg = document.getElementById('app-bg-img'); 
             if(state.appBgImage) {
-                // Cache Buster implementation
+                // CACHE BUSTER implementation to pull freshest JPGs
                 aBg.src = state.appBgImage.includes('data:image') ? state.appBgImage : state.appBgImage + '?v=' + new Date().getTime(); 
                 aBg.style.display = 'block';
             } else {
@@ -644,7 +651,6 @@
             
             const keys = Object.keys(state.classes);
             if(keys.length === 0) {
-                // If there are literally no classes, show a placeholder
                 pSel.innerHTML = `<option value="">No Classes</option>`;
                 dSel.innerHTML = `<option value="">No Classes</option>`;
                 state.activeClass = null;
