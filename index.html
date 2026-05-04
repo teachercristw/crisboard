@@ -236,7 +236,7 @@
             <div class="widget-content" id="score-container"></div>
         </div>
 
-        <!-- PICKER -->
+        <!-- PICKER (Name & Group Tabs) -->
         <div class="widget" id="w-picker" style="width: 400px; min-height: 380px;">
             <div class="widget-header">
                 <span>🎯 Picker</span>
@@ -390,11 +390,11 @@
                     <div>
                         <div class="dash-section" style="background:#EBF4FA;">
                             <h3>Media Library</h3>
-                            <p style="font-size:0.8rem; color:#666; margin-top:0;">*Canva links auto-fix. YouTube Error 153? The video owner disabled embedding. Web/GitHub Links support Camera.</p>
+                            <p style="font-size:0.8rem; color:#666; margin-top:0;">*Canva links auto-fix. Paste Google Drive share links for Drive videos/music!</p>
                             <select id="media-cat" style="background:var(--c2);" onchange="renderMediaList()">
                                 <option value="wbBackgrounds">🖍️ Whiteboard BGs</option>
                                 <option value="learning">📚 Learning (Canva/Web/PDF)</option>
-                                <option value="video">🎬 Videos (YouTube/MP4)</option>
+                                <option value="video">🎬 Videos (YouTube/Drive/MP4)</option>
                                 <option value="music">🎵 Music Tracks</option>
                                 <option value="exit">🚪 Exit Tickets</option>
                             </select>
@@ -413,7 +413,6 @@
 
     <script>
         // --- 1. STATE & DATA ---
-        // INJECTED YOUR EXACT GITHUB RAW LINKS HERE
         const palettes = {
             space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg' },
             sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg' },
@@ -421,7 +420,6 @@
             pastel: { bg: '#B5EAEA', c1: '#FFB6B9', c2: '#FFE082', c3: '#C8E3D4', c4: '#D1C4E9', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/4.jpg' }
         };
 
-        // EMPTIED DEFAULT CLASSES
         let state = {
             appBgColor: "#0F0C29", appBgImage: null, 
             classes: {}, 
@@ -499,7 +497,6 @@
 
         function handleUpload(e, key, apply) { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onload = (ev) => { state[key] = ev.target.result; alert("Loaded!"); if(apply) applyCoreSettings(); }; r.readAsDataURL(f); } }
         
-        // FIXED BACKGROUND LOGIC: Applies directly to the CSS body style, making it immune to z-index bugs
         function applyCoreSettings() { 
             if(state.appBgImage) {
                 document.body.style.backgroundImage = `url('${state.appBgImage}')`;
@@ -757,7 +754,8 @@
             applyCoreSettings(); resetPicker(); renderGreetings(); document.getElementById('dashboard-modal').style.display = 'none';
         }
 
-        function fmtURL(url) { 
+        // --- GOOGLE DRIVE INTERCEPTOR ---
+        function fmtURL(url, cat) { 
             if(!url) return ""; let f = url.trim(); 
             if(f.includes("canva.com")) { 
                 let b=f.split('?')[0]; if(b.endsWith("/edit")) b=b.replace("/edit","/view"); 
@@ -766,7 +764,15 @@
                 f="https://www.youtube.com/embed/"+new URL(f).searchParams.get("v")+"?rel=0&modestbranding=1"; 
             } else if(f.includes("youtu.be/")) { 
                 f="https://www.youtube.com/embed/"+f.split("youtu.be/")[1].split("?")[0]+"?rel=0&modestbranding=1"; 
-            } 
+            } else if(f.includes("drive.google.com/file/d/")) {
+                // Intercepts standard Google Drive share links
+                let id = f.split("file/d/")[1].split("/")[0];
+                f = (cat === 'music') ? "https://drive.google.com/uc?export=download&id=" + id : "https://drive.google.com/file/d/" + id + "/preview";
+            } else if(f.includes("drive.google.com/open?id=")) {
+                // Intercepts alternate Google Drive share links
+                let id = f.split("id=")[1].split("&")[0];
+                f = (cat === 'music') ? "https://drive.google.com/uc?export=download&id=" + id : "https://drive.google.com/file/d/" + id + "/preview";
+            }
             return f; 
         }
         
@@ -774,7 +780,7 @@
             beep(); const cat = document.getElementById('media-cat').value; let t = document.getElementById('m-title').value.trim(); let rU = document.getElementById('m-url').value.trim(); const fI = document.getElementById('m-file');
             if(!t) t = `Item ${state.media[cat].length + 1}`;
             if(fI.files.length > 0) { const r = new FileReader(); r.onload = (e) => { state.media[cat].push({ title: t, url: e.target.result }); finishAdd(); }; r.readAsDataURL(fI.files[0]); } 
-            else if(rU) { state.media[cat].push({ title: t, url: fmtURL(rU) }); finishAdd(); } else { alert("Provide URL or file."); }
+            else if(rU) { state.media[cat].push({ title: t, url: fmtURL(rU, cat) }); finishAdd(); } else { alert("Provide URL or file."); }
         }
         function finishAdd() { document.getElementById('m-title').value = ''; document.getElementById('m-url').value = ''; document.getElementById('m-file').value = ''; renderMediaList(); updateDrops(); }
         function remMedia(cat, i) { beep(); state.media[cat].splice(i, 1); renderMediaList(); updateDrops(); }
