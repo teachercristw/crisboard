@@ -246,7 +246,7 @@
             <div class="widget-content" id="score-container"></div>
         </div>
 
-        <!-- PICKER -->
+        <!-- PICKER (Name & Group Tabs) -->
         <div class="widget" id="w-picker" style="width: 400px; min-height: 380px;">
             <div class="widget-header">
                 <span>🎯 Picker</span>
@@ -343,7 +343,7 @@
             </div>
         </div>
 
-        <!-- LEARNING -->
+        <!-- LEARNING (With Auto-Scaling & Fullscreen) -->
         <div class="widget" id="w-learning" style="width: 700px; height: 500px;">
             <div class="widget-header"><span style="background:var(--c2); padding:5px 15px; border-radius:15px; color:#222;">📚 Learning</span><button class="widget-close" onclick="toggleW('w-learning')">X</button></div>
             <div class="widget-content">
@@ -475,7 +475,6 @@
             const aPlayer = document.getElementById('audio-player');
             const ytFrame = document.getElementById('music-yt-frame');
             
-            // Stop whatever is currently playing
             aPlayer.pause();
             if(ytFrame.contentWindow) {
                 ytFrame.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*');
@@ -497,7 +496,7 @@
             } else {
                 currentMusicType = 'audio';
                 aPlayer.src = url;
-                aPlayer.style.display = "block"; // Show audio player so you can adjust volume
+                aPlayer.style.display = "block";
             }
         }
 
@@ -845,7 +844,6 @@
             applyCoreSettings(); resetPicker(); renderGreetings(); document.getElementById('dashboard-modal').style.display = 'none';
         }
 
-        // --- THE HYBRID GOOGLE DRIVE / YOUTUBE URL FORMATTER ---
         function fmtURL(url, cat) { 
             if(!url) return ""; let f = url.trim(); 
             if(f.includes("canva.com")) { 
@@ -859,10 +857,10 @@
                 f="https://www.youtube.com/embed/"+f.split("youtu.be/")[1].split("?")[0]+ytParams; 
             } else if(f.includes("drive.google.com/file/d/")) {
                 let id = f.split("file/d/")[1].split("/")[0];
-                f = (cat === 'music') ? "https://drive.google.com/uc?export=download&id=" + id : "https://drive.google.com/file/d/" + id + "/preview";
+                f = (cat === 'music') ? url : "https://drive.google.com/file/d/" + id + "/preview";
             } else if(f.includes("drive.google.com/open?id=")) {
                 let id = f.split("id=")[1].split("&")[0];
-                f = (cat === 'music') ? "https://drive.google.com/uc?export=download&id=" + id : "https://drive.google.com/file/d/" + id + "/preview";
+                f = (cat === 'music') ? url : "https://drive.google.com/file/d/" + id + "/preview";
             }
             return f; 
         }
@@ -890,7 +888,36 @@
 
         // --- EXPORT/IMPORT ---
         function exportJSON() { beep(); const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); a.download = "config.json"; a.click(); }
-        function importJSON(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = (ev) => { try { state = JSON.parse(ev.target.result); alert("Loaded!"); applyCoreSettings(); updateClassDropdowns(); initTeams(); renderGreetings(); updateDrops(); document.getElementById('dashboard-modal').style.display='none'; } catch(err) { alert("JSON Error."); } }; r.readAsText(f); }
+        
+        // FIXED IMPORT LOGIC
+        function importJSON(e) { 
+            const f = e.target.files[0]; 
+            if(!f) return; 
+            const r = new FileReader(); 
+            r.onload = (ev) => { 
+                try { 
+                    const importedState = JSON.parse(ev.target.result);
+                    if(importedState && importedState.classes) {
+                        state = importedState; 
+                        alert("Loaded successfully!"); 
+                        applyCoreSettings(); 
+                        updateClassDropdowns(); 
+                        evalRanks();      // <--- The fix: replaced initTeams()
+                        renderScores();   // <--- Added to render the loaded scores
+                        renderGreetings(); 
+                        updateDrops(); 
+                        document.getElementById('dashboard-modal').style.display='none'; 
+                    } else {
+                        alert("Invalid config file.");
+                    }
+                } catch(err) { 
+                    console.error(err);
+                    alert("Error loading file."); 
+                } 
+            }; 
+            r.readAsText(f); 
+            e.target.value = ''; // <--- The fix: allows importing the same file again
+        }
     </script>
 </body>
 </html>
