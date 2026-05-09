@@ -414,10 +414,10 @@
                     <div>
                         <div class="dash-section" style="background:#EBF4FA;">
                             <h3>Media Library</h3>
-                            <p style="font-size:0.8rem; color:#666; margin-top:0;">*Canva links auto-fix. Paste standard YouTube OR Google Drive links!</p>
+                            <p style="font-size:0.8rem; color:#666; margin-top:0;">*Paste Canva, YouTube, Google Drive, Docs, Sheets, or Slides links here!</p>
                             <select id="media-cat" style="background:var(--c2);" onchange="renderMediaList()">
                                 <option value="wbBackgrounds">🖍️ Whiteboard BGs</option>
-                                <option value="learning">📚 Learning (Canva/Web/PDF)</option>
+                                <option value="learning">📚 Learning (Slides/Canva/Web)</option>
                                 <option value="video">🎬 Videos (YouTube/Drive/MP4)</option>
                                 <option value="music">🎵 Music Tracks (YouTube/Drive)</option>
                                 <option value="exit">🚪 Exit Tickets</option>
@@ -509,7 +509,6 @@
                 if(action === 'play') ytFrame.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
                 if(action === 'pause') ytFrame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
                 if(action === 'stop') { 
-                    // FIXED: Pauses and rewinds instead of refreshing the iframe!
                     ytFrame.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
                     ytFrame.contentWindow.postMessage('{"event":"command","func":"seekTo","args":[0, true]}', '*');
                 }
@@ -845,11 +844,21 @@
             applyCoreSettings(); resetPicker(); renderGreetings(); document.getElementById('dashboard-modal').style.display = 'none';
         }
 
+        // --- UPDATED SMART URL FORMATTER FOR GOOGLE SLIDES/DOCS ---
         function fmtURL(url, cat) { 
             if(!url) return ""; let f = url.trim(); 
             if(f.includes("canva.com")) { 
                 let b=f.split('?')[0]; if(b.endsWith("/edit")) b=b.replace("/edit","/view"); 
                 if(!b.endsWith("/view")) b+="/view"; f=b+"?embed"; 
+            } else if(f.includes("docs.google.com/presentation/d/")) {
+                let match = f.match(/(https:\/\/docs\.google\.com\/presentation\/d\/[a-zA-Z0-9-_]+)/);
+                if(match) f = match[1] + "/embed"; // Automatically converts edit links to embed links
+            } else if(f.includes("docs.google.com/document/d/") || f.includes("docs.google.com/spreadsheets/d/")) {
+                let match = f.match(/(https:\/\/docs\.google\.com\/(document|spreadsheets)\/d\/[a-zA-Z0-9-_]+)/);
+                if(match) f = match[1] + "/preview";
+            } else if(f.includes("docs.google.com/forms/d/")) {
+                 let match = f.match(/(https:\/\/docs\.google\.com\/forms\/d\/(?:e\/)?[a-zA-Z0-9-_]+)/);
+                 if(match) f = match[1] + "/viewform?embedded=true";
             } else if(f.includes("youtube.com/watch?v=")) { 
                 let ytParams = cat === 'music' ? "?enablejsapi=1&autoplay=1" : "?rel=0&modestbranding=1";
                 f="https://www.youtube.com/embed/"+new URL(f).searchParams.get("v")+ytParams; 
