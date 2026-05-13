@@ -24,10 +24,15 @@
         
         select, input, textarea { 
             padding: 10px; border-radius: 10px; border: 3px solid #EEE; font-size: 1rem; width: 100%; margin-bottom: 10px; background: #FAFAFA; color: #333;
-            /* NEW FIX: Re-enables clicking, typing, and pasting */
-            user-select: text !important;
-            -webkit-user-select: text !important;
+            /* ULTIMATE INPUT FIX: Forces browsers/smartboards to allow tapping, typing, and pasting */
+            user-select: auto !important;
+            -webkit-user-select: auto !important;
+            -moz-user-select: auto !important;
+            -ms-user-select: auto !important;
+            -webkit-touch-callout: default !important;
             touch-action: auto !important;
+            cursor: text !important;
+            pointer-events: auto !important;
         }
         
         /* ==========================================
@@ -138,7 +143,6 @@
         .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         @media(max-width: 768px) { .dash-grid { grid-template-columns: 1fr; } }
         .dash-section { margin-bottom: 15px; background: #F9F9F9; padding: 15px; border-radius: 15px; border: 3px solid #EEE; }
-        .dash-input { width: 100%; padding: 10px; border: 4px solid #EEE; border-radius: 10px; font-size: 1rem; background: #FAFAFA; margin-bottom: 10px;}
         .list-item { display: flex; justify-content: space-between; align-items: center; background: #FFF; padding: 10px; border-radius: 10px; margin-bottom: 5px; border: 2px solid #EEE;}
     </style>
 </head>
@@ -419,25 +423,36 @@
                         <div class="dash-section" style="background:#EBF4FA;">
                             <h3>Media Library</h3>
                             
-                            <div style="background:#FFF; padding:10px; border-radius:10px; margin-bottom:10px; border:2px solid #2196F3;">
-                                <h4 style="margin:0 0 5px 0; color:#1976D2;">How to add OneDrive PPTs:</h4>
-                                <p style="font-size:0.8rem; color:#444; margin:0;">In OneDrive, click <strong>File > Share > Embed</strong>. You can paste the <strong>entire code</strong> into the URL box below! The app will automatically extract the exact link for you.</p>
+                            <div style="background:#FFF; padding:10px; border-radius:10px; margin-bottom:15px; border:2px solid #2196F3;">
+                                <h4 style="margin:0 0 5px 0; color:#1976D2;">How to add Canva / OneDrive PPTs:</h4>
+                                <p style="font-size:0.8rem; color:#444; margin:0;">In OneDrive or Canva, click <strong>Share > Embed</strong>. You can safely paste the <strong>ENTIRE `<iframe>...</iframe>` code</strong> into the URL box below! The app will automatically clean it up for you.</p>
                             </div>
                             
-                            <select id="media-cat" style="background:var(--c2);" onchange="renderMediaList()">
-                                <option value="wbBackgrounds">🖍️ Whiteboard BGs</option>
-                                <option value="learning">📚 Learning (Slides/Canva/Web)</option>
-                                <option value="video">🎬 Videos (YouTube/Drive/MP4)</option>
-                                <option value="music">🎵 Music Tracks (YouTube/Drive)</option>
-                                <option value="exit">🚪 Exit Tickets</option>
+                            <select id="media-cat" style="background:var(--c2); font-weight:bold; margin-bottom:15px;" onchange="renderMediaList()">
+                                <option value="wbBackgrounds">🖍️ Category: Whiteboard BGs</option>
+                                <option value="learning">📚 Category: Learning (Slides/Web)</option>
+                                <option value="video">🎬 Category: Videos (YouTube/MP4)</option>
+                                <option value="music">🎵 Category: Music Tracks</option>
+                                <option value="exit">🚪 Category: Exit Tickets</option>
                             </select>
-                            <input type="text" id="m-title" placeholder="Title (e.g., Space Game)">
-                            <input type="text" id="m-url" placeholder="Paste the Link or full <iframe> code here">
-                            <p style="margin:2px 0; text-align:center; font-size:0.8rem; color:#666;">-- OR LOCAL UPLOAD (Images/Audio only) --</p>
-                            <input type="file" id="m-file" accept="image/*, audio/mp3">
+
+                            <label style="font-size: 0.9rem; color: #333; font-weight: bold;">1. Name your media:</label>
+                            <input type="text" id="m-title" placeholder="e.g., XinSheng G4 Storytelling">
+                            
+                            <label style="font-size: 0.9rem; color: #333; font-weight: bold;">2. Paste your link or code here:</label>
+                            <input type="text" id="m-url" placeholder="Paste link or full <iframe> code...">
+                            
+                            <p style="margin:5px 0; text-align:center; font-size:0.8rem; color:#666;">-- OR LOCAL UPLOAD (Images/Audio only) --</p>
+                            <input type="file" id="m-file" accept="image/*, audio/mp3" style="margin-bottom:10px;">
+                            
                             <button onclick="addMedia()" style="background:#222; color:#FFF; width:100%; text-transform:none;">+ Add to Library</button>
                         </div>
-                        <div id="media-list" style="background:#FFF; padding:10px; border-radius:10px; border:2px solid #EEE; min-height:150px; max-height:250px; overflow-y:auto;"></div>
+
+                        <!-- This is the Box you were asking about! -->
+                        <h4 style="margin:0 0 5px 0; color:#333;">Your Saved Media:</h4>
+                        <div id="media-list" style="background:#FFF; padding:10px; border-radius:10px; border:2px solid #EEE; min-height:150px; max-height:250px; overflow-y:auto;">
+                            <!-- Items appear here dynamically -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -851,24 +866,23 @@
             applyCoreSettings(); resetPicker(); renderGreetings(); document.getElementById('dashboard-modal').style.display = 'none';
         }
 
-        // --- UPGRADED SMART URL FORMATTER WITH IFRAME EXTRACTION ---
+        // --- UPGRADED SMART URL FORMATTER ---
         function fmtURL(url, cat) { 
             if(!url) return ""; let f = url.trim(); 
             
             // 1. Check if the user pasted an entire <iframe> code block
             if(f.toLowerCase().includes("<iframe") && f.includes("src=")) {
-                // Extract just the URL from the src="..." attribute
                 let match = f.match(/src=["'](.*?)["']/);
                 if(match && match[1]) {
-                    // Fix HTML encoding (like &amp;) so the browser reads the URL correctly
                     f = match[1].replace(/&amp;/g, '&');
                 }
             }
 
             // 2. Format the URL based on its origin
             if(f.includes("canva.com")) { 
-                let b=f.split('?')[0]; if(b.endsWith("/edit")) b=b.replace("/edit","/view"); 
-                if(!b.endsWith("/view")) b+="/view"; f=b+"?embed"; 
+                let b=f.split('?')[0]; 
+                b=b.replace(/\/view\/?$/, "").replace(/\/edit\/?$/, "").replace(/\/watch\/?$/, ""); 
+                f=b+"/view?embed"; 
             } else if(f.includes("docs.google.com/presentation/d/")) {
                 let match = f.match(/(https:\/\/docs\.google\.com\/presentation\/d\/[a-zA-Z0-9-_]+)/);
                 if(match) f = match[1] + "/embed";
@@ -908,7 +922,11 @@
         }
         function finishAdd() { document.getElementById('m-title').value = ''; document.getElementById('m-url').value = ''; document.getElementById('m-file').value = ''; renderMediaList(); updateDrops(); }
         function remMedia(cat, i) { beep(); state.media[cat].splice(i, 1); renderMediaList(); updateDrops(); }
-        function renderMediaList() { const cat = document.getElementById('media-cat').value; const c = document.getElementById('media-list'); c.innerHTML = state.media[cat].length === 0 ? '<p style="text-align:center; color:#888;">No items.</p>' : state.media[cat].map((m,i)=>`<div class="list-item"><span>${m.title}</span><button onclick="remMedia('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c4); color:#FFF; border:none; border-radius:5px;">X</button></div>`).join(''); }
+        function renderMediaList() { 
+            const cat = document.getElementById('media-cat').value; 
+            const c = document.getElementById('media-list'); 
+            c.innerHTML = state.media[cat].length === 0 ? '<p style="text-align:center; color:#888; margin-top:20px;">No links saved here yet.</p>' : state.media[cat].map((m,i)=>`<div class="list-item"><span>${m.title}</span><button onclick="remMedia('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c4); color:#FFF; border:none; border-radius:5px;">X</button></div>`).join(''); 
+        }
         
         function updateDrops() { 
             ['learning', 'video', 'music', 'exit', 'wbBackgrounds'].forEach(cat => { 
