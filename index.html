@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sanxing English Village Interactive Whiteboard</title>
 
-    <!-- PRELOADER: Forces the browser to download your specific GitHub images immediately -->
+    <!-- PRELOADER -->
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg" as="image">
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg" as="image">
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/3.jpg" as="image">
@@ -182,6 +182,7 @@
                 <button style="width:100%; margin-bottom:10px; background:linear-gradient(90deg, #FFB6B9, #C8E3D4); color:#FFF; border:none;" onclick="applyPalette('pastel')">Soft Pastel</button>
                 <hr style="border: 2px solid #EEE; margin: 10px 0;">
                 <label style="font-size:0.9rem;">Custom Background Image:</label>
+                <!-- Kept Image-Only Upload for safety -->
                 <input type="file" accept="image/*" onchange="handleUpload(event, 'appBgImage', true)" style="margin-bottom:10px;">
                 <button onclick="state.appBgImage=null; applyCoreSettings();" style="width:100%; font-size:1rem; background:#EEE; text-transform:none;">Clear Background</button>
             </div>
@@ -378,6 +379,7 @@
                         <div class="dash-section">
                             <h3>App Background</h3>
                             <input type="color" id="dash-bg-color" style="height:40px; padding:0; border:none; cursor:pointer;">
+                            <!-- Safety lock: Only allow images locally to prevent memory crashes from documents -->
                             <input type="file" accept="image/*" onchange="handleUpload(event, 'appBgImage')">
                             <button onclick="state.appBgImage=null; applyCoreSettings();" style="font-size:0.9rem; padding:5px 10px; text-transform:none;">Clear Image</button>
                         </div>
@@ -414,7 +416,12 @@
                     <div>
                         <div class="dash-section" style="background:#EBF4FA;">
                             <h3>Media Library</h3>
-                            <p style="font-size:0.8rem; color:#666; margin-top:0;">*Paste Canva, YouTube, Google Drive, Docs, Sheets, or Slides links here!</p>
+                            <!-- UPDATED INSTRUCTIONS FOR TEACHER -->
+                            <div style="background:#FFF; padding:10px; border-radius:10px; margin-bottom:10px; border:2px dashed var(--c2);">
+                                <h4 style="margin:0 0 5px 0; color:var(--c4);">How to add PowerPoints / PDFs:</h4>
+                                <p style="font-size:0.8rem; color:#666; margin:0;">Do not use the local upload button for heavy documents. Instead, <strong>upload them to your Google Drive</strong> (save as Google Slides), and paste the <strong>Share Link</strong> into the URL box below!</p>
+                            </div>
+                            
                             <select id="media-cat" style="background:var(--c2);" onchange="renderMediaList()">
                                 <option value="wbBackgrounds">🖍️ Whiteboard BGs</option>
                                 <option value="learning">📚 Learning (Slides/Canva/Web)</option>
@@ -423,9 +430,9 @@
                                 <option value="exit">🚪 Exit Tickets</option>
                             </select>
                             <input type="text" id="m-title" placeholder="Title (e.g., Space Game)">
-                            <input type="text" id="m-url" placeholder="Paste URL Link...">
-                            <p style="margin:2px 0; text-align:center; font-size:0.8rem; color:#666;">-- OR UPLOAD --</p>
-                            <input type="file" id="m-file">
+                            <input type="text" id="m-url" placeholder="Paste Cloud Link (Google Drive, Canva, etc.)">
+                            <p style="margin:2px 0; text-align:center; font-size:0.8rem; color:#666;">-- OR LOCAL UPLOAD (Images/Audio only) --</p>
+                            <input type="file" id="m-file" accept="image/*, audio/mp3">
                             <button onclick="addMedia()" style="background:#222; color:#FFF; width:100%; text-transform:none;">+ Add to Library</button>
                         </div>
                         <div id="media-list" style="background:#FFF; padding:10px; border-radius:10px; border:2px solid #EEE; min-height:150px; max-height:250px; overflow-y:auto;"></div>
@@ -437,7 +444,6 @@
 
     <script>
         // --- 1. STATE & DATA ---
-        // INJECTED YOUR EXACT GITHUB RAW LINKS HERE
         const palettes = {
             space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg' },
             sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg' },
@@ -547,7 +553,6 @@
         function goHome() { beep(); document.getElementById('app').style.display = 'none'; document.getElementById('start-screen').style.display = 'flex'; document.getElementById('start-screen').style.opacity = '1'; document.querySelectorAll('.widget').forEach(w => w.style.display = 'none'); }
         function makeFullscreen(id) { beep(); let el = document.getElementById(id); if(el.requestFullscreen) { el.requestFullscreen(); } else if(el.mozRequestFullScreen) { el.mozRequestFullScreen(); } else if(el.webkitRequestFullscreen) { el.webkitRequestFullscreen(); } else if(el.msRequestFullscreen) { el.msRequestFullscreen(); } }
 
-        // FOCUS MODE TOGGLE
         function toggleUI() {
             beep();
             document.body.classList.toggle('ui-hidden');
@@ -844,7 +849,8 @@
             applyCoreSettings(); resetPicker(); renderGreetings(); document.getElementById('dashboard-modal').style.display = 'none';
         }
 
-        // --- UPDATED SMART URL FORMATTER FOR GOOGLE SLIDES/DOCS ---
+        // --- UPDATED SMART URL FORMATTER ---
+        // Now automatically handles Microsoft SharePoint, OneDrive, and raw PPTX links!
         function fmtURL(url, cat) { 
             if(!url) return ""; let f = url.trim(); 
             if(f.includes("canva.com")) { 
@@ -852,13 +858,19 @@
                 if(!b.endsWith("/view")) b+="/view"; f=b+"?embed"; 
             } else if(f.includes("docs.google.com/presentation/d/")) {
                 let match = f.match(/(https:\/\/docs\.google\.com\/presentation\/d\/[a-zA-Z0-9-_]+)/);
-                if(match) f = match[1] + "/embed"; // Automatically converts edit links to embed links
+                if(match) f = match[1] + "/embed";
             } else if(f.includes("docs.google.com/document/d/") || f.includes("docs.google.com/spreadsheets/d/")) {
                 let match = f.match(/(https:\/\/docs\.google\.com\/(document|spreadsheets)\/d\/[a-zA-Z0-9-_]+)/);
                 if(match) f = match[1] + "/preview";
             } else if(f.includes("docs.google.com/forms/d/")) {
                  let match = f.match(/(https:\/\/docs\.google\.com\/forms\/d\/(?:e\/)?[a-zA-Z0-9-_]+)/);
                  if(match) f = match[1] + "/viewform?embedded=true";
+            } else if(f.includes("sharepoint.com") || f.includes("1drv.ms")) {
+                // Microsoft OneDrive / SharePoint embed logic
+                f = f.split("?")[0] + "?action=embedview";
+            } else if(f.endsWith(".ppt") || f.endsWith(".pptx")) {
+                // Public raw PPT link wrapped in MS Office Viewer
+                f = "https://view.officeapps.live.com/op/embed.aspx?src=" + encodeURIComponent(f);
             } else if(f.includes("youtube.com/watch?v=")) { 
                 let ytParams = cat === 'music' ? "?enablejsapi=1&autoplay=1" : "?rel=0&modestbranding=1";
                 f="https://www.youtube.com/embed/"+new URL(f).searchParams.get("v")+ytParams; 
