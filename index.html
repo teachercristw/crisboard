@@ -278,21 +278,18 @@
             </div>
         </div>
 
-        <!-- HYBRID MUSIC BOX: Supports YouTube AND Google Drive links -->
+        <!-- HYBRID MUSIC BOX -->
         <div class="widget" id="w-music" style="width: 320px; min-height: 180px;">
             <div class="widget-header"><span>🎵 Music Box</span><button class="widget-close" onclick="toggleW('w-music')">X</button></div>
             <div class="widget-content" style="align-items:center; justify-content:center;">
                 <select id="music-select" onchange="loadMusicMedia()" style="width:100%; margin-bottom:15px;"></select>
                 
-                <!-- Google Drive / MP3 Audio Player -->
                 <audio id="audio-player" style="width:100%; display:none; margin-bottom:10px;" controls loop></audio>
 
-                <!-- Hidden YouTube Iframe -->
                 <div style="width:0; height:0; overflow:hidden;">
                     <iframe id="music-yt-frame" src="" allow="autoplay" allowfullscreen></iframe>
                 </div>
 
-                <!-- Custom Controls -->
                 <div style="display:flex; gap:5px; width:100%;">
                     <button onclick="controlMusic('play')" style="flex:1; background:var(--c2); font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">▶ Play</button>
                     <button onclick="controlMusic('pause')" style="flex:1; background:var(--c1); color:#FFF; font-size:1rem; text-transform:none; padding:10px 5px; border:none; border-radius:10px;">⏸ Pause</button>
@@ -379,7 +376,6 @@
                         <div class="dash-section">
                             <h3>App Background</h3>
                             <input type="color" id="dash-bg-color" style="height:40px; padding:0; border:none; cursor:pointer;">
-                            <!-- Safety lock: Only allow images locally to prevent memory crashes from documents -->
                             <input type="file" accept="image/*" onchange="handleUpload(event, 'appBgImage')">
                             <button onclick="state.appBgImage=null; applyCoreSettings();" style="font-size:0.9rem; padding:5px 10px; text-transform:none;">Clear Image</button>
                         </div>
@@ -416,10 +412,10 @@
                     <div>
                         <div class="dash-section" style="background:#EBF4FA;">
                             <h3>Media Library</h3>
-                            <!-- UPDATED INSTRUCTIONS FOR TEACHER -->
-                            <div style="background:#FFF; padding:10px; border-radius:10px; margin-bottom:10px; border:2px dashed var(--c2);">
-                                <h4 style="margin:0 0 5px 0; color:var(--c4);">How to add PowerPoints / PDFs:</h4>
-                                <p style="font-size:0.8rem; color:#666; margin:0;">Do not use the local upload button for heavy documents. Instead, <strong>upload them to your Google Drive</strong> (save as Google Slides), and paste the <strong>Share Link</strong> into the URL box below!</p>
+                            
+                            <div style="background:#FFF; padding:10px; border-radius:10px; margin-bottom:10px; border:2px solid #2196F3;">
+                                <h4 style="margin:0 0 5px 0; color:#1976D2;">How to add OneDrive PPTs:</h4>
+                                <p style="font-size:0.8rem; color:#444; margin:0;">In OneDrive, click <strong>File > Share > Embed</strong>. You can paste the <strong>ENTIRE `<iframe>...</iframe>` code</strong> into the URL box below! The app will automatically extract the exact link for you.</p>
                             </div>
                             
                             <select id="media-cat" style="background:var(--c2);" onchange="renderMediaList()">
@@ -430,7 +426,7 @@
                                 <option value="exit">🚪 Exit Tickets</option>
                             </select>
                             <input type="text" id="m-title" placeholder="Title (e.g., Space Game)">
-                            <input type="text" id="m-url" placeholder="Paste Cloud Link (Google Drive, Canva, etc.)">
+                            <input type="text" id="m-url" placeholder="Paste Cloud Link or full <iframe> code here">
                             <p style="margin:2px 0; text-align:center; font-size:0.8rem; color:#666;">-- OR LOCAL UPLOAD (Images/Audio only) --</p>
                             <input type="file" id="m-file" accept="image/*, audio/mp3">
                             <button onclick="addMedia()" style="background:#222; color:#FFF; width:100%; text-transform:none;">+ Add to Library</button>
@@ -849,10 +845,21 @@
             applyCoreSettings(); resetPicker(); renderGreetings(); document.getElementById('dashboard-modal').style.display = 'none';
         }
 
-        // --- UPDATED SMART URL FORMATTER ---
-        // Now automatically handles Microsoft SharePoint, OneDrive, and raw PPTX links!
+        // --- UPGRADED SMART URL FORMATTER WITH IFRAME EXTRACTION ---
         function fmtURL(url, cat) { 
             if(!url) return ""; let f = url.trim(); 
+            
+            // 1. Check if the user pasted an entire <iframe> code block
+            if(f.toLowerCase().includes("<iframe") && f.includes("src=")) {
+                // Extract just the URL from the src="..." attribute
+                let match = f.match(/src=["'](.*?)["']/);
+                if(match && match[1]) {
+                    // Fix HTML encoding (like &amp;) so the browser reads the URL correctly
+                    f = match[1].replace(/&amp;/g, '&');
+                }
+            }
+
+            // 2. Format the URL based on its origin
             if(f.includes("canva.com")) { 
                 let b=f.split('?')[0]; if(b.endsWith("/edit")) b=b.replace("/edit","/view"); 
                 if(!b.endsWith("/view")) b+="/view"; f=b+"?embed"; 
@@ -865,12 +872,12 @@
             } else if(f.includes("docs.google.com/forms/d/")) {
                  let match = f.match(/(https:\/\/docs\.google\.com\/forms\/d\/(?:e\/)?[a-zA-Z0-9-_]+)/);
                  if(match) f = match[1] + "/viewform?embedded=true";
-            } else if(f.includes("sharepoint.com") || f.includes("1drv.ms")) {
-                // Microsoft OneDrive / SharePoint embed logic
-                f = f.split("?")[0] + "?action=embedview";
-            } else if(f.endsWith(".ppt") || f.endsWith(".pptx")) {
-                // Public raw PPT link wrapped in MS Office Viewer
-                f = "https://view.officeapps.live.com/op/embed.aspx?src=" + encodeURIComponent(f);
+            } else if(f.includes("sharepoint.com") || f.includes("onedrive.live.com") || f.includes("1drv.ms")) {
+                if(f.includes("view.aspx")) f = f.replace("view.aspx", "embed.aspx");
+                if(f.includes("redir?")) f = f.replace("redir?", "embed?");
+                if(!f.includes("action=embedview") && !f.includes("em=2") && !f.includes("embed")) {
+                    f = f + (f.includes("?") ? "&" : "?") + "action=embedview&wdbipreview=true";
+                }
             } else if(f.includes("youtube.com/watch?v=")) { 
                 let ytParams = cat === 'music' ? "?enablejsapi=1&autoplay=1" : "?rel=0&modestbranding=1";
                 f="https://www.youtube.com/embed/"+new URL(f).searchParams.get("v")+ytParams; 
