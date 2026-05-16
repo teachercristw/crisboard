@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Sanxing English Village Interactive Whiteboard</title>
 
-    <!-- PRELOADER -->
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg" as="image">
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg" as="image">
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/3.jpg" as="image">
@@ -255,7 +254,6 @@
 </head>
 <body>
 
-    <!-- GLOBAL ANNOTATION ENGINE (MAIN + DRAFT LAYER) -->
     <canvas id="anno-canvas"></canvas>
     <canvas id="anno-draft"></canvas>
     <div id="anno-toolbar">
@@ -289,7 +287,6 @@
     </div>
 
     <div id="app">
-        <!-- Floating Corner Buttons -->
         <button id="fs-global-btn" onclick="toggleGlobalFullscreen()" title="Toggle Global Fullscreen">🖵</button>
         <button id="anno-global-btn" onclick="toggleAnnotation()" title="Screen Annotate">🖍️</button>
         <button id="theme-btn" onclick="toggleW('w-theme')">🎨</button>
@@ -313,11 +310,6 @@
             <button class="bottom-btn" style="background:#2D3436; color:#FFF;" onclick="openDashboard()">⚙️ Settings</button>
         </div>
 
-        <!-- ==========================================
-             WIDGETS 
-        ========================================== -->
-        <!-- THEME -->
-        <!-- WIDGET SPAWN LOWER TO AVOID FULLSCREEN BUTTONS -->
         <div class="widget" id="w-theme" style="top: 160px; right: 20px; left: auto; width: 300px;">
             <div class="widget-header" style="background:var(--c1); color:#FFF;"><span>🎨 Theme</span><button class="widget-close" onclick="toggleW('w-theme')">X</button></div>
             <div class="widget-content">
@@ -332,7 +324,6 @@
             </div>
         </div>
 
-        <!-- WHITEBOARD -->
         <div class="widget" id="w-whiteboard" style="width: 700px; height: 500px;">
             <div class="widget-header" style="background:var(--c1); color:#FFF;"><span>📝 Whiteboard</span><button class="widget-close" onclick="toggleW('w-whiteboard')">X</button></div>
             <div class="widget-content" style="padding:10px;">
@@ -359,7 +350,6 @@
             </div>
         </div>
 
-        <!-- TIMER -->
         <div class="widget" id="w-timer" style="width: 320px; min-height: 250px;">
             <div class="widget-header"><span>⏳ Timer</span><button class="widget-close" onclick="toggleW('w-timer')">X</button></div>
             <div class="widget-content" style="justify-content:center; align-items:center;">
@@ -376,7 +366,6 @@
             </div>
         </div>
 
-        <!-- SCOREBOARD -->
         <div class="widget" id="w-score" style="width: 600px; height: 500px;">
             <div class="widget-header">
                 <span>🍔 Scoreboard</span>
@@ -391,7 +380,6 @@
             <div class="widget-content" id="score-container"></div>
         </div>
 
-        <!-- PICKER (Name & Group Tabs) -->
         <div class="widget" id="w-picker" style="width: 400px; min-height: 380px;">
             <div class="widget-header">
                 <span>🎯 Picker</span>
@@ -422,7 +410,6 @@
             </div>
         </div>
 
-        <!-- HYBRID MUSIC BOX -->
         <div class="widget" id="w-music" style="width: 320px; min-height: 180px;">
             <div class="widget-header"><span>🎵 Music Box</span><button class="widget-close" onclick="toggleW('w-music')">X</button></div>
             <div class="widget-content" style="align-items:center; justify-content:center;">
@@ -443,7 +430,6 @@
             </div>
         </div>
 
-        <!-- VIDEO BOX -->
         <div class="widget" id="w-video" style="width: 450px; height: 350px;">
             <div class="widget-header"><span>🎬 Video Box</span><button class="widget-close" onclick="toggleW('w-video')">X</button></div>
             <div class="widget-content">
@@ -460,7 +446,6 @@
             </div>
         </div>
 
-        <!-- GREETINGS -->
         <div class="widget" id="w-greetings" style="width: 650px; height: 450px;">
             <div class="widget-header"><span>☀️ Greetings</span><div style="display:flex; gap:10px;"><button style="padding:5px 15px; font-size:1rem;" onclick="resetGreetings()">🔄</button><button class="widget-close" onclick="toggleW('w-greetings')">X</button></div></div>
             <div class="widget-content">
@@ -490,7 +475,6 @@
             </div>
         </div>
 
-        <!-- LEARNING -->
         <div class="widget" id="w-learning" style="width: 700px; height: 500px;">
             <div class="widget-header"><span style="background:var(--c2); padding:5px 15px; border-radius:15px; color:#222;">📚 Learning</span><button class="widget-close" onclick="toggleW('w-learning')">X</button></div>
             <div class="widget-content">
@@ -507,7 +491,6 @@
             </div>
         </div>
 
-        <!-- FUN ACTIVITIES (NEW WIDGET) -->
         <div class="widget" id="w-activities" style="width: 700px; height: 500px;">
             <div class="widget-header"><span style="background:var(--c4); padding:5px 15px; border-radius:15px; color:#FFF;">🕹️ Fun Activities</span><button class="widget-close" onclick="toggleW('w-activities')">X</button></div>
             <div class="widget-content">
@@ -524,7 +507,6 @@
             </div>
         </div>
 
-        <!-- EXIT TICKET -->
         <div class="widget" id="w-exit" style="width: 550px; height: 400px;">
             <div class="widget-header"><span style="background:var(--c3); color:#FFF; padding:5px 15px; border-radius:15px;">🚪 Exit Ticket</span><button class="widget-close" onclick="toggleW('w-exit')">X</button></div>
             <div class="widget-content">
@@ -541,7 +523,6 @@
             </div>
         </div>
 
-        <!-- TEACHER DASHBOARD -->
         <div id="dashboard-modal">
             <div class="dash-content">
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:4px solid #EEE; padding-bottom:15px; margin-bottom:20px;">
@@ -550,7 +531,6 @@
                 </div>
                 
                 <div class="dash-grid">
-                    <!-- Config & Classes -->
                     <div>
                         <div class="dash-section">
                             <h3>App Background</h3>
@@ -587,7 +567,6 @@
                         </div>
                     </div>
 
-                    <!-- Media -->
                     <div>
                         <div class="dash-section" style="background:#EBF4FA;">
                             <h3>Media Library</h3>
@@ -620,8 +599,7 @@
 
                         <h4 style="margin:0 0 5px 0; color:#333;">Your Saved Media:</h4>
                         <div id="media-list" style="background:#FFF; padding:10px; border-radius:10px; border:2px solid #EEE; min-height:150px; max-height:250px; overflow-y:auto;">
-                            <!-- Items appear here dynamically -->
-                        </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -647,6 +625,7 @@
             pastel: { bg: '#B5EAEA', c1: '#FFB6B9', c2: '#FFE082', c3: '#C8E3D4', c4: '#D1C4E9', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/4.jpg' }
         };
 
+        // PRE-LOADED CUSTOM DATA 
         let state = {
             appBgColor: "#0F0C29", appBgImage: null, 
             classes: {}, activeClass: null,
@@ -654,7 +633,23 @@
             scoreStyle: 'burger', goal: 10,
             feelings: [{ emoji: "😊", word: "happy" }, { emoji: "😢", word: "sad" }, { emoji: "😡", word: "angry" }, { emoji: "😴", word: "sleepy" }, { emoji: "🤢", word: "sick" }, { emoji: "🥶", word: "cold" }],
             weather: [{ emoji: "☀️", word: "sunny" }, { emoji: "🌧️", word: "rainy" }, { emoji: "☁️", word: "cloudy" }, { emoji: "❄️", word: "snowy" }, { emoji: "🌬️", word: "windy" }],
-            media: { wbBackgrounds: [], learning: [], activities: [], video: [], music: [], exit: [] }
+            media: { 
+                wbBackgrounds: [], 
+                learning: [
+                    { title: "Virtual Library", url: "https://teachercristw.github.io/cristory" }
+                ], 
+                activities: [
+                    { title: "Race to the Moon", url: "https://teachercristw.github.io/moonrace/" },
+                    { title: "Snakes and Ladders", url: "https://teachercristw.github.io/snakesandladders/" },
+                    { title: "Sorting Game", url: "https://teachercristw.github.io/sortinggame" },
+                    { title: "Tilt and Choose", url: "https://teachercristw.github.io/tiltandchoose" },
+                    { title: "Tug of War Game", url: "https://teachercristw.github.io/tug-of-war" },
+                    { title: "Word Race", url: "https://teachercristw.github.io/wordrace/" }
+                ], 
+                video: [], 
+                music: [], 
+                exit: [] 
+            }
         };
         let memStud = []; 
 
@@ -715,7 +710,7 @@
             setTimeout(() => {
                 document.getElementById('start-screen').style.display = 'none'; 
                 document.getElementById('app').style.display = 'block'; 
-                initCanvas(); renderScores(); updateClassDropdowns(); resetPicker(); renderGreetings(); document.getElementById('media-cat').addEventListener('change', renderMediaList); initIframeScalers(); 
+                initCanvas(); renderScores(); updateClassDropdowns(); resetPicker(); renderGreetings(); document.getElementById('media-cat').addEventListener('change', renderMediaList); 
             }, 500);
         }
         function goHome() { beep(); document.getElementById('app').style.display = 'none'; document.getElementById('start-screen').style.display = 'flex'; document.getElementById('start-screen').style.opacity = '1'; document.querySelectorAll('.widget').forEach(w => w.style.display = 'none'); }
