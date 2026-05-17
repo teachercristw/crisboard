@@ -66,9 +66,9 @@
         #right-sidebar { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 2000; transition: transform 0.4s ease-in-out; }
         .side-btn { width: 60px; height: 60px; font-size: 1.5rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; }
         
-        /* UPDATED: Forced single line for bottom bar */
-        #bottom-bar { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: nowrap; gap: 10px; z-index: 2000; background: rgba(255,255,255,0.2); padding: 10px 15px; border-radius: 40px; backdrop-filter: blur(10px); transition: transform 0.4s ease-in-out; max-width: 95vw; overflow-x: auto;}
-        .bottom-btn { background: #FFF; font-size: 1rem; padding: 12px 18px; border-radius: 30px; text-transform: uppercase; color: #2D3436; white-space: nowrap; flex-shrink: 0;}
+        /* GUARANTEED SINGLE LINE BOTTOM BAR */
+        #bottom-bar { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-wrap: nowrap; gap: 8px; z-index: 2000; background: rgba(255,255,255,0.2); padding: 10px 15px; border-radius: 40px; backdrop-filter: blur(10px); transition: transform 0.4s ease-in-out; max-width: 98vw; overflow-x: auto; align-items: center; justify-content: center; }
+        .bottom-btn { background: #FFF; font-size: clamp(0.75rem, 1.2vw, 1.1rem); padding: 10px 15px; border-radius: 30px; text-transform: uppercase; color: #2D3436; white-space: nowrap; flex-shrink: 1; }
 
         /* FOCUS MODE - Hides UI Elements */
         body.ui-hidden #bottom-bar { transform: translate(-50%, 150px); }
@@ -267,9 +267,9 @@
         <div class="wb-color-btn" style="background:#FFFFFF;" onclick="setAnnoColor('#FFFFFF', this)"></div>
         <div style="width:2px; height:20px; background:#CCC; margin:0 5px;"></div>
         
-        <button class="wb-tool-btn" id="a-tool-pointer" onclick="setAnnoTool('pointer')" style="padding:5px 10px; border-radius:10px;">Pointer</button>
+        <button class="wb-tool-btn" id="a-tool-pointer" onclick="setAnnoTool('pointer')" style="padding:5px 10px; border-radius:10px;">🖱️ Touch Slides</button>
         <button class="wb-tool-btn active" id="a-tool-pen" onclick="setAnnoTool('pen')" style="padding:5px 10px; border-radius:10px;">Pen</button>
-        <button class="wb-tool-btn" id="a-tool-highlighter" onclick="setAnnoTool('highlighter')" style="padding:5px 10px; border-radius:10px;">Highlighter</button>
+        <button class="wb-tool-btn" id="a-tool-highlighter" onclick="setAnnoTool('highlighter')" style="padding:5px 10px; border-radius:10px;">🖍️ Highlight</button>
         <button class="wb-tool-btn" id="a-tool-eraser" onclick="setAnnoTool('eraser')" style="padding:5px 10px; border-radius:10px;">Eraser</button>
         
         <div style="width:2px; height:20px; background:#CCC; margin:0 5px;"></div>
@@ -711,7 +711,7 @@
             setTimeout(() => {
                 document.getElementById('start-screen').style.display = 'none'; 
                 document.getElementById('app').style.display = 'block'; 
-                initCanvas(); renderScores(); updateClassDropdowns(); resetPicker(); renderGreetings(); document.getElementById('media-cat').addEventListener('change', renderMediaList); initIframeScalers(); 
+                initCanvas(); renderScores(); updateClassDropdowns(); resetPicker(); renderGreetings(); document.getElementById('media-cat').addEventListener('change', renderMediaList); 
             }, 500);
         }
         function goHome() { beep(); document.getElementById('app').style.display = 'none'; document.getElementById('start-screen').style.display = 'flex'; document.getElementById('start-screen').style.opacity = '1'; document.querySelectorAll('.widget').forEach(w => w.style.display = 'none'); }
@@ -916,27 +916,12 @@
         }
         function clearAnno() { beep(); aCtx.clearRect(0,0,aCvs.width,aCvs.height); dCtx.clearRect(0,0,dCvs.width,dCvs.height); }
 
-        // --- 5. WIDGET DRAG & SMART SCALER ---
+        // --- 5. WIDGET DRAG ---
         document.querySelectorAll('.widget').forEach(w => {
             const h = w.querySelector('.widget-header');
             if(h) { h.addEventListener('pointerdown', (e) => { if(e.target.classList.contains('widget-close') || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return; e.preventDefault(); document.querySelectorAll('.widget').forEach(x=>x.style.zIndex=100); w.style.zIndex=1000; document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='block'); let sX = e.clientX, sY = e.clientY; const move = (ev) => { w.style.left = (w.offsetLeft - (sX - ev.clientX)) + "px"; w.style.top = (w.offsetTop - (sY - ev.clientY)) + "px"; sX = ev.clientX; sY = ev.clientY; }; const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='none'); }; document.addEventListener('pointermove', move); document.addEventListener('pointerup', up); }); }
             w.addEventListener('mousedown', (e) => { if(e.offsetX > w.offsetWidth - 20 && e.offsetY > w.offsetHeight - 20) { document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='block'); const up = () => { document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='none'); document.removeEventListener('mouseup', up); }; document.addEventListener('mouseup', up); } });
         });
-
-        function initIframeScalers() {
-            const ro = new ResizeObserver(entries => {
-                for(let e of entries) {
-                    const wrap = e.target;
-                    const iframe = wrap.querySelector('iframe');
-                    if(!iframe || document.fullscreenElement === iframe) continue; 
-                    let w = wrap.clientWidth; let h = wrap.clientHeight;
-                    if(w === 0 || h === 0) continue;
-                    let vW = 1024; let scale = w / vW;
-                    iframe.style.width = vW + 'px'; iframe.style.height = (h / scale) + 'px'; iframe.style.transform = `scale(${scale})`;
-                }
-            });
-            document.querySelectorAll('.iframe-wrapper').forEach(w => ro.observe(w));
-        }
 
         // --- 6. TIMER ---
         let tT = 300, tI = null, isR = false, defaultT = 300;
