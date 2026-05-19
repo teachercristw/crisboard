@@ -730,7 +730,28 @@
             else { btn.innerText = '👁️'; btn.style.background = '#FFF'; }
         }
 
-        window.onload = () => { generateBubbles(); applyPalette('space'); updateClassDropdowns(); updateDrops(); };
+        // --- NEW AUTO FETCH FEATURE ---
+        async function autoFetchConfig() {
+            try {
+                const response = await fetch('https://raw.githubusercontent.com/teachercristw/crisboard/refs/heads/main/crisboard.json?t=' + new Date().getTime());
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.classes) {
+                        state = data;
+                        applyCoreSettings();
+                        updateClassDropdowns();
+                        evalRanks();
+                        renderScores();
+                        renderGreetings();
+                        updateDrops();
+                    }
+                }
+            } catch (error) {
+                console.error("Auto-fetch failed. Using local defaults.", error);
+            }
+        }
+
+        window.onload = () => { generateBubbles(); applyPalette('space'); updateClassDropdowns(); updateDrops(); autoFetchConfig(); };
 
         function applyPalette(name) { 
             beep(); const p = palettes[name]; 
