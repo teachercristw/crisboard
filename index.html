@@ -54,13 +54,16 @@
         #app { display: none; width: 100%; height: 100%; position: relative; }
 
         /* Floating App Buttons */
-        #fs-global-btn { position: absolute; top: 20px; left: 20px; z-index: 3000; width: 60px; height: 60px; font-size: 1.8rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; background: #FFF; color: var(--c3); border: 4px solid var(--c3); box-shadow: var(--shadow); transition: transform 0.2s;}
+        #fs-global-btn { position: absolute; bottom: 90px; left: 27px; z-index: 3000; width: 45px; height: 45px; font-size: 1.4rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; background: #FFF; color: var(--c3); border: 4px solid var(--c3); box-shadow: var(--shadow); transition: transform 0.4s ease-in-out;}
         #anno-global-btn { position: absolute; bottom: 20px; left: 90px; z-index: 3000; width: 60px; height: 60px; font-size: 1.8rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; background: #FFF; color: var(--c4); border: 4px solid var(--c2); box-shadow: var(--shadow); transition: transform 0.2s;}
         
         #theme-btn { position: absolute; top: 90px; right: 20px; z-index: 3000; width: 60px; height: 60px; font-size: 1.8rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; background: var(--c4); transition: transform 0.4s ease-in-out; }
         
         #home-btn { position: absolute; bottom: 20px; right: 20px; z-index: 3000; width: 60px; height: 60px; font-size: 1.8rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; background: #FFF; color: var(--c4); border: 4px solid var(--c4); box-shadow: var(--shadow); transition: transform 0.4s ease-in-out;}
         #focus-btn { position: absolute; bottom: 20px; left: 20px; z-index: 3000; width: 60px; height: 60px; font-size: 1.8rem; border-radius: 50%; padding: 0; display: flex; justify-content: center; align-items: center; background: #FFF; color: var(--c4); border: 4px solid var(--c1); box-shadow: var(--shadow); transition: transform 0.2s;}
+
+        /* Real-time Global Digital Clock - Moved to top-left corner */
+        #global-clock { position: absolute; top: 20px; left: 20px; z-index: 3000; background: rgba(255,255,255,0.95); padding: 5px 12px; border-radius: 15px; font-size: 1.1rem; font-weight: bold; color: var(--c1); border: 3px solid #EEE; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; transition: opacity 0.3s; pointer-events: none;}
 
         /* Toolbars & Focus Mode Animations */
         #right-sidebar { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 2000; transition: transform 0.4s ease-in-out; }
@@ -75,7 +78,9 @@
         body.ui-hidden #right-sidebar { transform: translate(150px, -50%); }
         body.ui-hidden #theme-btn { transform: translateX(150px); }
         body.ui-hidden #anno-global-btn { transform: translateY(150px); }
+        body.ui-hidden #fs-global-btn { transform: translateX(-150px); }
         body.ui-hidden #home-btn { transform: translateX(150px); }
+        body.ui-hidden #global-clock { opacity: 0; pointer-events: none; }
 
         /* ==========================================
            3. WIDGETS
@@ -137,6 +142,28 @@
         .dd-item { font-size: 2.5rem; cursor: grab; padding: 10px 20px; background: #FFF; border: 4px solid #EEE; border-radius: 15px; box-shadow: 0 4px 0 rgba(0,0,0,0.1); touch-action: none; z-index: 3500; text-align: center; display: flex; flex-direction: column; align-items: center; line-height: 1.2;}
         .dd-item small { font-size: 1.1rem; color: #2D3436; margin-top: 5px; text-transform: lowercase;}
         .dd-item.feeling-card { flex-direction: row; gap: 10px; padding: 10px 15px; border-radius: 20px; }
+        
+        /* Professional calendar date dots */
+        .dd-item.cal-date { 
+            font-size: 1.2rem !important; 
+            padding: 5px !important; 
+            min-width: 40px; 
+            min-height: 40px; 
+            border-radius: 8px; 
+            background: #F8F9FA;
+            color: #2D3436;
+            border: 2px solid #E9ECEF;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+            font-weight: bold;
+            transition: transform 0.1s, border-color 0.1s, box-shadow 0.1s;
+        }
+        .dd-item.cal-date:hover {
+            transform: translateY(-2px);
+            border-color: var(--c4);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
         .dd-clone { position: fixed; z-index: 5000; pointer-events: none; opacity: 0.9; box-shadow: 0 15px 30px rgba(0,0,0,0.3); transform: scale(1.1); }
 
         /* IFRAME PSEUDO-FULLSCREEN ENGINE */
@@ -156,6 +183,7 @@
             background: #000;
         }
 
+        /* Resized exit fullscreen button */
         .close-fs-btn {
             position: fixed !important;
             top: 20px !important;
@@ -163,9 +191,9 @@
             left: auto !important;
             transform: none !important;
             z-index: 2147483647 !important; /* Max possible z-index */
-            width: 60px;
-            height: 60px;
-            font-size: 1.8rem;
+            width: 45px;
+            height: 45px;
+            font-size: 1.4rem;
             background: var(--c4);
             color: #FFF;
             border: 4px solid #FFF;
@@ -187,9 +215,9 @@
             left: auto !important;
             transform: none !important;
             z-index: 2147483647 !important; 
-            width: 60px;
-            height: 60px;
-            font-size: 1.8rem;
+            width: 45px;
+            height: 45px;
+            font-size: 1.4rem;
             background: #FFF;
             color: var(--c4);
             border: 4px solid var(--c4);
@@ -289,6 +317,9 @@
     </div>
 
     <div id="app">
+        <!-- GLOBAL CLOCK -->
+        <div id="global-clock">12:00 AM</div>
+
         <button id="fs-global-btn" onclick="toggleGlobalFullscreen()" title="Toggle Global Fullscreen">🖵</button>
         <button id="anno-global-btn" onclick="toggleAnnotation()" title="Screen Annotate">🖍️</button>
         <button id="theme-btn" onclick="toggleW('w-theme')">🎨</button>
@@ -437,7 +468,7 @@
             <div class="widget-content">
                 <div style="display:flex; gap:10px; width:100%; margin-bottom:10px;">
                     <select id="video-select" onchange="loadMedia('video', 'video-iframe')" style="margin:0; flex:1;"></select>
-                    <button onclick="togglePseudoFS('video-wrapper')" style="background:var(--c2); color:#FFF; border:none; padding:10px 15px; border-radius:10px; font-size:1.2rem;" title="Maximize">⛶</button>
+                    <button onclick="togglePseudoFS('video-wrapper')" style="background:var(--c2); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="video-wrapper">
                     <button class="anno-fs-btn" onclick="toggleAnnotation()" title="Draw on Screen">🖍️</button>
@@ -448,13 +479,16 @@
             </div>
         </div>
 
-        <div class="widget" id="w-greetings" style="width: 650px; height: 450px;">
+        <!-- AUTOFIT HEIGHT FOR GREETINGS WIDGET -->
+        <div class="widget" id="w-greetings" style="width: 800px; height: auto; min-height: 680px;">
             <div class="widget-header"><span>☀️ Greetings</span><div style="display:flex; gap:10px;"><button style="padding:5px 15px; font-size:1rem;" onclick="resetGreetings()">🔄</button><button class="widget-close" onclick="toggleW('w-greetings')">X</button></div></div>
-            <div class="widget-content">
+            <div class="widget-content" style="overflow-y: auto;">
                 <div class="tab-nav">
                     <button class="tab-btn" style="background:var(--c2);" onclick="switchTab('tab-time')">Time</button>
+                    <button class="tab-btn" style="background:var(--c1); color:#FFF;" onclick="switchTab('tab-day')">Day</button>
+                    <button class="tab-btn" style="background:var(--c4); color:#FFF;" onclick="switchTab('tab-date')">Date</button>
                     <button class="tab-btn" style="background:var(--c3); color:#FFF;" onclick="switchTab('tab-weather')">Weather</button>
-                    <button class="tab-btn" style="background:var(--c4); color:#FFF;" onclick="switchTab('tab-feeling')">Feelings</button>
+                    <button class="tab-btn" style="background:#0984E3; color:#FFF;" onclick="switchTab('tab-feeling')">Feelings</button>
                 </div>
                 
                 <div id="tab-time" class="tab-content active">
@@ -462,17 +496,32 @@
                     <button style="background:var(--c2); font-size:1.5rem; text-transform:none;" onclick="this.innerText = this.innerText === 'Switch to afternoon' ? 'Switch to morning' : 'Switch to afternoon'; this.previousElementSibling.innerText = this.innerText === 'Switch to morning' ? 'Good afternoon! 🌤️' : 'Good morning! ☀️';">Switch to afternoon</button>
                 </div>
 
+                <div id="tab-day" class="tab-content">
+                    <h1 style="font-size: 2.5rem; text-align:center; font-weight:normal; display:flex; align-items:center; gap:10px; color:#2D3436; flex-wrap: wrap; justify-content: center;">
+                        Today is <div class="dd-zone" id="day-drop" style="min-width: 200px; height: 65px; border-color:var(--c1);"></div>.
+                    </h1>
+                    <div style="background:#FFF; padding:15px; border-radius:15px; border:2px solid #EEE; display:flex; gap:10px; flex-wrap:wrap; justify-content:center;" id="day-bank"></div>
+                </div>
+
+                <div id="tab-date" class="tab-content">
+                    <h1 style="font-size: 2rem; text-align:center; font-weight:normal; display:flex; align-items:center; gap:10px; color:#2D3436; flex-wrap: wrap; justify-content: center;">
+                        It is the <div class="dd-zone" id="date-day-drop" style="min-width: 100px; height: 65px; border-color:var(--c2);"></div> day of <div class="dd-zone" id="date-month-drop" style="min-width: 200px; height: 65px; border-color:var(--c3);"></div>, <span id="date-year-display" style="font-weight:bold; color:var(--c1);"></span>.
+                    </h1>
+                    <div id="month-bank" style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; background:#FFF; padding:10px; border-radius:15px; border:2px solid #EEE; width:100%;"></div>
+                    <div id="calendar-grid" style="display:grid; grid-template-columns:repeat(7, 1fr); gap:5px; background:#FFF; padding:15px; border-radius:15px; border:2px solid #EEE; width:100%; max-width: 500px; margin-top: 10px;"></div>
+                </div>
+
                 <div id="tab-weather" class="tab-content">
-                    <h1 style="font-size: 2rem; text-align:center; font-weight:normal; display:flex; align-items:center; gap:10px; color:#2D3436;">It's <div class="dd-zone" id="weather-drop"></div> today.</h1>
-                    <div style="background:#FFF; padding:15px; border-radius:15px; border:var(--white-border); display:flex; gap:10px; flex-wrap:wrap; justify-content:center;" id="weather-bank"></div>
+                    <h1 style="font-size: 2rem; text-align:center; font-weight:normal; display:flex; align-items:center; gap:10px; color:#2D3436;">It's <div class="dd-zone" id="weather-drop" style="border-color:var(--c3);"></div> today.</h1>
+                    <div style="background:#FFF; padding:15px; border-radius:15px; border:2px solid #EEE; display:flex; gap:10px; flex-wrap:wrap; justify-content:center;" id="weather-bank"></div>
                 </div>
 
                 <div id="tab-feeling" class="tab-content">
                     <h1 style="font-size: 2rem; text-align:center; font-weight:normal; margin-bottom:10px; color:#2D3436;">How are you today?</h1>
-                    <div style="display:flex; align-items:center; gap:10px; font-size: 2.5rem; background:#FFF; padding:10px 20px; border-radius:15px; border:var(--white-border); margin-bottom:10px; color:#2D3436;">
-                        <span>I am</span><div class="dd-zone" id="feeling-drop" style="min-width: 150px; height: 65px; border-color:var(--c4);"></div><span>.</span>
+                    <div style="display:flex; align-items:center; gap:10px; font-size: 2.5rem; background:#FFF; padding:10px 20px; border-radius:15px; border:2px solid #EEE; margin-bottom:10px; color:#2D3436;">
+                        <span>I am</span><div class="dd-zone" id="feeling-drop" style="min-width: 150px; height: 65px; border-color:#0984E3;"></div><span>.</span>
                     </div>
-                    <div style="background:#FFF; padding:10px; border-radius:15px; border:var(--white-border); display:flex; gap:8px; flex-wrap:wrap; justify-content:center; overflow-y:auto; flex:1;" id="feeling-bank"></div>
+                    <div style="background:#FFF; padding:10px; border-radius:15px; border:2px solid #EEE; display:flex; gap:8px; flex-wrap:wrap; justify-content:center; overflow-y:auto; flex:1;" id="feeling-bank"></div>
                 </div>
             </div>
         </div>
@@ -482,7 +531,7 @@
             <div class="widget-content">
                 <div style="display:flex; gap:10px; width:100%; margin-bottom:10px;">
                     <select id="learning-select" onchange="loadMedia('learning', 'learning-iframe')" style="margin:0; flex:1;"></select>
-                    <button onclick="togglePseudoFS('learning-wrapper')" style="background:var(--c2); color:#FFF; border:none; padding:10px 15px; border-radius:10px; font-size:1.2rem;" title="Maximize">⛶</button>
+                    <button onclick="togglePseudoFS('learning-wrapper')" style="background:var(--c2); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="learning-wrapper">
                     <button class="anno-fs-btn" onclick="toggleAnnotation()" title="Draw on Screen">🖍️</button>
@@ -498,7 +547,7 @@
             <div class="widget-content">
                 <div style="display:flex; gap:10px; width:100%; margin-bottom:10px;">
                     <select id="activities-select" onchange="loadMedia('activities', 'activities-iframe')" style="margin:0; flex:1;"></select>
-                    <button onclick="togglePseudoFS('activities-wrapper')" style="background:var(--c4); color:#FFF; border:none; padding:10px 15px; border-radius:10px; font-size:1.2rem;" title="Maximize">⛶</button>
+                    <button onclick="togglePseudoFS('activities-wrapper')" style="background:var(--c4); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="activities-wrapper">
                     <button class="anno-fs-btn" onclick="toggleAnnotation()" title="Draw on Screen">🖍️</button>
@@ -514,7 +563,7 @@
             <div class="widget-content">
                 <div style="display:flex; gap:10px; width:100%; margin-bottom:10px;">
                     <select id="exit-select" onchange="loadMedia('exit', 'exit-iframe')" style="margin:0; flex:1;"></select>
-                    <button onclick="togglePseudoFS('exit-wrapper')" style="background:var(--c3); color:#FFF; border:none; padding:10px 15px; border-radius:10px; font-size:1.2rem;" title="Maximize">⛶</button>
+                    <button onclick="togglePseudoFS('exit-wrapper')" style="background:var(--c3); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="exit-wrapper">
                     <button class="anno-fs-btn" onclick="toggleAnnotation()" title="Draw on Screen">🖍️</button>
@@ -618,6 +667,21 @@
             }
             lastTouchEnd = now;
         }, false);
+
+        // --- GLOBAL CLOCK UPDATER ---
+        function updateGlobalClock() {
+            const now = new Date();
+            let h = now.getHours();
+            let m = now.getMinutes();
+            let ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            h = h ? h : 12; // the hour '0' should be '12'
+            m = m < 10 ? '0' + m : m;
+            const clk = document.getElementById('global-clock');
+            if (clk) clk.innerText = h + ':' + m + ' ' + ampm;
+        }
+        setInterval(updateGlobalClock, 1000);
+        updateGlobalClock();
 
         // --- 1. STATE & DATA ---
         const palettes = {
@@ -945,7 +1009,6 @@
             w.addEventListener('mousedown', (e) => { if(e.offsetX > w.offsetWidth - 20 && e.offsetY > w.offsetHeight - 20) { document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='block'); const up = () => { document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='none'); document.removeEventListener('mouseup', up); }; document.addEventListener('mouseup', up); } });
         });
 
-        // --- RESTORED ORIGINAL SCALING LOGIC FOR WIDGET MODE, BUT DISABLED IN FULLSCREEN ---
         function initIframeScalers() {
             const ro = new ResizeObserver(entries => {
                 for(let e of entries) {
@@ -953,7 +1016,6 @@
                     const iframe = wrap.querySelector('iframe');
                     if(!iframe || document.fullscreenElement === iframe) continue; 
                     
-                    // FIXED: Do not apply artificial scale if the widget is maximized
                     if (wrap.classList.contains('pseudo-fullscreen')) {
                         iframe.style.width = '100%';
                         iframe.style.height = '100%';
@@ -961,7 +1023,6 @@
                         continue;
                     }
                     
-                    // OTHERWISE: Shrink it properly for the small widget box
                     let w = wrap.clientWidth; let h = wrap.clientHeight;
                     if(w === 0 || h === 0) continue;
                     let vW = 1024; let scale = w / vW;
@@ -1030,7 +1091,7 @@
             if(!state.classes[state.activeClass]) state.activeClass = keys[0];
             pSel.value = state.activeClass; dSel.value = state.activeClass; loadDashClass();
         }
-        function autoSaveClass() { const cls = document.getElementById('dash-class-sel').value; if(cls) { state.classes[cls] = document.getElementById('dash-students').value.split(/[\n,\t]+/).map(s=>s.trim().toUpperCase()).filter(s=>s); } }
+        function autoSaveClass() { const cls = document.getElementById('dash-class-sel').value; if(cls) { state.classes[cls] = document.getElementById('dash-students').value.split(/[\n,\t]+/).map(s=>s.trim()).filter(s=>s); } }
         function loadDashClass() { const cls = document.getElementById('dash-class-sel').value; document.getElementById('dash-students').value = (cls && state.classes[cls]) ? state.classes[cls].join('\n') : ""; }
         function addClass() { beep(); const n = document.getElementById('new-class-name').value.trim(); if(n && !state.classes[n]) { state.classes[n] = []; state.activeClass = n; document.getElementById('new-class-name').value = ''; updateClassDropdowns(); } else { buzz(); } }
         function deleteClass() { beep(); const cls = document.getElementById('dash-class-sel').value; if(cls && confirm(`Delete class ${cls}?`)) { delete state.classes[cls]; const remaining = Object.keys(state.classes); state.activeClass = remaining.length > 0 ? remaining[0] : null; updateClassDropdowns(); } else { buzz(); } }
@@ -1043,9 +1104,161 @@
         function generateGroups() { beep(); const nGroups = Math.max(1, parseInt(document.getElementById('group-count-input').value) || 2); let studs = [...(state.classes[state.activeClass] || [])].sort(() => Math.random() - 0.5); let groups = Array.from({length: nGroups}, () => []); studs.forEach((s, i) => groups[i % nGroups].push(s)); let res = document.getElementById('group-results'); res.innerHTML = ''; groups.forEach((g, i) => { if(g.length === 0) return; res.innerHTML += `<div class="grp-col"><h4>Group ${i+1}</h4>${g.map(s => `<div class="grp-item">${s}</div>`).join('')}</div>`; }); cheer(); }
 
         // --- 9. GREETINGS D&D ---
-        function renderGreetings() { const bF = document.getElementById('feeling-bank'); bF.innerHTML = ''; [...state.feelings].sort(()=>Math.random()-0.5).forEach(f => { bF.innerHTML += `<div class="dd-item feeling-card" data-w="${f.word}" data-type="feeling" style="flex-direction:row; padding:5px 15px; border-radius:20px;"><span>${f.emoji}</span><small style="font-size:1.2rem; margin:0;">${f.word}</small></div>`; }); const bW = document.getElementById('weather-bank'); bW.innerHTML = ''; [...state.weather].forEach(w => { bW.innerHTML += `<div class="dd-item" data-w="${w.word}" data-type="weather"><span>${w.emoji}</span><small>${w.word}</small></div>`; }); attachDND(); }
-        function resetGreetings() { beep(); document.getElementById('weather-bank').appendChild(document.querySelector('#weather-drop .dd-item') || document.createDocumentFragment()); document.getElementById('feeling-bank').appendChild(document.querySelector('#feeling-drop .dd-item') || document.createDocumentFragment()); }
-        function attachDND() { document.querySelectorAll('.dd-item').forEach(el => { el.onpointerdown = null; el.addEventListener('pointerdown', (e) => { if(e.button !== 0 && e.button !== undefined) return; e.preventDefault(); pop(); let c = el.cloneNode(true); c.classList.add('dd-clone'); document.body.appendChild(c); el.style.opacity = '0'; const r = el.getBoundingClientRect(); const oX = e.clientX - r.left; const oY = e.clientY - r.top; const moveC = (ev) => { c.style.left = `${ev.clientX - oX}px`; c.style.top = `${ev.clientY - oY}px`; }; moveC(e); const upC = (ev) => { document.removeEventListener('pointermove', moveC); document.removeEventListener('pointerup', upC); c.style.display = 'none'; let tgt = document.elementFromPoint(ev.clientX, ev.clientY); let isF = el.dataset.type === 'feeling'; let dZ = document.getElementById(isF ? 'feeling-drop' : 'weather-drop'); let bZ = document.getElementById(isF ? 'feeling-bank' : 'weather-bank'); if(tgt && (tgt.id === dZ.id || tgt.closest(`#${dZ.id}`))) { if(dZ.children.length > 0) bZ.appendChild(dZ.children[0]); dZ.appendChild(el); if(isF) { cheer(); setTimeout(() => speak(`I am ${el.dataset.w}.`), 300); } else { beep(); setTimeout(() => speak(`It is ${el.dataset.w} today.`), 300); } } else { bZ.appendChild(el); } c.remove(); el.style.opacity = '1'; }; document.addEventListener('pointermove', moveC); document.addEventListener('pointerup', upC); }); }); }
+        function renderGreetings() { 
+            // Feelings
+            const bF = document.getElementById('feeling-bank'); bF.innerHTML = ''; 
+            [...state.feelings].sort(()=>Math.random()-0.5).forEach(f => { bF.innerHTML += `<div class="dd-item feeling-card" data-w="${f.word}" data-type="feeling" style="flex-direction:row; padding:5px 15px; border-radius:20px;"><span>${f.emoji}</span><small style="font-size:1.2rem; margin:0;">${f.word}</small></div>`; }); 
+            
+            // Weather
+            const bW = document.getElementById('weather-bank'); bW.innerHTML = ''; 
+            [...state.weather].forEach(w => { bW.innerHTML += `<div class="dd-item" data-w="${w.word}" data-type="weather"><span>${w.emoji}</span><small>${w.word}</small></div>`; }); 
+
+            // Days - Using darker colors for white font readability
+            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const dayColors = ['#D63031', '#0984E3', '#00B894', '#E17055', '#6C5CE7', '#E84393', '#2D3436'];
+            const bDay = document.getElementById('day-bank'); bDay.innerHTML = '';
+            days.forEach((d, i) => {
+                bDay.innerHTML += `<div class="dd-item" data-w="${d}" data-type="day" style="background:${dayColors[i]}; color:#FFF; border:none; padding:10px 20px; border-radius:15px;"><small style="font-size:1.5rem; margin:0; text-transform:capitalize; font-weight:bold; color:#FFF;">${d}</small></div>`;
+            });
+
+            // Date (Month and Calendar Grid)
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const now = new Date();
+            const curMonthStr = months[now.getMonth()];
+            const curYear = now.getFullYear();
+
+            document.getElementById('date-year-display').innerText = curYear;
+
+            const bMonth = document.getElementById('month-bank');
+            bMonth.innerHTML = `<div class="dd-item" data-w="${curMonthStr}" data-type="month" style="padding:10px 20px; background:var(--c3); color:#FFF; border:none;"><small style="font-size:1.5rem; margin:0; text-transform:capitalize; font-weight:bold; color:#FFF;">${curMonthStr}</small></div>`;
+
+            const daysInMonth = new Date(curYear, now.getMonth() + 1, 0).getDate();
+            const firstDayIndex = new Date(curYear, now.getMonth(), 1).getDay();
+
+            const bGrid = document.getElementById('calendar-grid');
+            bGrid.innerHTML = '';
+            ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].forEach(dw => {
+                bGrid.innerHTML += `<div style="text-align:center; font-weight:bold; color:#888; padding:5px;">${dw}</div>`;
+            });
+            for(let i=0; i<firstDayIndex; i++) {
+                bGrid.innerHTML += `<div style="min-width:35px; min-height:35px;"></div>`;
+            }
+            for(let i=1; i<=daysInMonth; i++) {
+                bGrid.innerHTML += `<div class="dd-item cal-date" data-w="${i}" data-type="date" style="display:flex; justify-content:center; align-items:center; cursor:grab;">${i}</div>`;
+            }
+            
+            // Clear drop zones on fresh render
+            document.getElementById('feeling-drop').innerHTML = '';
+            document.getElementById('weather-drop').innerHTML = '';
+            document.getElementById('day-drop').innerHTML = '';
+            document.getElementById('date-day-drop').innerHTML = '';
+            document.getElementById('date-month-drop').innerHTML = '';
+
+            attachDND(); 
+        }
+
+        function resetGreetings() { 
+            beep(); 
+            // Using a fresh render neatly restores all lists and grids correctly sorted
+            renderGreetings(); 
+        }
+
+        function attachDND() { 
+            document.querySelectorAll('.dd-item').forEach(el => { 
+                el.onpointerdown = null; 
+                el.addEventListener('pointerdown', (e) => { 
+                    if(e.button !== 0 && e.button !== undefined) return; 
+                    e.preventDefault(); pop(); 
+                    
+                    let c = el.cloneNode(true); 
+                    c.classList.add('dd-clone'); 
+                    document.body.appendChild(c); 
+                    el.style.opacity = '0'; 
+                    
+                    const r = el.getBoundingClientRect(); 
+                    const oX = e.clientX - r.left; 
+                    const oY = e.clientY - r.top; 
+                    
+                    const moveC = (ev) => { c.style.left = `${ev.clientX - oX}px`; c.style.top = `${ev.clientY - oY}px`; }; 
+                    moveC(e); 
+                    
+                    const upC = (ev) => { 
+                        document.removeEventListener('pointermove', moveC); 
+                        document.removeEventListener('pointerup', upC); 
+                        c.style.display = 'none'; 
+                        let tgt = document.elementFromPoint(ev.clientX, ev.clientY); 
+                        
+                        let type = el.dataset.type;
+                        let dZ, bZ;
+                        if(type === 'feeling') { dZ = document.getElementById('feeling-drop'); bZ = document.getElementById('feeling-bank'); }
+                        else if(type === 'weather') { dZ = document.getElementById('weather-drop'); bZ = document.getElementById('weather-bank'); }
+                        else if(type === 'day') { dZ = document.getElementById('day-drop'); bZ = document.getElementById('day-bank'); }
+                        else if(type === 'date') { dZ = document.getElementById('date-day-drop'); bZ = document.getElementById('calendar-grid'); }
+                        else if(type === 'month') { dZ = document.getElementById('date-month-drop'); bZ = document.getElementById('month-bank'); }
+
+                        if(tgt && (tgt.id === dZ.id || tgt.closest(`#${dZ.id}`))) { 
+                            if(dZ.children.length > 0) {
+                                let existing = dZ.children[0];
+                                if(existing.dataset.type === 'date') {
+                                    existing.innerHTML = existing.dataset.w;
+                                } else if (existing.dataset.type === 'month') {
+                                    existing.innerHTML = `<small style="font-size:1.5rem; margin:0; text-transform:capitalize; font-weight:bold; color:#FFF;">${existing.dataset.w}</small>`;
+                                } else if (existing.dataset.type === 'day') {
+                                    existing.innerHTML = `<small style="font-size:1.5rem; margin:0; text-transform:capitalize; font-weight:bold; color:#FFF;">${existing.dataset.w}</small>`;
+                                }
+                                bZ.appendChild(existing); 
+                            }
+                            dZ.appendChild(el); 
+
+                            // Handle specific text mutations and speech
+                            if(type === 'date') {
+                                let val = parseInt(el.dataset.w);
+                                let suffix = 'th';
+                                if(val % 10 === 1 && val !== 11) suffix = 'st';
+                                else if(val % 10 === 2 && val !== 12) suffix = 'nd';
+                                else if(val % 10 === 3 && val !== 13) suffix = 'rd';
+                                el.innerHTML = `<span style="font-size:1.8rem; font-weight:bold;">${val}<sup>${suffix}</sup></span>`;
+                            } else if (type === 'month') {
+                                el.innerHTML = `<span style="font-size:1.5rem; font-weight:bold; color:#FFF;">${el.dataset.w}</span>`;
+                            } else if (type === 'day') {
+                                el.innerHTML = `<span style="font-size:1.5rem; font-weight:bold; color:#FFF;">${el.dataset.w}</span>`;
+                            }
+
+                            if (type === 'date' || type === 'month') {
+                                beep();
+                                let dDrop = document.querySelector('#date-day-drop .dd-item');
+                                let mDrop = document.querySelector('#date-month-drop .dd-item');
+                                if(dDrop && mDrop) {
+                                    setTimeout(() => speak(`It is the ${dDrop.innerText.trim()} day of ${mDrop.innerText.trim()}.`), 300);
+                                }
+                            } else if (type === 'day') {
+                                beep();
+                                setTimeout(() => speak(`Today is ${el.dataset.w}.`), 300);
+                            } else if(type === 'feeling') { 
+                                cheer(); 
+                                setTimeout(() => speak(`I am ${el.dataset.w}.`), 300); 
+                            } else { 
+                                beep(); 
+                                setTimeout(() => speak(`It is ${el.dataset.w} today.`), 300); 
+                            } 
+                        } else { 
+                            bZ.appendChild(el); 
+                            if(type === 'date') {
+                                el.innerHTML = el.dataset.w;
+                            } else if (type === 'month') {
+                                el.innerHTML = `<small style="font-size:1.5rem; margin:0; text-transform:capitalize; font-weight:bold; color:#FFF;">${el.dataset.w}</small>`;
+                            } else if (type === 'day') {
+                                el.innerHTML = `<small style="font-size:1.5rem; margin:0; text-transform:capitalize; font-weight:bold; color:#FFF;">${el.dataset.w}</small>`;
+                            }
+                        } 
+                        c.remove(); 
+                        el.style.opacity = '1'; 
+                    }; 
+                    document.addEventListener('pointermove', moveC); 
+                    document.addEventListener('pointerup', upC); 
+                }); 
+            }); 
+        }
 
         // --- 10. DASHBOARD & SETTINGS ---
         function openDashboard() { beep(); document.getElementById('dash-bg-color').value = state.appBgColor; document.getElementById('dash-feelings').value = state.feelings.map(f=>`${f.emoji},${f.word}`).join('\n'); updateClassDropdowns(); renderMediaList(); document.getElementById('dashboard-modal').style.display = 'flex'; }
