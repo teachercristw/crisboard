@@ -333,6 +333,7 @@
     </div>
 
     <div id="app">
+        <!-- GLOBAL CLOCK -->
         <div id="global-clock">12:00 AM</div>
 
         <button id="fs-global-btn" onclick="toggleGlobalFullscreen()" title="Toggle Global Fullscreen">🖵</button>
@@ -489,6 +490,7 @@
                     <button onclick="togglePseudoFS('video-wrapper')" style="background:var(--c2); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="video-wrapper">
+                    <!-- FLOATING FS CONTROLS -->
                     <div class="fs-controls">
                         <div class="drag-handle-fs">⠿</div>
                         <button class="fs-btn-shared fs-anno" onclick="toggleAnnotation()" title="Draw on Screen">🖍️</button>
@@ -500,6 +502,7 @@
             </div>
         </div>
 
+        <!-- AUTOFIT HEIGHT FOR GREETINGS WIDGET -->
         <div class="widget" id="w-greetings" style="width: 800px; height: auto; min-height: 680px;">
             <div class="widget-header"><span>☀️ Greetings</span><div style="display:flex; gap:10px;"><button style="padding:5px 15px; font-size:1rem;" onclick="resetGreetings()">🔄</button><button class="widget-close" onclick="toggleW('w-greetings')">X</button></div></div>
             <div class="widget-content" style="overflow-y: auto;">
@@ -554,6 +557,7 @@
                     <button onclick="togglePseudoFS('learning-wrapper')" style="background:var(--c2); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="learning-wrapper">
+                    <!-- FLOATING FS CONTROLS -->
                     <div class="fs-controls">
                         <div class="drag-handle-fs">⠿</div>
                         <button class="fs-btn-shared fs-anno" onclick="toggleAnnotation()" title="Draw on Screen">🖍️</button>
@@ -573,6 +577,7 @@
                     <button onclick="togglePseudoFS('activities-wrapper')" style="background:var(--c4); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="activities-wrapper">
+                    <!-- FLOATING FS CONTROLS -->
                     <div class="fs-controls">
                         <div class="drag-handle-fs">⠿</div>
                         <button class="fs-btn-shared fs-anno" onclick="toggleAnnotation()" title="Draw on Screen">🖍️</button>
@@ -592,6 +597,7 @@
                     <button onclick="togglePseudoFS('exit-wrapper')" style="background:var(--c3); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="exit-wrapper">
+                    <!-- FLOATING FS CONTROLS -->
                     <div class="fs-controls">
                         <div class="drag-handle-fs">⠿</div>
                         <button class="fs-btn-shared fs-anno" onclick="toggleAnnotation()" title="Draw on Screen">🖍️</button>
@@ -1180,8 +1186,29 @@
         }
 
         function renderScores() { 
-            const c = document.getElementById('score-container'); c.innerHTML = ''; 
+            const c = document.getElementById('score-container'); 
+            
+            // Ensure structure matches exactly to avoid rebuilding the whole DOM
+            if (c.children.length !== state.teams.length) {
+                c.innerHTML = '';
+                state.teams.forEach((t, i) => {
+                    let div = document.createElement('div');
+                    div.className = 'score-card';
+                    div.id = `score-card-${i}`;
+                    c.appendChild(div);
+                });
+            }
+            
             state.teams.forEach((t, i) => { 
+                const card = document.getElementById(`score-card-${i}`);
+                
+                // Create a unique hash for the current state of this specific team AND the global score settings
+                const hash = `${t.name}|${t.score}|${t.rank}|${state.scoreStyle}|${state.goal}|${JSON.stringify(state.scoreThemes[state.scoreStyle])}`;
+                
+                // Skip re-rendering this team entirely if its data hasn't changed. Stops the "blink"!
+                if (card.dataset.hash === hash) return; 
+                card.dataset.hash = hash;
+
                 let vis = '';
                 if(state.scoreStyle === 'digital') {
                     vis = `<div style="flex-grow:1; display:flex; justify-content:center; align-items:center;"><span style="font-size:5.5rem; font-weight:bold; color:var(--c2); text-shadow: 0 4px 0 rgba(0,0,0,0.2);">${t.score}</span></div>`;
@@ -1212,7 +1239,8 @@
                             let m = imgs.length > 0 ? imgs[j % imgs.length] : null;
                             let rot = j * 30; 
                             if(m) {
-                                vis += `<img src="${m.url}" style="position:absolute; bottom:50%; left:50%; width:${m.w}px; transform-origin: 50% 100%; transform: translateX(-50%) rotate(${rot}deg) translate(${m.x}px, ${m.y}px); z-index:${j}; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3)); object-fit:contain; animation: fadeIn 0.3s ease;">`;
+                                // Hardcoded Auto-fit boundaries for Pizza slices so they are always perfect
+                                vis += `<img src="${m.url}" style="position:absolute; bottom:50%; left:50%; width: 50px; height: 80px; transform-origin: 50% 100%; transform: translateX(-50%) rotate(${rot}deg); z-index:${j}; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3)); object-fit:contain; animation: fadeIn 0.3s ease;">`;
                             } else {
                                 vis += getFallbackCSS(theme, j);
                             }
@@ -1256,7 +1284,7 @@
                     let medals = ["🥇 1st", "🥈 2nd", "🥉 3rd"]; let mText = t.rank <= 3 ? medals[t.rank-1] : `🏅 ${t.rank}th`;
                     rankOverlay = `<div style="position:absolute; top:45px; right:10px; background:rgba(0,0,0,0.85); border-radius:15px; padding:10px; display:flex; justify-content:center; align-items:center; z-index:1000; flex-direction:column; animation: dropIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid #F5AF19; box-shadow: 0 4px 10px rgba(0,0,0,0.5); min-width: 80px;"><div style="display:flex; align-items:center; gap:5px;"><span style="font-size:2rem;">${mText.split(' ')[0]}</span><span style="font-size:1.4rem; color:#FFF; font-weight:bold;">${mText.split(' ')[1]}</span></div><button onclick="mS(${i}, -1)" style="margin-top:5px; font-size:0.85rem; padding:3px 10px; background:var(--c4); color:#FFF; border:2px solid #FFF; border-radius: 8px;">Undo</button></div>`;
                 }
-                c.innerHTML += `<div class="score-card">${rankOverlay}<button class="card-del" onclick="state.teams.splice(${i},1); renderScores();">X</button><input type="text" value="${t.name}" onchange="state.teams[${i}].name=this.value">${vis}<div style="display:flex; gap:10px; width:100%; margin-top:10px; z-index:200;"><button onclick="mS(${i},-1)" style="flex:1; background:var(--c4); color:#FFF; border:none;">-</button><button onclick="mS(${i},1)" style="flex:1; background:var(--c2); border:none;">+</button></div></div>`; 
+                card.innerHTML = `${rankOverlay}<button class="card-del" onclick="state.teams.splice(${i},1); renderScores();">X</button><input type="text" value="${t.name}" onchange="state.teams[${i}].name=this.value">${vis}<div style="display:flex; gap:10px; width:100%; margin-top:10px; z-index:200;"><button onclick="mS(${i},-1)" style="flex:1; background:var(--c4); color:#FFF; border:none;">-</button><button onclick="mS(${i},1)" style="flex:1; background:var(--c2); border:none;">+</button></div>`; 
             }); 
         }
         
@@ -1510,12 +1538,12 @@
             
             let helpText = '';
             if(sel === 'fries') helpText = '<p style="font-size:0.85rem; width:100%; color:#d32f2f; margin:0 0 5px 0;"><strong>Tip for Fries:</strong> Image #1 is the BOX (front). Image #2 is the FRY (scattered behind box).</p>';
-            if(sel === 'pizza') helpText = '<p style="font-size:0.85rem; width:100%; color:#d32f2f; margin:0 0 5px 0;"><strong>Tip for Pizza:</strong> Upload a SINGLE slice pointing UP. It will spin around to form a circle.</p>';
+            if(sel === 'pizza') helpText = '<p style="font-size:0.85rem; width:100%; color:#d32f2f; margin:0 0 5px 0;"><strong>Tip for Pizza:</strong> Upload a SINGLE slice pointing UP. We automatically auto-fit and rotate it perfectly for you!</p>';
 
             list.innerHTML = helpText + state.scoreThemes[sel].map((imgObj, i) => `
                 <div style="position:relative; width:100%; border:2px solid #DDD; border-radius:10px; background:#F9F9F9; padding:10px; display:flex; gap:10px; align-items:center;">
                     <img src="${imgObj.url}" style="width:50px; height:50px; object-fit:contain; border:1px solid #CCC; border-radius:5px; background:#FFF;">
-                    <div style="flex:1; display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px;">
+                    <div style="flex:1; display:${sel === 'pizza' ? 'none' : 'grid'}; grid-template-columns: 1fr 1fr 1fr; gap:5px;">
                         <label style="font-size:0.8rem; font-weight:bold; color:#555;">Width <input type="number" value="${imgObj.w}" onchange="updateThemeImg(${i}, 'w', this.value)" style="margin:0; padding:2px; font-weight:normal; border:2px solid #CCC;"></label>
                         <label style="font-size:0.8rem; font-weight:bold; color:#555;">X Offset <input type="number" value="${imgObj.x}" onchange="updateThemeImg(${i}, 'x', this.value)" style="margin:0; padding:2px; font-weight:normal; border:2px solid #CCC;"></label>
                         <label style="font-size:0.8rem; font-weight:bold; color:#555;">Y Offset <input type="number" value="${imgObj.y}" onchange="updateThemeImg(${i}, 'y', this.value)" style="margin:0; padding:2px; font-weight:normal; border:2px solid #CCC;"></label>
