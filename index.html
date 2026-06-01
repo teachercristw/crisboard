@@ -23,7 +23,6 @@
         
         select, input, textarea { 
             padding: 10px; border-radius: 10px; border: 3px solid #EEE; font-size: 1rem; width: 100%; margin-bottom: 10px; background: #FAFAFA; color: #333;
-            /* ULTIMATE INPUT FIX: Forces browsers/smartboards to allow tapping, typing, and pasting */
             user-select: auto !important;
             -webkit-user-select: auto !important;
             -moz-user-select: auto !important;
@@ -105,26 +104,42 @@
         .time-input::-webkit-outer-spin-button, .time-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .time-input:disabled { background: transparent; color: var(--c4); opacity: 1; -webkit-text-fill-color: var(--c4);}
 
-        /* Scoreboard (Grid & Burger CSS) */
-        #score-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; padding: 5px;}
+        /* Scoreboard */
+        #score-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 5px;}
         .score-card { background: var(--c3); padding: 15px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; border: 4px solid #FFF; position: relative; overflow: hidden;}
         .score-card input { position: relative; z-index: 20; color: #FFF; text-shadow: 0 2px 0 rgba(0,0,0,0.3); text-align: center; border: none; background: transparent; font-size: 1.4rem; font-family: inherit; font-weight: bold; width: 100%; outline: none; padding: 0;}
         .card-del { position: absolute; top: -10px; right: -10px; background: var(--c1); color: #FFF; border-radius: 50%; width: 30px; height: 30px; padding: 0; font-size: 1rem; border: 2px solid #FFF; z-index: 25;}
         
-        .burger-stack { display: flex; flex-direction: column-reverse; align-items: center; min-height: 120px; justify-content: flex-start; margin: 10px 0; width: 100%;}
-        .ing { width: 80px; height: 15px; border-radius: 10px; margin-bottom: -5px; box-shadow: 0 3px 5px rgba(0,0,0,0.4); animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; border: 2px solid rgba(0,0,0,0.15); z-index: 1;}
-        .ing-1 { height: 25px; border-radius: 10px 10px 20px 20px; background: #E6A15C; } 
-        .ing-2 { height: 12px; border-radius: 5px; background: #78E08F; width: 90px; border-bottom: 3px dashed #38ADA9; } 
-        .ing-3 { height: 14px; background: #FF5252; width: 75px; border-radius: 8px; } 
-        .ing-4 { height: 8px; background: #FFDA79; width: 85px; border-radius: 2px; } 
-        .ing-5 { height: 20px; background: #6D214F; width: 78px; border-radius: 10px; } 
-        .ing-6 { height: 8px; background: #D6A2E8; width: 70px; border-radius: 10px; } 
-        .ing-7 { height: 8px; background: #218C74; width: 60px; border-radius: 10px; } 
-        .ing-8 { height: 8px; background: #B33939; width: 85px; border-radius: 2px; } 
-        .ing-9 { height: 15px; background: #FFF; width: 75px; border-radius: 10px; border: 2px solid #EEE; display:flex; justify-content:center; align-items:center;} 
-        .ing-9::after { content:''; width:20px; height:8px; background:#FFB142; border-radius:50%; }
-        .ing-10 { height: 35px; border-radius: 40px 40px 10px 10px; background: #E6A15C; width: 80px; margin-bottom: 0; } 
+        .theme-stack { display: flex; flex-direction: column-reverse; align-items: center; min-height: 180px; justify-content: flex-start; margin: 15px 0; width: 100%;}
+        
+        /* CSS Default Ingredients Scaled Up */
+        .ing { position: relative; animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 2px solid rgba(0,0,0,0.15);}
+        /* Burger */
+        .ing-1 { height: 35px; border-radius: 15px 15px 30px 30px; background: #E6A15C; width: 120px; margin-bottom: -10px; } 
+        .ing-2 { height: 18px; border-radius: 8px; background: #78E08F; width: 135px; border-bottom: 3px dashed #38ADA9; margin-bottom: -8px; } 
+        .ing-3 { height: 20px; background: #FF5252; width: 115px; border-radius: 10px; margin-bottom: -8px; } 
+        .ing-4 { height: 12px; background: #FFDA79; width: 125px; border-radius: 4px; margin-bottom: -8px; } 
+        .ing-5 { height: 30px; background: #6D214F; width: 118px; border-radius: 15px; margin-bottom: -10px; } 
+        .ing-6 { height: 12px; background: #D6A2E8; width: 105px; border-radius: 10px; margin-bottom: -8px; } 
+        .ing-7 { height: 12px; background: #218C74; width: 90px; border-radius: 10px; margin-bottom: -8px; } 
+        .ing-8 { height: 12px; background: #B33939; width: 125px; border-radius: 4px; margin-bottom: -8px; } 
+        .ing-9 { height: 22px; background: #FFF; width: 110px; border-radius: 15px; display:flex; justify-content:center; align-items:center; margin-bottom: -8px;} 
+        .ing-9::after { content:''; width:30px; height:12px; background:#FFB142; border-radius:50%; }
+        .ing-10 { height: 50px; border-radius: 50px 50px 15px 15px; background: #E6A15C; width: 120px; margin-bottom: 0; } 
+        
+        /* Ice Cream */
+        .ic-cone { height: 70px; background: #E6A15C; border-radius: 5px 5px 60px 60px; width: 60px; border: 2px solid #D35400; margin-top:10px; }
+        .ic-scoop { height: 60px; border-radius: 50%; width: 80px; margin-bottom: -25px; box-shadow: inset -5px -5px 0 rgba(0,0,0,0.1); border: 2px solid rgba(0,0,0,0.1); }
+        
+        /* Pizza */
+        .pz-slice { position: absolute; bottom: 50%; left: 50%; width: 44px; height: 80px; clip-path: polygon(50% 100%, 0 0, 100% 0); background: #FDCB6E; border-top: 12px solid #EE5253; transform-origin: 50% 100%; animation: fadeIn 0.3s ease; }
+        
+        /* Fries */
+        .fry-box { position: relative; width: 100px; height: 80px; background: #EE5253; border-radius: 5px 5px 20px 20px; border-top: 5px solid #C23616; display:flex; justify-content:center; align-items:center; color:#FFF; font-size:2rem; font-weight:900; z-index: 100; box-shadow: 0 5px 10px rgba(0,0,0,0.4); }
+        .fry-stick { position: absolute; width: 14px; height: 70px; background: #FDCB6E; border-radius: 5px; border: 2px solid #E1B12C; animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
         @keyframes dropIn { 0% { transform: translateY(-40px) scale(0); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+        @keyframes fadeIn { 0% { opacity: 0; transform: translateX(-50%) scale(0.5); } 100% { opacity: 1; transform: translateX(-50%) scale(1); } }
 
         /* Picker */
         .picker-tab-btn { background: var(--c2); color: #FFF; flex: 1; padding: 10px; font-size: 1.1rem; border: none; border-radius: 10px;}
@@ -143,7 +158,6 @@
         .dd-item small { font-size: 1.1rem; color: #2D3436; margin-top: 5px; text-transform: lowercase;}
         .dd-item.feeling-card { flex-direction: row; gap: 10px; padding: 10px 15px; border-radius: 20px; }
         
-        /* Professional calendar date dots */
         .dd-item.cal-date { 
             font-size: 1.2rem !important; 
             padding: 5px !important; 
@@ -190,7 +204,7 @@
             right: 20px;
             z-index: 2147483647 !important;
             display: none;
-            background: rgba(0,0,0,0.4); /* Transparent dark background */
+            background: rgba(0,0,0,0.4); 
             padding: 5px;
             border-radius: 20px;
             border: 2px solid rgba(255,255,255,0.3);
@@ -205,8 +219,8 @@
         .fs-controls:active { cursor: grabbing; }
 
         .fs-btn-shared {
-            width: 35px; /* Smaller */
-            height: 35px; /* Smaller */
+            width: 35px;
+            height: 35px; 
             font-size: 1rem;
             border-radius: 50%;
             display: flex;
@@ -400,12 +414,15 @@
             </div>
         </div>
 
-        <div class="widget" id="w-score" style="width: 600px; height: 500px;">
+        <div class="widget" id="w-score" style="width: 700px; height: 500px;">
             <div class="widget-header">
                 <span>🍔 Scoreboard</span>
-                <div style="display:flex; gap:5px; align-items:center;">
+                <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">
                     <button onclick="addGrp()" style="padding:5px 10px; font-size:0.9rem; text-transform:none;">Add Group</button>
-                    <button onclick="setScoreStyle('burger')" style="padding:5px 10px; font-size:0.9rem; background:var(--c2); color:#FFF; text-transform:none;">Burger</button>
+                    <button onclick="setScoreStyle('burger')" style="padding:5px 10px; font-size:0.9rem; background:#E6A15C; color:#FFF; text-transform:none;" title="Goal: 10">🍔 10</button>
+                    <button onclick="setScoreStyle('icecream')" style="padding:5px 10px; font-size:0.9rem; background:#FF9FF3; color:#FFF; text-transform:none;" title="Goal: 15">🍦 15</button>
+                    <button onclick="setScoreStyle('pizza')" style="padding:5px 10px; font-size:0.9rem; background:#FF9F43; color:#FFF; text-transform:none;" title="Goal: 12">🍕 12</button>
+                    <button onclick="setScoreStyle('fries')" style="padding:5px 10px; font-size:0.9rem; background:#EE5253; color:#FFF; text-transform:none;" title="Goal: 20">🍟 20</button>
                     <button onclick="setScoreStyle('digital')" style="padding:5px 10px; font-size:0.9rem; background:var(--c1); color:#FFF; text-transform:none;">Digital</button>
                     <input type="number" id="digital-goal" value="10" onchange="updateGoal(this.value)" style="width:55px; padding:5px; margin:0; display:none; border:2px solid #FFF;" title="Set Target Goal">
                     <button class="widget-close" onclick="toggleW('w-score')">X</button>
@@ -619,6 +636,19 @@
                             </div>
                         </div>
 
+                        <div class="dash-section" style="background:#E8F5E9; border-color:#C8E6C9;">
+                            <h3 style="color:#2E7D32;">🍔 Scoreboard Custom Images</h3>
+                            <p style="font-size:0.8rem; margin:0 0 10px 0;">Select a theme, upload images (bottom to top), and precisely calibrate their sizes and offsets!</p>
+                            <select id="score-theme-sel" style="background:#FFF; border:2px solid #4CAF50;" onchange="renderScoreThemeList()">
+                                <option value="burger">🍔 Burger (Stack)</option>
+                                <option value="icecream">🍦 Ice Cream (Stack)</option>
+                                <option value="pizza">🍕 Pizza (Circular)</option>
+                                <option value="fries">🍟 Fries (Box Fill)</option>
+                            </select>
+                            <input type="file" id="theme-file" accept="image/*" onchange="addScoreThemeImg(event)">
+                            <div id="theme-img-list" style="display:flex; flex-direction:column; gap:10px; margin-top:10px;"></div>
+                        </div>
+
                         <div class="dash-section">
                             <h3>Feelings (Emoji,word)</h3>
                             <textarea id="dash-feelings" rows="3"></textarea>
@@ -700,7 +730,6 @@
         document.querySelectorAll('.fs-controls').forEach(ctrl => {
             let isDragging = false, oX = 0, oY = 0;
             ctrl.addEventListener('pointerdown', (e) => {
-                // Ignore drags if the user clicked one of the buttons
                 if(e.target.tagName === 'BUTTON') return;
                 isDragging = true;
                 ctrl.style.cursor = 'grabbing';
@@ -709,7 +738,7 @@
                 oY = e.clientY - rect.top;
                 ctrl.style.left = rect.left + 'px';
                 ctrl.style.top = rect.top + 'px';
-                ctrl.style.right = 'auto'; // release right constraint
+                ctrl.style.right = 'auto'; 
                 ctrl.setPointerCapture(e.pointerId);
             });
             ctrl.addEventListener('pointermove', (e) => {
@@ -732,12 +761,15 @@
             pastel: { bg: '#B5EAEA', c1: '#FFB6B9', c2: '#FFE082', c3: '#C8E3D4', c4: '#D1C4E9', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/4.jpg' }
         };
 
+        const themeGoals = { burger: 10, icecream: 15, pizza: 12, fries: 20 };
+
         // PRE-LOADED CUSTOM DATA 
         let state = {
             appBgColor: "#0F0C29", appBgImage: null, 
             classes: {}, activeClass: null,
             teams: [{name:"GROUP 1", score:0, rank:null, time:null}, {name:"GROUP 2", score:0, rank:null, time:null}],
             scoreStyle: 'burger', goal: 10,
+            scoreThemes: { burger: [], icecream: [], pizza: [], fries: [] },
             feelings: [{ emoji: "😊", word: "happy" }, { emoji: "😢", word: "sad" }, { emoji: "😡", word: "angry" }, { emoji: "😴", word: "sleepy" }, { emoji: "🤢", word: "sick" }, { emoji: "🥶", word: "cold" }],
             weather: [{ emoji: "☀️", word: "sunny" }, { emoji: "🌧️", word: "rainy" }, { emoji: "☁️", word: "cloudy" }, { emoji: "❄️", word: "snowy" }, { emoji: "🌬️", word: "windy" }],
             media: { 
@@ -755,7 +787,7 @@
                 ], 
                 video: [], 
                 music: [], 
-                exit: [] 
+                exit: []
             }
         };
         let memStud = []; 
@@ -843,6 +875,24 @@
                     const data = await response.json();
                     if (data && data.classes) {
                         state = data;
+                        if(!state.scoreThemes) state.scoreThemes = { burger: [], icecream: [], pizza: [], fries: [] };
+                        
+                        // Handle legacy score_images migration if they existed
+                        if(state.media && state.media.score_images && state.media.score_images.length > 0) {
+                            state.media.score_images.forEach(img => {
+                                state.scoreThemes.burger.push({url: img.url, w: 120, x: 0, y: -15});
+                            });
+                            state.media.score_images = []; 
+                        }
+
+                        // Ensure all elements in scoreThemes are proper objects
+                        for(let k in state.scoreThemes) {
+                            state.scoreThemes[k] = state.scoreThemes[k].map(item => {
+                                if(typeof item === 'string') return { url: item, w: 100, x: 0, y: -15 };
+                                return item;
+                            });
+                        }
+
                         applyCoreSettings();
                         updateClassDropdowns();
                         evalRanks();
@@ -1095,31 +1145,118 @@
         function updateGoal(v) { beep(); state.goal = Math.max(1, parseInt(v)||10); evalRanks(); renderScores(); }
         function addGrp() { state.teams.push({name:`GROUP ${state.teams.length+1}`, score:0, rank:null, time:null}); renderScores(); beep(); }
         function evalRanks() {
-            let g = state.scoreStyle === 'burger' ? 10 : state.goal;
+            let g = state.scoreStyle === 'digital' ? state.goal : themeGoals[state.scoreStyle];
             state.teams.forEach(t => { if(t.score < g) t.time = null; else if(!t.time) t.time = Date.now(); });
             let ranked = state.teams.map((tm, idx) => ({tm, idx})).filter(x => x.tm.score >= g && x.tm.time).sort((a,b) => a.tm.time - b.tm.time);
             state.teams.forEach(tm => tm.rank = null); ranked.forEach((x, rIdx) => x.tm.rank = rIdx + 1);
         }
         function mS(i, v) { 
-            let t = state.teams[i]; let g = state.scoreStyle === 'burger' ? 10 : state.goal; let old = t.score;
+            let g = state.scoreStyle === 'digital' ? state.goal : themeGoals[state.scoreStyle]; 
+            let t = state.teams[i]; let old = t.score;
             t.score = Math.max(0, Math.min(g, t.score + v)); 
             if(t.score === g && old < g) { cheer(); } else if(t.score < g && old >= g) { buzz(); } else if(v > 0) { beep(); } else { buzz(); }
             evalRanks(); renderScores(); 
         }
+        
+        function getFallbackCSS(theme, j) {
+            if(theme === 'burger') {
+                const classes = ['ing-1','ing-2','ing-3','ing-4','ing-5','ing-6','ing-7','ing-8','ing-9','ing-10'];
+                return `<div class="ing ${classes[j%10]}" style="z-index:${j}"></div>`;
+            }
+            if(theme === 'icecream') {
+                if(j === 0) return `<div class="ing ic-cone" style="z-index:${j}"></div>`;
+                const colors = ['#FF9FF3', '#54A0FF', '#5F27CD', '#1DD1A1', '#FECA57'];
+                return `<div class="ing ic-scoop" style="background:${colors[j%colors.length]}; z-index:${j}"></div>`;
+            }
+            if(theme === 'pizza') {
+                let rot = j * 30; // 360 / 12 slices
+                return `<div class="pz-slice" style="transform: translateX(-50%) rotate(${rot}deg); z-index:${j}"></div>`;
+            }
+            if(theme === 'fries') {
+                if(j === 0) return ''; // Handled via Front box
+                return ''; // Handled via loop logic
+            }
+            return '';
+        }
+
         function renderScores() { 
             const c = document.getElementById('score-container'); c.innerHTML = ''; 
             state.teams.forEach((t, i) => { 
                 let vis = '';
-                if(state.scoreStyle === 'burger') {
-                    vis = `<div class="burger-stack">`; const classes = ['ing-1','ing-2','ing-3','ing-4','ing-5','ing-6','ing-7','ing-8','ing-9','ing-10'];
-                    for(let j=0; j<Math.min(t.score, 10); j++) { vis += `<div class="ing ${classes[j]}" style="z-index:${j}"></div>`; } vis += `</div>`;
-                } else { vis = `<div style="flex-grow:1; display:flex; justify-content:center; align-items:center;"><span style="font-size:4.5rem; font-weight:bold; color:var(--c2); text-shadow: 0 4px 0 rgba(0,0,0,0.2);">${t.score}</span></div>`; }
+                if(state.scoreStyle === 'digital') {
+                    vis = `<div style="flex-grow:1; display:flex; justify-content:center; align-items:center;"><span style="font-size:5.5rem; font-weight:bold; color:var(--c2); text-shadow: 0 4px 0 rgba(0,0,0,0.2);">${t.score}</span></div>`;
+                } else {
+                    const theme = state.scoreStyle;
+                    const imgs = state.scoreThemes[theme] || [];
+                    const max = themeGoals[theme];
+                    let score = Math.min(t.score, max);
+
+                    // --- LAYOUT ENGINE: STACK (Burger & Ice Cream) ---
+                    if(theme === 'burger' || theme === 'icecream') {
+                        vis = `<div class="theme-stack">`;
+                        for(let j=0; j<score; j++) {
+                            let m = imgs.length > 0 ? imgs[j % imgs.length] : null;
+                            if(m) {
+                                vis += `<img src="${m.url}" style="width:${m.w}px; margin-bottom:${m.y}px; margin-left:${m.x}px; position:relative; z-index:${j}; filter:drop-shadow(0 4px 4px rgba(0,0,0,0.4)); object-fit:contain; animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">`;
+                            } else {
+                                vis += getFallbackCSS(theme, j);
+                            }
+                        }
+                        vis += `</div>`;
+                    }
+                    
+                    // --- LAYOUT ENGINE: CIRCULAR (Pizza) ---
+                    else if (theme === 'pizza') {
+                        vis = `<div style="position:relative; width:160px; height:160px; margin: 15px auto;">`;
+                        for(let j=0; j<score; j++) {
+                            let m = imgs.length > 0 ? imgs[j % imgs.length] : null;
+                            let rot = j * 30; 
+                            if(m) {
+                                vis += `<img src="${m.url}" style="position:absolute; bottom:50%; left:50%; width:${m.w}px; transform-origin: 50% 100%; transform: translateX(-50%) rotate(${rot}deg) translate(${m.x}px, ${m.y}px); z-index:${j}; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3)); object-fit:contain; animation: fadeIn 0.3s ease;">`;
+                            } else {
+                                vis += getFallbackCSS(theme, j);
+                            }
+                        }
+                        vis += `</div>`;
+                    }
+                    
+                    // --- LAYOUT ENGINE: CONTAINER FILL (Fries) ---
+                    else if (theme === 'fries') {
+                        vis = `<div style="position:relative; width:120px; height:170px; margin: 10px auto; display:flex; justify-content:center; align-items:flex-end;">`;
+                        
+                        // Scatter Fries (behind container)
+                        for(let j=1; j<=score; j++) { 
+                            let m = imgs.length > 1 ? imgs[1] : (imgs.length === 1 ? imgs[0] : null); 
+                            
+                            let randX = ((j * 17) % 60) - 30; // Pseudo-random scatter X (-30 to 30)
+                            let randRot = ((j * 23) % 40) - 20; // Pseudo-random rotate (-20 to 20)
+                            let randY = ((j * 11) % 30); // Vertical stagger
+
+                            if(m && imgs.length > 1) { 
+                                vis += `<img src="${m.url}" style="position:absolute; bottom:${50 + randY}px; width:${m.w}px; transform: translateX(${randX + m.x}px) rotate(${randRot}deg) translateY(${m.y}px); z-index:${10 + j}; object-fit:contain; animation: dropIn 0.3s ease;">`;
+                            } else {
+                                vis += `<div class="fry-stick" style="bottom:${50 + randY}px; transform: translateX(${randX}px) rotate(${randRot}deg); z-index:${10 + j}"></div>`;
+                            }
+                        }
+
+                        // Front Container
+                        let boxImg = imgs.length > 0 ? imgs[0] : null;
+                        if(boxImg) {
+                            vis += `<img src="${boxImg.url}" style="position:relative; width:${boxImg.w}px; z-index:100; transform: translate(${boxImg.x}px, ${boxImg.y}px); object-fit:contain;">`;
+                        } else {
+                            vis += `<div class="fry-box">M</div>`;
+                        }
+
+                        vis += `</div>`;
+                    }
+                }
+                
                 let rankOverlay = '';
                 if(t.rank) {
                     let medals = ["🥇 1st", "🥈 2nd", "🥉 3rd"]; let mText = t.rank <= 3 ? medals[t.rank-1] : `🏅 ${t.rank}th`;
-                    rankOverlay = `<div style="position:absolute; top:45px; bottom:0; left:0; right:0; background:rgba(0,0,0,0.85); border-radius:0 0 11px 11px; display:flex; justify-content:center; align-items:center; z-index:10; flex-direction:column; animation: dropIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);"><span style="font-size:3.5rem;">${mText.split(' ')[0]}</span><span style="font-size:1.8rem; color:#FFF; font-weight:bold;">${mText.split(' ')[1]}</span><button onclick="mS(${i}, -1)" style="margin-top:10px; font-size:1rem; padding:5px 15px; background:var(--c4); color:#FFF; border:2px solid #FFF;">Undo</button></div>`;
+                    rankOverlay = `<div style="position:absolute; top:45px; right:10px; background:rgba(0,0,0,0.85); border-radius:15px; padding:10px; display:flex; justify-content:center; align-items:center; z-index:1000; flex-direction:column; animation: dropIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid #F5AF19; box-shadow: 0 4px 10px rgba(0,0,0,0.5); min-width: 80px;"><div style="display:flex; align-items:center; gap:5px;"><span style="font-size:2rem;">${mText.split(' ')[0]}</span><span style="font-size:1.4rem; color:#FFF; font-weight:bold;">${mText.split(' ')[1]}</span></div><button onclick="mS(${i}, -1)" style="margin-top:5px; font-size:0.85rem; padding:3px 10px; background:var(--c4); color:#FFF; border:2px solid #FFF; border-radius: 8px;">Undo</button></div>`;
                 }
-                c.innerHTML += `<div class="score-card">${rankOverlay}<button class="card-del" onclick="state.teams.splice(${i},1); renderScores();">X</button><input type="text" value="${t.name}" onchange="state.teams[${i}].name=this.value">${vis}<div style="display:flex; gap:10px; width:100%; margin-top:10px;"><button onclick="mS(${i},-1)" style="flex:1; background:var(--c4); color:#FFF; border:none;">-</button><button onclick="mS(${i},1)" style="flex:1; background:var(--c2); border:none;">+</button></div></div>`; 
+                c.innerHTML += `<div class="score-card">${rankOverlay}<button class="card-del" onclick="state.teams.splice(${i},1); renderScores();">X</button><input type="text" value="${t.name}" onchange="state.teams[${i}].name=this.value">${vis}<div style="display:flex; gap:10px; width:100%; margin-top:10px; z-index:200;"><button onclick="mS(${i},-1)" style="flex:1; background:var(--c4); color:#FFF; border:none;">-</button><button onclick="mS(${i},1)" style="flex:1; background:var(--c2); border:none;">+</button></div></div>`; 
             }); 
         }
         
@@ -1137,7 +1274,6 @@
         function loadDashClass() { const cls = document.getElementById('dash-class-sel').value; document.getElementById('dash-students').value = (cls && state.classes[cls]) ? state.classes[cls].join('\n') : ""; }
         function addClass() { beep(); const n = document.getElementById('new-class-name').value.trim(); if(n && !state.classes[n]) { state.classes[n] = []; state.activeClass = n; document.getElementById('new-class-name').value = ''; updateClassDropdowns(); } else { buzz(); } }
         
-        // NEW Rename Function
         function renameClass() {
             beep();
             const cls = document.getElementById('dash-class-sel').value;
@@ -1170,15 +1306,12 @@
 
         // --- 9. GREETINGS D&D ---
         function renderGreetings() { 
-            // Feelings
             const bF = document.getElementById('feeling-bank'); bF.innerHTML = ''; 
             [...state.feelings].sort(()=>Math.random()-0.5).forEach(f => { bF.innerHTML += `<div class="dd-item feeling-card" data-w="${f.word}" data-type="feeling" style="flex-direction:row; padding:5px 15px; border-radius:20px;"><span>${f.emoji}</span><small style="font-size:1.2rem; margin:0;">${f.word}</small></div>`; }); 
             
-            // Weather
             const bW = document.getElementById('weather-bank'); bW.innerHTML = ''; 
             [...state.weather].forEach(w => { bW.innerHTML += `<div class="dd-item" data-w="${w.word}" data-type="weather"><span>${w.emoji}</span><small>${w.word}</small></div>`; }); 
 
-            // Days - Using darker colors for white font readability
             const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             const dayColors = ['#D63031', '#0984E3', '#00B894', '#E17055', '#6C5CE7', '#E84393', '#2D3436'];
             const bDay = document.getElementById('day-bank'); bDay.innerHTML = '';
@@ -1186,7 +1319,6 @@
                 bDay.innerHTML += `<div class="dd-item" data-w="${d}" data-type="day" style="background:${dayColors[i]}; color:#FFF; border:none; padding:10px 20px; border-radius:15px;"><small style="font-size:1.5rem; margin:0; text-transform:capitalize; font-weight:bold; color:#FFF;">${d}</small></div>`;
             });
 
-            // Date (Month and Calendar Grid)
             const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             const now = new Date();
             const curMonthStr = months[now.getMonth()];
@@ -1212,7 +1344,6 @@
                 bGrid.innerHTML += `<div class="dd-item cal-date" data-w="${i}" data-type="date" style="display:flex; justify-content:center; align-items:center; cursor:grab;">${i}</div>`;
             }
             
-            // Clear drop zones on fresh render
             document.getElementById('feeling-drop').innerHTML = '';
             document.getElementById('weather-drop').innerHTML = '';
             document.getElementById('day-drop').innerHTML = '';
@@ -1222,11 +1353,7 @@
             attachDND(); 
         }
 
-        function resetGreetings() { 
-            beep(); 
-            // Using a fresh render neatly restores all lists and grids correctly sorted
-            renderGreetings(); 
-        }
+        function resetGreetings() { beep(); renderGreetings(); }
 
         function attachDND() { 
             document.querySelectorAll('.dd-item').forEach(el => { 
@@ -1275,7 +1402,6 @@
                             }
                             dZ.appendChild(el); 
 
-                            // Handle specific text mutations and speech
                             if(type === 'date') {
                                 let val = parseInt(el.dataset.w);
                                 let suffix = 'th';
@@ -1326,8 +1452,79 @@
         }
 
         // --- 10. DASHBOARD & SETTINGS ---
-        function openDashboard() { beep(); document.getElementById('dash-bg-color').value = state.appBgColor; document.getElementById('dash-feelings').value = state.feelings.map(f=>`${f.emoji},${f.word}`).join('\n'); updateClassDropdowns(); renderMediaList(); document.getElementById('dashboard-modal').style.display = 'flex'; }
+        function openDashboard() { 
+            beep(); 
+            document.getElementById('dash-bg-color').value = state.appBgColor; 
+            document.getElementById('dash-feelings').value = state.feelings.map(f=>`${f.emoji},${f.word}`).join('\n'); 
+            updateClassDropdowns(); 
+            renderMediaList(); 
+            renderScoreThemeList();
+            document.getElementById('dashboard-modal').style.display = 'flex'; 
+        }
         function saveSettings() { beep(); state.appBgColor = document.getElementById('dash-bg-color').value; autoSaveClass(); let nF = []; document.getElementById('dash-feelings').value.split('\n').forEach(l => { const p = l.split(','); if(p.length===2 && p[0].trim() && p[1].trim()) nF.push({ emoji: p[0].trim(), word: p[1].trim().toLowerCase() }); }); if(nF.length>0) state.feelings = nF; applyCoreSettings(); resetPicker(); renderGreetings(); document.getElementById('dashboard-modal').style.display = 'none'; }
+
+        // --- SCORE THEME CALIBRATION EDITOR ---
+        function addScoreThemeImg(e) {
+            const f = e.target.files[0];
+            if(!f) return;
+            const sel = document.getElementById('score-theme-sel').value;
+            const r = new FileReader();
+            r.onload = (ev) => {
+                if(!state.scoreThemes) state.scoreThemes = {burger:[], icecream:[], pizza:[], fries:[]};
+                if(!state.scoreThemes[sel]) state.scoreThemes[sel] = [];
+                
+                // Defaults based on theme
+                let defaultW = 100, defaultX = 0, defaultY = -15;
+                if(sel === 'burger') { defaultW = 120; }
+                if(sel === 'icecream') { defaultW = 80; }
+                if(sel === 'pizza') { defaultW = 100; defaultY = -30;}
+                if(sel === 'fries') { defaultW = 120; defaultY = 0; }
+
+                state.scoreThemes[sel].push({ url: ev.target.result, w: defaultW, x: defaultX, y: defaultY });
+                renderScoreThemeList();
+                renderScores();
+                e.target.value = ''; 
+            };
+            r.readAsDataURL(f);
+        }
+        
+        function removeScoreThemeImg(sel, idx) {
+            state.scoreThemes[sel].splice(idx, 1);
+            renderScoreThemeList();
+            renderScores();
+        }
+
+        function updateThemeImg(idx, prop, val) {
+            const sel = document.getElementById('score-theme-sel').value;
+            state.scoreThemes[sel][idx][prop] = parseInt(val) || 0;
+            renderScores(); // Update real-time
+        }
+
+        function renderScoreThemeList() {
+            const sel = document.getElementById('score-theme-sel').value;
+            const list = document.getElementById('theme-img-list');
+            if(!state.scoreThemes || !state.scoreThemes[sel] || state.scoreThemes[sel].length === 0) {
+                list.innerHTML = '<span style="color:#888; font-size:0.9rem;">No custom images uploaded. Using default shapes.</span>';
+                return;
+            }
+            
+            let helpText = '';
+            if(sel === 'fries') helpText = '<p style="font-size:0.85rem; width:100%; color:#d32f2f; margin:0 0 5px 0;"><strong>Tip for Fries:</strong> Image #1 is the BOX (front). Image #2 is the FRY (scattered behind box).</p>';
+            if(sel === 'pizza') helpText = '<p style="font-size:0.85rem; width:100%; color:#d32f2f; margin:0 0 5px 0;"><strong>Tip for Pizza:</strong> Upload a SINGLE slice pointing UP. It will spin around to form a circle.</p>';
+
+            list.innerHTML = helpText + state.scoreThemes[sel].map((imgObj, i) => `
+                <div style="position:relative; width:100%; border:2px solid #DDD; border-radius:10px; background:#F9F9F9; padding:10px; display:flex; gap:10px; align-items:center;">
+                    <img src="${imgObj.url}" style="width:50px; height:50px; object-fit:contain; border:1px solid #CCC; border-radius:5px; background:#FFF;">
+                    <div style="flex:1; display:grid; grid-template-columns: 1fr 1fr 1fr; gap:5px;">
+                        <label style="font-size:0.8rem; font-weight:bold; color:#555;">Width <input type="number" value="${imgObj.w}" onchange="updateThemeImg(${i}, 'w', this.value)" style="margin:0; padding:2px; font-weight:normal; border:2px solid #CCC;"></label>
+                        <label style="font-size:0.8rem; font-weight:bold; color:#555;">X Offset <input type="number" value="${imgObj.x}" onchange="updateThemeImg(${i}, 'x', this.value)" style="margin:0; padding:2px; font-weight:normal; border:2px solid #CCC;"></label>
+                        <label style="font-size:0.8rem; font-weight:bold; color:#555;">Y Offset <input type="number" value="${imgObj.y}" onchange="updateThemeImg(${i}, 'y', this.value)" style="margin:0; padding:2px; font-weight:normal; border:2px solid #CCC;"></label>
+                    </div>
+                    <button onclick="removeScoreThemeImg('${sel}', ${i})" style="width:30px; height:30px; font-size:0.9rem; padding:0; background:var(--c4); color:#FFF; border:none; border-radius:50%; box-shadow:0 2px 5px rgba(0,0,0,0.3);">X</button>
+                    <div style="position:absolute; top:-10px; left:-10px; width:22px; height:22px; background:#222; color:#FFF; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:0.8rem;">${i+1}</div>
+                </div>
+            `).join('');
+        }
 
         // --- MEDIA URL FORMATTER ---
         function fmtURL(url, cat) { 
@@ -1345,10 +1542,38 @@
             return f; 
         }
         
-        function addMedia() { beep(); const cat = document.getElementById('media-cat').value; let t = document.getElementById('m-title').value.trim(); let rU = document.getElementById('m-url').value.trim(); const fI = document.getElementById('m-file'); if(!t) t = `Item ${state.media[cat].length + 1}`; if(fI.files.length > 0) { const r = new FileReader(); r.onload = (e) => { state.media[cat].push({ title: t, url: e.target.result }); finishAdd(); }; r.readAsDataURL(fI.files[0]); } else if(rU) { state.media[cat].push({ title: t, url: fmtURL(rU, cat) }); finishAdd(); } else { alert("Provide URL or file."); } }
-        function finishAdd() { document.getElementById('m-title').value = ''; document.getElementById('m-url').value = ''; document.getElementById('m-file').value = ''; renderMediaList(); updateDrops(); }
+        function addMedia() { 
+            beep(); 
+            const cat = document.getElementById('media-cat').value; 
+            let t = document.getElementById('m-title').value.trim(); 
+            let rU = document.getElementById('m-url').value.trim(); 
+            const fI = document.getElementById('m-file'); 
+            
+            if(!state.media[cat]) state.media[cat] = [];
+            if(!t) t = `Item ${state.media[cat].length + 1}`; 
+            
+            if(fI.files.length > 0) { 
+                const r = new FileReader(); 
+                r.onload = (e) => { 
+                    state.media[cat].push({ title: t, url: e.target.result }); 
+                    finishAdd(); 
+                }; 
+                r.readAsDataURL(fI.files[0]); 
+            } else if(rU) { 
+                state.media[cat].push({ title: t, url: fmtURL(rU, cat) }); 
+                finishAdd(); 
+            } else { 
+                alert("Provide URL or file."); 
+            } 
+        }
+        function finishAdd() { 
+            document.getElementById('m-title').value = ''; 
+            document.getElementById('m-url').value = ''; 
+            document.getElementById('m-file').value = ''; 
+            renderMediaList(); 
+            updateDrops(); 
+        }
         
-        // NEW Edit Media Function
         function editMediaName(cat, i) {
             beep();
             let currentName = state.media[cat][i].title;
@@ -1360,15 +1585,20 @@
             }
         }
         
-        function remMedia(cat, i) { beep(); state.media[cat].splice(i, 1); renderMediaList(); updateDrops(); }
+        function remMedia(cat, i) { 
+            beep(); 
+            state.media[cat].splice(i, 1); 
+            renderMediaList(); 
+            updateDrops(); 
+        }
         
-        function renderMediaList() { const cat = document.getElementById('media-cat').value; const c = document.getElementById('media-list'); c.innerHTML = state.media[cat].length === 0 ? '<p style="text-align:center; color:#888; margin-top:20px;">No links saved here yet.</p>' : state.media[cat].map((m,i)=>`<div class="list-item"><span>${m.title}</span><div><button onclick="editMediaName('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c2); color:#FFF; border:none; border-radius:5px; margin-right:5px;" title="Edit Name">✎</button><button onclick="remMedia('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c4); color:#FFF; border:none; border-radius:5px;" title="Delete">X</button></div></div>`).join(''); }
-        function updateDrops() { ['learning', 'activities', 'video', 'music', 'exit', 'wbBackgrounds'].forEach(cat => { const s = document.getElementById(cat === 'wbBackgrounds' ? 'wbBackgrounds-select' : `${cat}-select`); if(s) { s.innerHTML = `<option value="">-- Choose Item --</option>` + state.media[cat].map((m,i)=>`<option value="${i}">${m.title}</option>`).join(''); } }); }
+        function renderMediaList() { const cat = document.getElementById('media-cat').value; const c = document.getElementById('media-list'); c.innerHTML = (!state.media[cat] || state.media[cat].length === 0) ? '<p style="text-align:center; color:#888; margin-top:20px;">No links saved here yet.</p>' : state.media[cat].map((m,i)=>`<div class="list-item"><span>${m.title}</span><div><button onclick="editMediaName('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c2); color:#FFF; border:none; border-radius:5px; margin-right:5px;" title="Edit Name">✎</button><button onclick="remMedia('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c4); color:#FFF; border:none; border-radius:5px;" title="Delete">X</button></div></div>`).join(''); }
+        function updateDrops() { ['learning', 'activities', 'video', 'music', 'exit', 'wbBackgrounds'].forEach(cat => { const s = document.getElementById(cat === 'wbBackgrounds' ? 'wbBackgrounds-select' : `${cat}-select`); if(s && state.media[cat]) { s.innerHTML = `<option value="">-- Choose Item --</option>` + state.media[cat].map((m,i)=>`<option value="${i}">${m.title}</option>`).join(''); } }); }
         function loadMedia(cat, id, isImg=false) { beep(); const v = document.getElementById(cat === 'wbBackgrounds' ? 'wbBackgrounds-select' : `${cat}-select`).value; const el = document.getElementById(id); if(v === "") { if(isImg) el.style.display = 'none'; else el.src = "about:blank"; } else { el.src = state.media[cat][v].url; if(isImg) el.style.display = 'block'; } }
 
         // --- EXPORT/IMPORT ---
         function exportJSON() { beep(); const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); a.download = "config.json"; a.click(); }
-        function importJSON(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = (ev) => { try { const importedState = JSON.parse(ev.target.result); if(importedState && importedState.classes) { state = importedState; alert("Loaded successfully!"); applyCoreSettings(); updateClassDropdowns(); evalRanks(); renderScores(); renderGreetings(); updateDrops(); document.getElementById('dashboard-modal').style.display='none'; } else { alert("Invalid config file."); } } catch(err) { console.error(err); alert("Error loading file."); } }; r.readAsText(f); e.target.value = ''; }
+        function importJSON(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = (ev) => { try { const importedState = JSON.parse(ev.target.result); if(importedState && importedState.classes) { state = importedState; if(!state.scoreThemes) state.scoreThemes = { burger: [], icecream: [], pizza: [], fries: [] }; alert("Loaded successfully!"); applyCoreSettings(); updateClassDropdowns(); evalRanks(); renderScores(); renderGreetings(); updateDrops(); document.getElementById('dashboard-modal').style.display='none'; } else { alert("Invalid config file."); } } catch(err) { console.error(err); alert("Error loading file."); } }; r.readAsText(f); e.target.value = ''; }
     </script>
 </body>
 </html>
