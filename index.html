@@ -135,7 +135,7 @@
         .pz-slice { position: absolute; bottom: 50%; left: 50%; width: 44px; height: 80px; clip-path: polygon(50% 100%, 0 0, 100% 0); background: #FDCB6E; border-top: 12px solid #EE5253; transform-origin: 50% 100%; animation: fadeIn 0.3s ease; }
         
         /* Fries */
-        .fry-box { position: relative; width: 100px; height: 80px; background: #EE5253; border-radius: 5px 5px 20px 20px; border-top: 5px solid #C23616; display:flex; justify-content:center; align-items:center; color:#FFF; font-size:2rem; font-weight:900; z-index: 100; box-shadow: 0 5px 10px rgba(0,0,0,0.4); }
+        .fry-box { position: relative; width: 100px; height: 80px; background: #EE5253; border-radius: 5px 5px 20px 20px; border-top: 5px solid #C23616; display:flex; justify-content:center; align-items:center; color:#FFF; font-size:2.5rem; font-weight:900; z-index: 100; box-shadow: 0 5px 10px rgba(0,0,0,0.4); }
         .fry-stick { position: absolute; width: 14px; height: 70px; background: #FDCB6E; border-radius: 5px; border: 2px solid #E1B12C; animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
         @keyframes dropIn { 0% { transform: translateY(-40px) scale(0); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
@@ -333,7 +333,6 @@
     </div>
 
     <div id="app">
-        <!-- GLOBAL CLOCK -->
         <div id="global-clock">12:00 AM</div>
 
         <button id="fs-global-btn" onclick="toggleGlobalFullscreen()" title="Toggle Global Fullscreen">🖵</button>
@@ -490,7 +489,6 @@
                     <button onclick="togglePseudoFS('video-wrapper')" style="background:var(--c2); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="video-wrapper">
-                    <!-- FLOATING FS CONTROLS -->
                     <div class="fs-controls">
                         <div class="drag-handle-fs">⠿</div>
                         <button class="fs-btn-shared fs-anno" onclick="toggleAnnotation()" title="Draw on Screen">🖍️</button>
@@ -502,7 +500,6 @@
             </div>
         </div>
 
-        <!-- AUTOFIT HEIGHT FOR GREETINGS WIDGET -->
         <div class="widget" id="w-greetings" style="width: 800px; height: auto; min-height: 680px;">
             <div class="widget-header"><span>☀️ Greetings</span><div style="display:flex; gap:10px;"><button style="padding:5px 15px; font-size:1rem;" onclick="resetGreetings()">🔄</button><button class="widget-close" onclick="toggleW('w-greetings')">X</button></div></div>
             <div class="widget-content" style="overflow-y: auto;">
@@ -557,7 +554,6 @@
                     <button onclick="togglePseudoFS('learning-wrapper')" style="background:var(--c2); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="learning-wrapper">
-                    <!-- FLOATING FS CONTROLS -->
                     <div class="fs-controls">
                         <div class="drag-handle-fs">⠿</div>
                         <button class="fs-btn-shared fs-anno" onclick="toggleAnnotation()" title="Draw on Screen">🖍️</button>
@@ -577,7 +573,6 @@
                     <button onclick="togglePseudoFS('activities-wrapper')" style="background:var(--c4); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="activities-wrapper">
-                    <!-- FLOATING FS CONTROLS -->
                     <div class="fs-controls">
                         <div class="drag-handle-fs">⠿</div>
                         <button class="fs-btn-shared fs-anno" onclick="toggleAnnotation()" title="Draw on Screen">🖍️</button>
@@ -597,7 +592,6 @@
                     <button onclick="togglePseudoFS('exit-wrapper')" style="background:var(--c3); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="exit-wrapper">
-                    <!-- FLOATING FS CONTROLS -->
                     <div class="fs-controls">
                         <div class="drag-handle-fs">⠿</div>
                         <button class="fs-btn-shared fs-anno" onclick="toggleAnnotation()" title="Draw on Screen">🖍️</button>
@@ -1269,10 +1263,14 @@
 
                         // Front Container
                         let boxImg = imgs.length > 0 ? imgs[0] : null;
+                        let counterText = score > 0 ? score : '';
                         if(boxImg) {
-                            vis += `<img src="${boxImg.url}" style="position:relative; width:${boxImg.w}px; z-index:100; transform: translate(${boxImg.x}px, ${boxImg.y}px); object-fit:contain;">`;
+                            vis += `<div style="position:relative; z-index:100; width:${boxImg.w}px; transform: translate(${boxImg.x}px, ${boxImg.y}px); display:flex; justify-content:center; align-items:center;">
+                                        <img src="${boxImg.url}" style="width:100%; object-fit:contain;">
+                                        <div style="position:absolute; color:#FFF; font-size:2.5rem; font-weight:900; text-shadow:0 2px 4px rgba(0,0,0,0.6); pointer-events:none;">${counterText}</div>
+                                    </div>`;
                         } else {
-                            vis += `<div class="fry-box">M</div>`;
+                            vis += `<div class="fry-box">${counterText}</div>`;
                         }
 
                         vis += `</div>`;
