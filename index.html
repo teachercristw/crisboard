@@ -105,15 +105,15 @@
         .time-input:disabled { background: transparent; color: var(--c4); opacity: 1; -webkit-text-fill-color: var(--c4);}
 
         /* Scoreboard */
-        #score-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 5px;}
-        .score-card { background: var(--c3); padding: 15px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; border: 4px solid #FFF; position: relative; overflow: hidden;}
+        #score-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 5px; height: 100%;}
+        .score-card { background: var(--c3); padding: 10px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; border: 4px solid #FFF; position: relative; overflow: hidden; min-height: 0;}
         .score-card input { position: relative; z-index: 20; color: #FFF; text-shadow: 0 2px 0 rgba(0,0,0,0.3); text-align: center; border: none; background: transparent; font-size: 1.4rem; font-family: inherit; font-weight: bold; width: 100%; outline: none; padding: 0;}
         .card-del { position: absolute; top: -10px; right: -10px; background: var(--c1); color: #FFF; border-radius: 50%; width: 30px; height: 30px; padding: 0; font-size: 1rem; border: 2px solid #FFF; z-index: 25;}
         
-        .theme-stack { display: flex; flex-direction: column-reverse; align-items: center; min-height: 180px; justify-content: flex-start; margin: 15px 0; width: 100%;}
+        .theme-stack { display: flex; flex-direction: column-reverse; align-items: center; justify-content: flex-start; margin: 0; width: 100%; flex: 1 1 auto; min-height: 0;}
         
         /* CSS Default Ingredients Scaled Up */
-        .ing { position: relative; animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 2px solid rgba(0,0,0,0.15);}
+        .ing { position: relative; animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 2px solid rgba(0,0,0,0.15); max-width: 100%; flex-shrink: 1; min-height: 5px; }
         /* Burger */
         .ing-1 { height: 35px; border-radius: 15px 15px 30px 30px; background: #E6A15C; width: 120px; margin-bottom: -10px; } 
         .ing-2 { height: 18px; border-radius: 8px; background: #78E08F; width: 135px; border-bottom: 3px dashed #38ADA9; margin-bottom: -8px; } 
@@ -128,15 +128,15 @@
         .ing-10 { height: 50px; border-radius: 50px 50px 15px 15px; background: #E6A15C; width: 120px; margin-bottom: 0; } 
         
         /* Ice Cream */
-        .ic-cone { height: 70px; background: #E6A15C; border-radius: 5px 5px 60px 60px; width: 60px; border: 2px solid #D35400; margin-top:10px; }
-        .ic-scoop { height: 60px; border-radius: 50%; width: 80px; margin-bottom: -25px; box-shadow: inset -5px -5px 0 rgba(0,0,0,0.1); border: 2px solid rgba(0,0,0,0.1); }
+        .ic-cone { height: 70px; background: #E6A15C; border-radius: 5px 5px 60px 60px; width: 60px; border: 2px solid #D35400; margin-top:0px; flex-shrink: 0; }
+        .ic-scoop { height: 60px; border-radius: 50%; width: 80px; margin-bottom: -25px; box-shadow: inset -5px -5px 0 rgba(0,0,0,0.1); border: 2px solid rgba(0,0,0,0.1); flex-shrink: 1; min-height: 15px; }
         
         /* Pizza */
-        .pz-slice { position: absolute; bottom: 50%; left: 50%; width: 44px; height: 80px; clip-path: polygon(50% 100%, 0 0, 100% 0); background: #FDCB6E; border-top: 12px solid #EE5253; transform-origin: 50% 100%; animation: fadeIn 0.3s ease; }
+        .pz-slice { position: absolute; bottom: 50%; left: 50%; width: 30%; height: 50%; clip-path: polygon(50% 100%, 0 0, 100% 0); background: #FDCB6E; border-top: 12px solid #EE5253; transform-origin: 50% 100%; animation: fadeIn 0.3s ease; }
         
         /* Fries */
-        .fry-box { position: relative; width: 100px; height: 80px; background: #EE5253; border-radius: 5px 5px 20px 20px; border-top: 5px solid #C23616; display:flex; justify-content:center; align-items:center; color:#FFF; font-size:2.5rem; font-weight:900; z-index: 100; box-shadow: 0 5px 10px rgba(0,0,0,0.4); }
-        .fry-stick { position: absolute; width: 14px; height: 70px; background: #FDCB6E; border-radius: 5px; border: 2px solid #E1B12C; animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .fry-box { position: relative; width: 100%; height: 60%; background: #EE5253; border-radius: 5px 5px 20px 20px; border-top: 5px solid #C23616; display:flex; justify-content:center; align-items:center; color:#FFF; font-size:2.5rem; font-weight:900; z-index: 100; box-shadow: 0 5px 10px rgba(0,0,0,0.4); }
+        .fry-stick { position: absolute; width: 15%; height: 50%; background: #FDCB6E; border-radius: 5px; border: 2px solid #E1B12C; animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
         @keyframes dropIn { 0% { transform: translateY(-40px) scale(0); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
         @keyframes fadeIn { 0% { opacity: 0; transform: translateX(-50%) scale(0.5); } 100% { opacity: 1; transform: translateX(-50%) scale(1); } }
@@ -418,6 +418,7 @@
             <div class="widget-header">
                 <span>🍔 Scoreboard</span>
                 <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">
+                    <button onclick="resetAllScores()" style="padding:5px 10px; font-size:0.9rem; background:var(--c4); color:#FFF; text-transform:none;">Reset</button>
                     <button onclick="addGrp()" style="padding:5px 10px; font-size:0.9rem; text-transform:none;">Add Group</button>
                     <button onclick="setScoreStyle('burger')" style="padding:5px 10px; font-size:0.9rem; background:#E6A15C; color:#FFF; text-transform:none;" title="Goal: 10">🍔 10</button>
                     <button onclick="setScoreStyle('icecream')" style="padding:5px 10px; font-size:0.9rem; background:#FF9FF3; color:#FFF; text-transform:none;" title="Goal: 15">🍦 15</button>
@@ -1141,6 +1142,13 @@
         function restartTimer() { resetTimer(); setTimeout(toggleTimer, 100); }
         
         // --- SCOREBOARD ---
+        function resetAllScores() {
+            beep();
+            state.teams.forEach(t => { t.score = 0; t.time = null; t.rank = null; });
+            evalRanks();
+            renderScores();
+        }
+
         function setScoreStyle(s) { beep(); state.scoreStyle = s; document.getElementById('digital-goal').style.display = s === 'digital' ? 'block' : 'none'; evalRanks(); renderScores(); }
         function updateGoal(v) { beep(); state.goal = Math.max(1, parseInt(v)||10); evalRanks(); renderScores(); }
         function addGrp() { state.teams.push({name:`GROUP ${state.teams.length+1}`, score:0, rank:null, time:null}); renderScores(); beep(); }
@@ -1173,8 +1181,11 @@
                 return `<div class="pz-slice" style="transform: translateX(-50%) rotate(${rot}deg); z-index:${j}"></div>`;
             }
             if(theme === 'fries') {
-                if(j === 0) return ''; // Handled via Front box
-                return ''; // Handled via loop logic
+                if(j === 0) return ''; 
+                let randX = Math.sin(j * 123) * 40; 
+                let randRot = Math.sin(j * 321) * 25; 
+                let randY = Math.abs(Math.cos(j * 222) * 20); 
+                return `<div class="fry-stick" style="bottom:${40 + randY}%; left:50%; transform-origin: bottom center; transform: translateX(-50%) translateX(${randX}%) rotate(${randRot}deg); z-index:${10 + j}"></div>`;
             }
             return '';
         }
@@ -1205,7 +1216,7 @@
 
                 let vis = '';
                 if(state.scoreStyle === 'digital') {
-                    vis = `<div style="flex-grow:1; display:flex; justify-content:center; align-items:center;"><span style="font-size:5.5rem; font-weight:bold; color:var(--c2); text-shadow: 0 4px 0 rgba(0,0,0,0.2);">${t.score}</span></div>`;
+                    vis = `<div style="flex-grow:1; display:flex; justify-content:center; align-items:center; width:100%; min-height:0;"><span style="font-size:clamp(3rem, 15vh, 5.5rem); font-weight:bold; color:var(--c2); text-shadow: 0 4px 0 rgba(0,0,0,0.2);">${t.score}</span></div>`;
                 } else {
                     const theme = state.scoreStyle;
                     const imgs = state.scoreThemes[theme] || [];
@@ -1214,11 +1225,11 @@
 
                     // --- LAYOUT ENGINE: STACK (Burger & Ice Cream) ---
                     if(theme === 'burger' || theme === 'icecream') {
-                        vis = `<div class="theme-stack">`;
+                        vis = `<div class="theme-stack" style="width:100%; display:flex; flex-direction:column-reverse; align-items:center; justify-content:flex-start; flex: 1 1 auto; min-height: 0;">`;
                         for(let j=0; j<score; j++) {
                             let m = imgs.length > 0 ? imgs[j % imgs.length] : null;
                             if(m) {
-                                vis += `<img src="${m.url}" style="width:${m.w}px; margin-bottom:${m.y}px; margin-left:${m.x}px; position:relative; z-index:${j}; filter:drop-shadow(0 4px 4px rgba(0,0,0,0.4)); object-fit:contain; animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">`;
+                                vis += `<img src="${m.url}" style="width:${m.w}px; max-width:100%; max-height:25%; object-fit:contain; flex-shrink:1; margin-bottom:${m.y}px; margin-left:${m.x}px; position:relative; z-index:${j}; filter:drop-shadow(0 4px 4px rgba(0,0,0,0.4)); animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">`;
                             } else {
                                 vis += getFallbackCSS(theme, j);
                             }
@@ -1228,13 +1239,12 @@
                     
                     // --- LAYOUT ENGINE: CIRCULAR (Pizza) ---
                     else if (theme === 'pizza') {
-                        vis = `<div style="position:relative; width:160px; height:160px; margin: 15px auto;">`;
+                        vis = `<div style="position:relative; width:100%; max-width:160px; aspect-ratio:1; margin: auto;">`;
                         for(let j=0; j<score; j++) {
                             let m = imgs.length > 0 ? imgs[j % imgs.length] : null;
                             let rot = j * 30; 
                             if(m) {
-                                // Hardcoded Auto-fit boundaries for Pizza slices so they are always perfect
-                                vis += `<img src="${m.url}" style="position:absolute; bottom:50%; left:50%; width: 50px; height: 80px; transform-origin: 50% 100%; transform: translateX(-50%) rotate(${rot}deg); z-index:${j}; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3)); object-fit:contain; animation: fadeIn 0.3s ease;">`;
+                                vis += `<img src="${m.url}" style="position:absolute; bottom:50%; left:50%; width: 35%; height: 50%; transform-origin: 50% 100%; transform: translateX(-50%) rotate(${rot}deg); z-index:${j}; filter:drop-shadow(0 2px 2px rgba(0,0,0,0.3)); object-fit:contain; animation: fadeIn 0.3s ease;">`;
                             } else {
                                 vis += getFallbackCSS(theme, j);
                             }
@@ -1244,20 +1254,20 @@
                     
                     // --- LAYOUT ENGINE: CONTAINER FILL (Fries) ---
                     else if (theme === 'fries') {
-                        vis = `<div style="position:relative; width:120px; height:170px; margin: 10px auto; display:flex; justify-content:center; align-items:flex-end;">`;
+                        vis = `<div style="position:relative; width:100%; max-width:120px; aspect-ratio: 0.8; margin: auto 0 0 0; display:flex; justify-content:center; align-items:flex-end;">`;
                         
-                        // Scatter Fries (behind container)
+                        // Scatter Fries
                         for(let j=1; j<=score; j++) { 
                             let m = imgs.length > 1 ? imgs[1] : (imgs.length === 1 ? imgs[0] : null); 
                             
-                            let randX = ((j * 17) % 60) - 30; // Pseudo-random scatter X (-30 to 30)
-                            let randRot = ((j * 23) % 40) - 20; // Pseudo-random rotate (-20 to 20)
-                            let randY = ((j * 11) % 30); // Vertical stagger
+                            let randX = Math.sin(j * 123) * 40; 
+                            let randRot = Math.sin(j * 321) * 25; 
+                            let randY = Math.abs(Math.cos(j * 222) * 20); 
 
                             if(m && imgs.length > 1) { 
-                                vis += `<img src="${m.url}" style="position:absolute; bottom:${50 + randY}px; width:${m.w}px; transform: translateX(${randX + m.x}px) rotate(${randRot}deg) translateY(${m.y}px); z-index:${10 + j}; object-fit:contain; animation: dropIn 0.3s ease;">`;
+                                vis += `<img src="${m.url}" style="position:absolute; bottom:${40 + randY}%; left:50%; width:${m.w}px; max-width: 40%; transform-origin: bottom center; transform: translateX(-50%) translateX(${randX}%) rotate(${randRot}deg); z-index:${10 + j}; object-fit:contain; animation: dropIn 0.3s ease;">`;
                             } else {
-                                vis += `<div class="fry-stick" style="bottom:${50 + randY}px; transform: translateX(${randX}px) rotate(${randRot}deg); z-index:${10 + j}"></div>`;
+                                vis += getFallbackCSS(theme, j);
                             }
                         }
 
@@ -1265,12 +1275,12 @@
                         let boxImg = imgs.length > 0 ? imgs[0] : null;
                         let counterText = score > 0 ? score : '';
                         if(boxImg) {
-                            vis += `<div style="position:relative; z-index:100; width:${boxImg.w}px; transform: translate(${boxImg.x}px, ${boxImg.y}px); display:flex; justify-content:center; align-items:center;">
+                            vis += `<div style="position:relative; z-index:100; width:100%; max-width:${boxImg.w}px; transform: translate(${boxImg.x}px, ${boxImg.y}px); display:flex; justify-content:center; align-items:center;">
                                         <img src="${boxImg.url}" style="width:100%; object-fit:contain;">
                                         <div style="position:absolute; color:#FFF; font-size:2.5rem; font-weight:900; text-shadow:0 2px 4px rgba(0,0,0,0.6); pointer-events:none;">${counterText}</div>
                                     </div>`;
                         } else {
-                            vis += `<div class="fry-box">${counterText}</div>`;
+                            vis += `<div class="fry-box" style="width:100%; height:60%; z-index:100; position:relative;">${counterText}</div>`;
                         }
 
                         vis += `</div>`;
@@ -1282,7 +1292,16 @@
                     let medals = ["🥇 1st", "🥈 2nd", "🥉 3rd"]; let mText = t.rank <= 3 ? medals[t.rank-1] : `🏅 ${t.rank}th`;
                     rankOverlay = `<div style="position:absolute; top:45px; right:10px; background:rgba(0,0,0,0.85); border-radius:15px; padding:10px; display:flex; justify-content:center; align-items:center; z-index:1000; flex-direction:column; animation: dropIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid #F5AF19; box-shadow: 0 4px 10px rgba(0,0,0,0.5); min-width: 80px;"><div style="display:flex; align-items:center; gap:5px;"><span style="font-size:2rem;">${mText.split(' ')[0]}</span><span style="font-size:1.4rem; color:#FFF; font-weight:bold;">${mText.split(' ')[1]}</span></div><button onclick="mS(${i}, -1)" style="margin-top:5px; font-size:0.85rem; padding:3px 10px; background:var(--c4); color:#FFF; border:2px solid #FFF; border-radius: 8px;">Undo</button></div>`;
                 }
-                card.innerHTML = `${rankOverlay}<button class="card-del" onclick="state.teams.splice(${i},1); renderScores();">X</button><input type="text" value="${t.name}" onchange="state.teams[${i}].name=this.value">${vis}<div style="display:flex; gap:10px; width:100%; margin-top:10px; z-index:200;"><button onclick="mS(${i},-1)" style="flex:1; background:var(--c4); color:#FFF; border:none;">-</button><button onclick="mS(${i},1)" style="flex:1; background:var(--c2); border:none;">+</button></div>`; 
+                
+                card.innerHTML = `${rankOverlay}<button class="card-del" onclick="state.teams.splice(${i},1); renderScores();">X</button>
+                    <input type="text" value="${t.name}" onchange="state.teams[${i}].name=this.value" style="flex:0 0 auto;">
+                    <div style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; width: 100%; min-height: 0; padding-bottom: 5px;">
+                        ${vis}
+                    </div>
+                    <div style="display:flex; gap:10px; width:100%; margin-top:auto; z-index:200;">
+                        <button onclick="mS(${i},-1)" style="flex:1; background:var(--c4); color:#FFF; border:none; padding:10px; border-radius:10px; font-weight:bold; cursor:pointer;">-</button>
+                        <button onclick="mS(${i},1)" style="flex:1; background:var(--c2); border:none; padding:10px; border-radius:10px; font-weight:bold; cursor:pointer;">+</button>
+                    </div>`; 
             }); 
         }
         
