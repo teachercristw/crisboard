@@ -291,14 +291,23 @@
 
         /* Settings Dashboard */
         #dashboard-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px);}
-        .dash-content { background: #FFF; padding: 30px; border-radius: 20px; width: 90%; max-width: 900px; max-height: 90vh; overflow-y: auto; color: #2D3436; border: 6px solid var(--c1);}
-        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media(max-width: 768px) { .dash-grid { grid-template-columns: 1fr; } }
+        .dash-content { background: #FFF; padding: 30px; border-radius: 20px; width: 90%; max-width: 1000px; height: 90vh; display: flex; flex-direction: column; color: #2D3436; border: 6px solid var(--c1);}
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+        @media(max-width: 768px) { .dash-grid { grid-template-columns: 1fr; overflow-y: auto; } }
         .dash-section { margin-bottom: 15px; background: #F9F9F9; padding: 15px; border-radius: 15px; border: 3px solid #EEE; }
-        .list-item { display: flex; justify-content: space-between; align-items: center; background: #FFF; padding: 10px; border-radius: 10px; margin-bottom: 5px; border: 2px solid #EEE;}
+        
+        /* Media List Accordion & Inline Edit Styles */
+        .folder-header { cursor: pointer; background: #EBF4FA; padding: 10px 15px; border-radius: 8px; margin-bottom: 5px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border: 2px solid #BBDEFB; color: #1565C0; transition: background 0.2s;}
+        .folder-header:hover { background: #BBDEFB; }
+        .list-item { display: flex; justify-content: space-between; align-items: center; background: #FFF; padding: 8px 12px; border-radius: 8px; margin-bottom: 5px; border: 2px solid #EEE; transition: border-color 0.2s;}
+        .list-item:hover { border-color: #BBDEFB; }
+        .inline-edit-form { display: flex; flex-direction: column; gap: 8px; background: #FFF9C4; padding: 12px; border-radius: 10px; border: 2px dashed #FBC02D; margin-bottom: 5px; }
     </style>
 </head>
 <body>
+
+    <!-- DATALIST FOR REUSABLE FOLDERS -->
+    <datalist id="folder-datalist"></datalist>
 
     <canvas id="anno-canvas"></canvas>
     <canvas id="anno-draft"></canvas>
@@ -633,7 +642,7 @@
                 </div>
                 
                 <div class="dash-grid">
-                    <div>
+                    <div style="overflow-y:auto; padding-right:10px;">
                         <div class="dash-section">
                             <h3>App Background</h3>
                             <input type="color" id="dash-bg-color" style="height:40px; padding:0; border:none; cursor:pointer;">
@@ -683,16 +692,16 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div style="display:flex; flex-direction:column; height:100%;">
                         <div class="dash-section" style="background:#EBF4FA;">
                             <h3>Media Library</h3>
                             
                             <div style="background:#FFF; padding:10px; border-radius:10px; margin-bottom:15px; border:2px solid #2196F3;">
                                 <h4 style="margin:0 0 5px 0; color:#1976D2;">How to add Canva / OneDrive PPTs:</h4>
-                                <p style="font-size:0.8rem; color:#444; margin:0;">In OneDrive or Canva, click <strong>Share > Embed</strong>. You can safely paste the <strong>ENTIRE code</strong> into the URL box below! The app will automatically clean it up for you.</p>
+                                <p style="font-size:0.8rem; color:#444; margin:0;">In OneDrive or Canva, click <strong>Share > Embed</strong>. You can safely paste the <strong>ENTIRE code</strong> into the URL box below!</p>
                             </div>
                             
-                            <select id="media-cat" style="background:var(--c2); font-weight:bold; margin-bottom:15px;" onchange="renderMediaList()">
+                            <select id="media-cat" style="background:var(--c2); font-weight:bold; margin-bottom:15px;" onchange="handleMediaCatChange()">
                                 <option value="wbBackgrounds">🖍️ Category: Whiteboard BGs</option>
                                 <option value="learning">📚 Category: Learning (Slides/Web)</option>
                                 <option value="activities">🕹️ Category: Fun Activities</option>
@@ -705,7 +714,7 @@
                             <input type="text" id="m-title" placeholder="e.g., G1 Storytelling">
                             
                             <label style="font-size: 0.9rem; color: #333; font-weight: bold;">2. Folder (Optional):</label>
-                            <input type="text" id="m-folder" placeholder="e.g., Unit 1">
+                            <input type="text" id="m-folder" list="folder-datalist" placeholder="e.g., Unit 1">
                             
                             <label style="font-size: 0.9rem; color: #333; font-weight: bold;">3. Paste your link or code here:</label>
                             <input type="text" id="m-url" placeholder="Paste link or full <iframe> code...">
@@ -717,8 +726,9 @@
                         </div>
 
                         <h4 style="margin:0 0 5px 0; color:#333;">Your Saved Media:</h4>
-                        <div id="media-list" style="background:#FFF; padding:10px; border-radius:10px; border:2px solid #EEE; min-height:150px; max-height:250px; overflow-y:auto;">
-                            </div>
+                        <div id="media-list" style="background:#FFF; padding:10px; border-radius:10px; border:2px solid #EEE; flex:1; min-height: 250px; overflow-y:auto; display:flex; flex-direction:column; gap:5px;">
+                            <!-- Media List populated by JS -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -874,7 +884,7 @@
             setTimeout(() => {
                 document.getElementById('start-screen').style.display = 'none'; 
                 document.getElementById('app').style.display = 'block'; 
-                initCanvas(); renderScores(); updateClassDropdowns(); resetPicker(); renderGreetings(); document.getElementById('media-cat').addEventListener('change', renderMediaList); initIframeScalers(); 
+                initCanvas(); renderScores(); updateClassDropdowns(); resetPicker(); renderGreetings(); initIframeScalers(); 
             }, 500);
         }
         function goHome() { beep(); document.getElementById('app').style.display = 'none'; document.getElementById('start-screen').style.display = 'flex'; document.getElementById('start-screen').style.opacity = '1'; document.querySelectorAll('.widget').forEach(w => w.style.display = 'none'); }
@@ -1544,7 +1554,7 @@
             document.getElementById('dash-bg-color').value = state.appBgColor; 
             document.getElementById('dash-feelings').value = state.feelings.map(f=>`${f.emoji},${f.word}`).join('\n'); 
             updateClassDropdowns(); 
-            renderMediaList(); 
+            handleMediaCatChange(); 
             renderScoreThemeList();
             document.getElementById('dashboard-modal').style.display = 'flex'; 
         }
@@ -1613,7 +1623,7 @@
             `).join('');
         }
 
-        // --- MEDIA URL FORMATTER ---
+        // --- MEDIA URL FORMATTER & HANDLER ---
         function fmtURL(url, cat) { 
             if(!url) return ""; let f = url.trim(); 
             if(f.toLowerCase().includes("<iframe") && f.includes("src=")) { let match = f.match(/src=["'](.*?)["']/); if(match && match[1]) { f = match[1].replace(/&amp;/g, '&'); } }
@@ -1627,6 +1637,33 @@
             else if(f.includes("drive.google.com/file/d/")) { let id = f.split("file/d/")[1].split("/")[0]; f = (cat === 'music') ? url : "https://drive.google.com/file/d/" + id + "/preview"; } 
             else if(f.includes("drive.google.com/open?id=")) { let id = f.split("id=")[1].split("&")[0]; f = (cat === 'music') ? url : "https://drive.google.com/file/d/" + id + "/preview"; }
             return f; 
+        }
+
+        // ACCORDION STATE
+        let expandedFolders = {};
+        let currentlyEditingIndex = null;
+
+        function handleMediaCatChange() {
+            expandedFolders = {};
+            currentlyEditingIndex = null;
+            renderMediaList();
+        }
+
+        function toggleFolder(fName) {
+            expandedFolders[fName] = !expandedFolders[fName];
+            renderMediaList();
+        }
+
+        function updateFolderDatalist(cat) {
+            const list = document.getElementById('folder-datalist');
+            if(!list) return;
+            let folders = new Set();
+            if(state.media[cat]) {
+                state.media[cat].forEach(m => {
+                    if(m.folder && m.folder.trim() !== "") folders.add(m.folder.trim());
+                });
+            }
+            list.innerHTML = Array.from(folders).map(f => `<option value="${f}">`).join('');
         }
         
         function addMedia() { 
@@ -1644,16 +1681,19 @@
                 const r = new FileReader(); 
                 r.onload = (e) => { 
                     state.media[cat].push({ title: t, url: e.target.result, folder: fD }); 
+                    if(fD) expandedFolders[fD] = true; else expandedFolders["Ungrouped"] = true;
                     finishAdd(); 
                 }; 
                 r.readAsDataURL(fI.files[0]); 
             } else if(rU) { 
                 state.media[cat].push({ title: t, url: fmtURL(rU, cat), folder: fD }); 
+                if(fD) expandedFolders[fD] = true; else expandedFolders["Ungrouped"] = true;
                 finishAdd(); 
             } else { 
                 alert("Provide URL or file."); 
             } 
         }
+
         function finishAdd() { 
             document.getElementById('m-title').value = ''; 
             document.getElementById('m-folder').value = ''; 
@@ -1663,29 +1703,39 @@
             updateDrops(); 
         }
         
-        function editMediaItem(cat, i) {
+        function editMediaInline(i) {
             beep();
-            let m = state.media[cat][i];
-            let newName = prompt("Edit media name:", m.title);
-            if (newName !== null && newName.trim() !== "") {
-                let newFolder = prompt("Edit folder name (leave blank for no folder):", m.folder || "");
-                if (newFolder !== null) {
-                    m.folder = newFolder.trim();
-                }
-                
-                if (m.url && !m.url.startsWith('data:')) {
-                    let newUrl = prompt("Edit link or embed code (leave as is if no change):", m.url);
-                    if (newUrl !== null && newUrl.trim() !== "") {
-                        m.url = fmtURL(newUrl.trim(), cat);
-                    }
-                } else if (m.url && m.url.startsWith('data:')) {
-                    alert("Note: This is a locally uploaded file. The link cannot be edited directly.");
-                }
+            currentlyEditingIndex = i;
+            renderMediaList();
+        }
 
-                m.title = newName.trim();
-                renderMediaList();
-                updateDrops();
+        function cancelEditInline() {
+            beep();
+            currentlyEditingIndex = null;
+            renderMediaList();
+        }
+
+        function saveMediaInline(cat, i) {
+            beep();
+            let newTitle = document.getElementById(`edit-title-${i}`).value.trim();
+            let newFolder = document.getElementById(`edit-folder-${i}`).value.trim();
+            let urlEl = document.getElementById(`edit-url-${i}`);
+            
+            let m = state.media[cat][i];
+            
+            if(newTitle) m.title = newTitle;
+            m.folder = newFolder;
+            
+            if(urlEl && urlEl.value.trim() !== "") {
+                m.url = fmtURL(urlEl.value.trim(), cat);
             }
+            
+            if(newFolder !== "") expandedFolders[newFolder] = true;
+            else expandedFolders["Ungrouped"] = true;
+
+            currentlyEditingIndex = null;
+            renderMediaList();
+            updateDrops();
         }
         
         function remMedia(cat, i) { 
@@ -1698,16 +1748,69 @@
         function renderMediaList() { 
             const cat = document.getElementById('media-cat').value; 
             const c = document.getElementById('media-list'); 
-            c.innerHTML = (!state.media[cat] || state.media[cat].length === 0) ? 
-                '<p style="text-align:center; color:#888; margin-top:20px;">No links saved here yet.</p>' : 
-                state.media[cat].map((m,i)=>`
-                <div class="list-item">
-                    <span>${m.folder ? `<strong style="color:var(--c1);">[${m.folder}]</strong> ` : ''}${m.title}</span>
-                    <div>
-                        <button onclick="editMediaItem('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c2); color:#FFF; border:none; border-radius:5px; margin-right:5px;" title="Edit Item">✎</button>
-                        <button onclick="remMedia('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c4); color:#FFF; border:none; border-radius:5px;" title="Delete">X</button>
-                    </div>
-                </div>`).join(''); 
+            
+            updateFolderDatalist(cat);
+
+            if (!state.media[cat] || state.media[cat].length === 0) {
+                c.innerHTML = '<p style="text-align:center; color:#888; margin-top:20px;">No links saved here yet.</p>';
+                return;
+            }
+
+            let grouped = {};
+            state.media[cat].forEach((m, i) => {
+                let f = (m.folder && m.folder.trim() !== "") ? m.folder.trim() : "Ungrouped";
+                if(!grouped[f]) grouped[f] = [];
+                grouped[f].push({ m, i });
+            });
+
+            let html = '';
+            for (let f in grouped) {
+                let isExpanded = expandedFolders[f] || false;
+                html += `<div class="folder-header" onclick="toggleFolder('${f.replace(/'/g, "\\'")}')">
+                            <span>📁 ${f} (${grouped[f].length})</span>
+                            <span style="color:#1976D2;">${isExpanded ? '▼' : '▶'}</span>
+                         </div>`;
+                
+                if (isExpanded) {
+                    html += `<div class="folder-content" style="padding-left:10px; margin-bottom:15px; border-left:2px solid #BBDEFB; margin-left:5px;">`;
+                    grouped[f].forEach(item => {
+                        let i = item.i;
+                        let m = item.m;
+                        
+                        if (currentlyEditingIndex === i) {
+                            html += `
+                            <div class="inline-edit-form">
+                                <label style="font-size:0.8rem; font-weight:bold; color:#555; margin-bottom:-5px;">Title:</label>
+                                <input type="text" id="edit-title-${i}" value="${m.title.replace(/"/g, '&quot;')}" placeholder="Title" style="margin:0; padding:8px; width:100%; box-sizing:border-box;">
+                                
+                                <label style="font-size:0.8rem; font-weight:bold; color:#555; margin-bottom:-5px; margin-top:5px;">Folder:</label>
+                                <input type="text" id="edit-folder-${i}" value="${(m.folder || '').replace(/"/g, '&quot;')}" list="folder-datalist" placeholder="Folder" style="margin:0; padding:8px; width:100%; box-sizing:border-box;">
+                                
+                                <label style="font-size:0.8rem; font-weight:bold; color:#555; margin-bottom:-5px; margin-top:5px;">Link / Code:</label>
+                                ${m.url && !m.url.startsWith('data:') 
+                                    ? `<input type="text" id="edit-url-${i}" value="${m.url.replace(/"/g, '&quot;')}" placeholder="URL" style="margin:0; padding:8px; width:100%; box-sizing:border-box;">` 
+                                    : `<p style="font-size:0.8rem; color:#d32f2f; margin:0; background:#fff; padding:5px; border-radius:5px;">[Local Uploaded File - URL Cannot Be Edited]</p>`}
+                                
+                                <div style="display:flex; gap:8px; margin-top:10px;">
+                                    <button onclick="saveMediaInline('${cat}', ${i})" style="flex:1; background:var(--c2); color:#FFF; font-size:0.9rem; padding:8px; text-transform:none; border:none; box-shadow:0 3px 0 rgba(0,0,0,0.1);">Save Changes</button>
+                                    <button onclick="cancelEditInline()" style="flex:1; background:#AAA; color:#FFF; font-size:0.9rem; padding:8px; text-transform:none; border:none; box-shadow:0 3px 0 rgba(0,0,0,0.1);">Cancel</button>
+                                </div>
+                            </div>`;
+                        } else {
+                            html += `
+                            <div class="list-item">
+                                <span style="font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px;" title="${m.title.replace(/"/g, '&quot;')}">${m.title}</span>
+                                <div style="display:flex; gap:5px; flex-shrink:0;">
+                                    <button onclick="editMediaInline(${i})" style="padding:4px 10px; font-size:0.9rem; background:var(--c2); color:#FFF; border:none; border-radius:5px; box-shadow:0 2px 0 rgba(0,0,0,0.1);" title="Edit">✎</button>
+                                    <button onclick="remMedia('${cat}', ${i})" style="padding:4px 10px; font-size:0.9rem; background:var(--c4); color:#FFF; border:none; border-radius:5px; box-shadow:0 2px 0 rgba(0,0,0,0.1);" title="Delete">X</button>
+                                </div>
+                            </div>`;
+                        }
+                    });
+                    html += `</div>`;
+                }
+            }
+            c.innerHTML = html;
         }
         
         function updateDrops() { 
