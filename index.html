@@ -306,7 +306,6 @@
 </head>
 <body>
 
-    <!-- DATALIST FOR REUSABLE FOLDERS -->
     <datalist id="folder-datalist"></datalist>
 
     <canvas id="anno-canvas"></canvas>
@@ -375,6 +374,22 @@
                 <button style="width:100%; margin-bottom:10px; background:linear-gradient(90deg, #81C784, #AED581); color:#FFF; border:none;" onclick="applyPalette('sanxing')">Nature</button>
                 <button style="width:100%; margin-bottom:10px; background:linear-gradient(90deg, #5F27CD, #FF9FF3); color:#FFF; border:none;" onclick="applyPalette('neon')">Neon Sparks</button>
                 <button style="width:100%; margin-bottom:10px; background:linear-gradient(90deg, #FFB6B9, #C8E3D4); color:#FFF; border:none;" onclick="applyPalette('pastel')">Soft Pastel</button>
+                
+                <hr style="border: 2px solid #EEE; margin: 10px 0;">
+                <label style="font-size:0.9rem; font-weight:bold; color:var(--c1);">🌍 Country Flag Themes:</label>
+                <select onchange="if(this.value) applyPalette(this.value)" style="margin-bottom:10px; font-size:1rem; border:2px solid var(--c1);">
+                    <option value="">-- Choose Country --</option>
+                    <option value="flag_us">🇺🇸 United States</option>
+                    <option value="flag_uk">🇬🇧 United Kingdom</option>
+                    <option value="flag_ca">🇨🇦 Canada</option>
+                    <option value="flag_au">🇦🇺 Australia</option>
+                    <option value="flag_nz">🇳🇿 New Zealand</option>
+                    <option value="flag_ie">🇮🇪 Ireland</option>
+                    <option value="flag_za">🇿🇦 South Africa</option>
+                    <option value="flag_ph">🇵🇭 Philippines</option>
+                    <option value="flag_tw">🇹🇼 Taiwan</option>
+                </select>
+
                 <hr style="border: 2px solid #EEE; margin: 10px 0;">
                 <label style="font-size:0.9rem;">Custom Background Image:</label>
                 <input type="file" accept="image/*" onchange="handleUpload(event, 'appBgImage', true)" style="margin-bottom:10px;">
@@ -614,7 +629,6 @@
             </div>
         </div>
 
-        <!-- NEW criSTORY WIDGET -->
         <div class="widget" id="w-cristory" style="width: 700px; height: 500px;">
             <div class="widget-header"><span style="background:#8E44AD; padding:5px 15px; border-radius:15px; color:#FFF;">📖 criSTORY E-Library</span><button class="widget-close" onclick="toggleW('w-cristory')">X</button></div>
             <div class="widget-content">
@@ -727,8 +741,7 @@
 
                         <h4 style="margin:0 0 5px 0; color:#333;">Your Saved Media:</h4>
                         <div id="media-list" style="background:#FFF; padding:10px; border-radius:10px; border:2px solid #EEE; max-height:450px; overflow-y:auto; display:flex; flex-direction:column; gap:5px;">
-                            <!-- Media List populated by JS -->
-                        </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -793,7 +806,17 @@
             space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg' },
             sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg' },
             neon: { bg: '#1A1A2E', c1: '#5F27CD', c2: '#FECA57', c3: '#1DD1A1', c4: '#FF9FF3', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/3.jpg' },
-            pastel: { bg: '#B5EAEA', c1: '#FFB6B9', c2: '#FFE082', c3: '#C8E3D4', c4: '#D1C4E9', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/4.jpg' }
+            pastel: { bg: '#B5EAEA', c1: '#FFB6B9', c2: '#FFE082', c3: '#C8E3D4', c4: '#D1C4E9', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/4.jpg' },
+            // NEW COUNTRY FLAG PALETTES ADDED HERE
+            flag_us: { bg: '#0A3161', c1: '#B31942', c2: '#FFFFFF', c3: '#0A3161', c4: '#B31942', img: 'https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg' },
+            flag_uk: { bg: '#012169', c1: '#C8102E', c2: '#FFFFFF', c3: '#012169', c4: '#C8102E', img: 'https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg' },
+            flag_ca: { bg: '#FF0000', c1: '#D52B1E', c2: '#FFFFFF', c3: '#FF0000', c4: '#D52B1E', img: 'https://upload.wikimedia.org/wikipedia/commons/c/cf/Flag_of_Canada.svg' },
+            flag_au: { bg: '#00008B', c1: '#FF0000', c2: '#FFFFFF', c3: '#FFCD00', c4: '#008000', img: 'https://upload.wikimedia.org/wikipedia/commons/b/b9/Flag_of_Australia.svg' },
+            flag_nz: { bg: '#00247D', c1: '#CC142B', c2: '#FFFFFF', c3: '#000000', c4: '#CC142B', img: 'https://upload.wikimedia.org/wikipedia/commons/3/3e/Flag_of_New_Zealand.svg' },
+            flag_ie: { bg: '#169B62', c1: '#FFFFFF', c2: '#FF883E', c3: '#169B62', c4: '#FF883E', img: 'https://upload.wikimedia.org/wikipedia/commons/4/45/Flag_of_Ireland.svg' },
+            flag_za: { bg: '#007749', c1: '#E31837', c2: '#FFB81C', c3: '#001489', c4: '#000000', img: 'https://upload.wikimedia.org/wikipedia/commons/a/af/Flag_of_South_Africa.svg' },
+            flag_ph: { bg: '#0038A8', c1: '#CE1126', c2: '#FCD116', c3: '#FFFFFF', c4: '#0038A8', img: 'https://upload.wikimedia.org/wikipedia/commons/9/99/Flag_of_the_Philippines.svg' },
+            flag_tw: { bg: '#FE0000', c1: '#000095', c2: '#FFFFFF', c3: '#FE0000', c4: '#000095', img: 'https://upload.wikimedia.org/wikipedia/commons/7/72/Flag_of_the_Republic_of_China.svg' }
         };
 
         const themeGoals = { burger: 10, icecream: 15, pizza: 12, fries: 20 };
@@ -945,7 +968,12 @@
 
         function applyPalette(name) { 
             beep(); const p = palettes[name]; 
-            document.documentElement.style.setProperty('--bg', p.bg); document.documentElement.style.setProperty('--c1', p.c1); document.documentElement.style.setProperty('--c2', p.c2); document.documentElement.style.setProperty('--c3', p.c3); document.documentElement.style.setProperty('--c4', p.c4); document.documentElement.style.setProperty('--text', (name==='space'||name==='neon')?'#FFF':'#2D3436'); 
+            document.documentElement.style.setProperty('--bg', p.bg); 
+            document.documentElement.style.setProperty('--c1', p.c1); 
+            document.documentElement.style.setProperty('--c2', p.c2); 
+            document.documentElement.style.setProperty('--c3', p.c3); 
+            document.documentElement.style.setProperty('--c4', p.c4); 
+            document.documentElement.style.setProperty('--text', (name==='space'||name==='neon'||name.startsWith('flag_'))?'#FFF':'#2D3436'); 
             state.appBgColor = p.bg; document.getElementById('dash-bg-color').value = p.bg; state.appBgImage = p.img; applyCoreSettings();
         }
         function handleUpload(e, key, apply) { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onload = (ev) => { state[key] = ev.target.result; alert("Loaded!"); if(apply) applyCoreSettings(); }; r.readAsDataURL(f); } }
