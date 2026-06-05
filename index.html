@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Sanxing English Village Interactive Whiteboard</title>
 
-    <!-- Preload core images -->
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg" as="image">
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg" as="image">
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/3.jpg" as="image">
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/4.jpg" as="image">
 
-    <!-- Kid-Friendly Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@700&family=Boogaloo&family=Bubblegum+Sans&family=Chewy&family=Fredoka+One&family=Patrick+Hand&family=Quicksand:wght@700&family=Short+Stack&display=swap" rel="stylesheet">
 
     <style>
@@ -367,14 +365,13 @@
 
         <div id="bottom-bar">
             <button class="bottom-btn" style="background:var(--c1); color:#FFF;" onclick="toggleW('w-greetings')">☀️ Greetings</button>
-            <button class="bottom-btn" style="background:var(--c2);" onclick="toggleW('w-learning')">📚 Learning</button>
+            <button class="bottom-btn" style="background:var(--c2); color:#222; border: 2px solid #222;" onclick="toggleW('w-learning')">📚 Learning</button>
             <button class="bottom-btn" style="background:var(--c4); color:#FFF;" onclick="toggleW('w-activities')">🕹️ Fun Activities</button>
-            <button class="bottom-btn" style="background:var(--c3); color:#FFF;" onclick="toggleW('w-exit')">🚪 Exit Ticket</button>
+            <button class="bottom-btn" style="background:#2D3436; color:#FFF;" onclick="toggleW('w-exit')">🚪 Exit Ticket</button>
             
-            <!-- Kept exactly 'criSTORY' by overriding text-transform -->
-            <button class="bottom-btn" style="background:var(--c4); color:#FFF; text-transform:none;" onclick="toggleW('w-cristory')">📖 criSTORY</button>
+            <button class="bottom-btn" style="background:var(--c3); color:#FFF; text-transform:none;" onclick="toggleW('w-cristory')">📖 criSTORY</button>
             
-            <button class="bottom-btn" style="background:var(--c1); color:#FFF;" onclick="openDashboard()">⚙️ Settings</button>
+            <button class="bottom-btn" style="background:var(--c2); color:#222; border: 2px solid #222;" onclick="openDashboard()">⚙️ Settings</button>
         </div>
 
         <div class="widget" id="w-theme" style="top: 160px; right: 20px; left: auto; width: 300px;">
@@ -522,7 +519,7 @@
             <div class="widget-content">
                 <div style="display:flex; gap:10px; width:100%; margin-bottom:10px;">
                     <select id="video-select" onchange="loadMedia('video', 'video-iframe')" style="margin:0; flex:1;"></select>
-                    <button onclick="togglePseudoFS('video-wrapper')" style="background:var(--c2); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
+                    <button onclick="togglePseudoFS('video-wrapper')" style="background:var(--c2); color:#222; border:2px solid #222; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="video-wrapper">
                     <div class="fs-controls">
@@ -587,7 +584,7 @@
             <div class="widget-content">
                 <div style="display:flex; gap:10px; width:100%; margin-bottom:10px;">
                     <select id="learning-select" onchange="loadMedia('learning', 'learning-iframe')" style="margin:0; flex:1;"></select>
-                    <button onclick="togglePseudoFS('learning-wrapper')" style="background:var(--c2); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
+                    <button onclick="togglePseudoFS('learning-wrapper')" style="background:var(--c2); color:#222; border:2px solid #222; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="learning-wrapper">
                     <div class="fs-controls">
@@ -639,7 +636,6 @@
             </div>
         </div>
 
-        <!-- criSTORY WIDGET (Kept exact casing by overriding text-transform) -->
         <div class="widget" id="w-cristory" style="width: 700px; height: 500px;">
             <div class="widget-header"><span style="background:var(--c4); padding:5px 15px; border-radius:15px; color:#FFF; text-transform:none;">📖 criSTORY E-Library</span><button class="widget-close" onclick="toggleW('w-cristory')">X</button></div>
             <div class="widget-content">
@@ -674,7 +670,6 @@
                             <input type="file" accept="image/*" onchange="handleUpload(event, 'appBgImage')">
                             <button onclick="state.appBgImage=null; applyCoreSettings();" style="font-size:0.9rem; padding:5px 10px; text-transform:none;">Clear Image</button>
                             
-                            <!-- NEW APP FONT SELECTOR -->
                             <h3 style="margin-top: 15px; color:#333;">App Font</h3>
                             <select id="dash-font-sel" onchange="state.appFont = this.value; applyCoreSettings();" style="width:100%; border:2px solid #CCC; margin-bottom:5px;">
                                 <option value="'Century Gothic', sans-serif">Century Gothic</option>
@@ -694,7 +689,7 @@
                             <h3 style="color:#F57F17;">📚 Class Manager</h3>
                             <div style="display:flex; gap:10px; margin-bottom:10px;">
                                 <select id="dash-class-sel" onchange="loadDashClass()" style="margin:0; flex:1; border:2px solid #FBC02D;"></select>
-                                <button onclick="renameClass()" style="background:var(--c2); color:#FFF; padding:5px 10px; font-size:0.9rem; text-transform:none;">Rename</button>
+                                <button onclick="renameClass()" style="background:var(--c2); color:#222; border: 2px solid #222; padding:5px 10px; font-size:0.9rem; text-transform:none;">Rename</button>
                                 <button onclick="deleteClass()" style="background:var(--c4); color:#FFF; padding:5px 10px; font-size:0.9rem; text-transform:none;">Delete</button>
                             </div>
                             
@@ -767,8 +762,7 @@
 
                         <h4 style="margin:0 0 5px 0; color:#333;">Your Saved Media:</h4>
                         <div id="media-list" style="background:#FFF; padding:10px; border-radius:10px; border:2px solid #EEE; max-height:450px; overflow-y:auto; display:flex; flex-direction:column; gap:5px;">
-                            <!-- Media List populated by JS -->
-                        </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -1848,7 +1842,7 @@
                                     : `<p style="font-size:0.8rem; color:#d32f2f; margin:0; background:#fff; padding:5px; border-radius:5px;">[Local Uploaded File - URL Cannot Be Edited]</p>`}
                                 
                                 <div style="display:flex; gap:8px; margin-top:10px;">
-                                    <button onclick="saveMediaInline('${cat}', ${i})" style="flex:1; background:var(--c2); color:#FFF; font-size:0.9rem; padding:8px; text-transform:none; border:none; box-shadow:0 3px 0 rgba(0,0,0,0.1);">Save Changes</button>
+                                    <button onclick="saveMediaInline('${cat}', ${i})" style="flex:1; background:var(--c2); color:#222; border:2px solid #222; font-size:0.9rem; padding:8px; text-transform:none; box-shadow:0 3px 0 rgba(0,0,0,0.1);">Save Changes</button>
                                     <button onclick="cancelEditInline()" style="flex:1; background:#AAA; color:#FFF; font-size:0.9rem; padding:8px; text-transform:none; border:none; box-shadow:0 3px 0 rgba(0,0,0,0.1);">Cancel</button>
                                 </div>
                             </div>`;
