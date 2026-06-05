@@ -5,19 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Sanxing English Village Interactive Whiteboard</title>
 
+    <!-- Preload core images -->
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg" as="image">
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg" as="image">
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/3.jpg" as="image">
     <link rel="preload" href="https://raw.githubusercontent.com/teachercristw/crisboard/main/4.jpg" as="image">
 
+    <!-- Kid-Friendly Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@700&family=Boogaloo&family=Bubblegum+Sans&family=Chewy&family=Fredoka+One&family=Patrick+Hand&family=Quicksand:wght@700&family=Short+Stack&display=swap" rel="stylesheet">
+
     <style>
         /* ==========================================
            1. GLOBAL AESTHETICS & CONSTRAINTS
            ========================================== */
-        :root { --bg: #0F0C29; --c1: #302B63; --c2: #F5AF19; --c3: #24243E; --c4: #F10086; --text: #FFFFFF; --shadow: 0 8px 20px rgba(0,0,0,0.3); }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Century Gothic', sans-serif; font-weight: bold; background-color: var(--bg); overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; color: var(--text); transition: background-color 0.5s, background-image 0.5s; background-repeat: no-repeat; }
+        :root { 
+            --bg: #0F0C29; --c1: #302B63; --c2: #F5AF19; --c3: #24243E; --c4: #F10086; --text: #FFFFFF; --shadow: 0 8px 20px rgba(0,0,0,0.3); 
+            --app-font: 'Century Gothic', sans-serif;
+        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; font-family: var(--app-font); font-weight: bold; background-color: var(--bg); overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; color: var(--text); transition: background-color 0.5s, background-image 0.5s; background-repeat: no-repeat; }
         * { box-sizing: border-box; }
-        button, select, input, textarea { font-family: 'Century Gothic', sans-serif; font-weight: bold; }
+        button, select, input, textarea { font-family: var(--app-font); font-weight: bold; }
         button { cursor: pointer; border: 4px solid #FFF; border-radius: 15px; background: #FFF; padding: 10px 20px; font-size: 1.1rem; color: #2D3436; box-shadow: 0 5px 0 rgba(0,0,0,0.1); transition: transform 0.1s; text-transform: uppercase; }
         button:active { transform: translateY(5px); box-shadow: 0 0px 0 rgba(0,0,0,0.1); }
         
@@ -363,7 +370,10 @@
             <button class="bottom-btn" style="background:var(--c2);" onclick="toggleW('w-learning')">📚 Learning</button>
             <button class="bottom-btn" style="background:var(--c4); color:#FFF;" onclick="toggleW('w-activities')">🕹️ Fun Activities</button>
             <button class="bottom-btn" style="background:var(--c3); color:#FFF;" onclick="toggleW('w-exit')">🚪 Exit Ticket</button>
-            <button class="bottom-btn" style="background:var(--c4); color:#FFF;" onclick="toggleW('w-cristory')">📖 criSTORY</button>
+            
+            <!-- Kept exactly 'criSTORY' by overriding text-transform -->
+            <button class="bottom-btn" style="background:var(--c4); color:#FFF; text-transform:none;" onclick="toggleW('w-cristory')">📖 criSTORY</button>
+            
             <button class="bottom-btn" style="background:var(--c1); color:#FFF;" onclick="openDashboard()">⚙️ Settings</button>
         </div>
 
@@ -629,8 +639,9 @@
             </div>
         </div>
 
+        <!-- criSTORY WIDGET (Kept exact casing by overriding text-transform) -->
         <div class="widget" id="w-cristory" style="width: 700px; height: 500px;">
-            <div class="widget-header"><span style="background:var(--c4); padding:5px 15px; border-radius:15px; color:#FFF;">📖 criSTORY E-Library</span><button class="widget-close" onclick="toggleW('w-cristory')">X</button></div>
+            <div class="widget-header"><span style="background:var(--c4); padding:5px 15px; border-radius:15px; color:#FFF; text-transform:none;">📖 criSTORY E-Library</span><button class="widget-close" onclick="toggleW('w-cristory')">X</button></div>
             <div class="widget-content">
                 <div style="display:flex; gap:10px; width:100%; margin-bottom:10px;">
                     <button onclick="document.getElementById('cristory-iframe').src='https://teachercristw.github.io/cristory/'" style="flex:1; font-size:1rem; text-transform:none;">Reload Library</button>
@@ -662,6 +673,21 @@
                             <input type="color" id="dash-bg-color" style="height:40px; padding:0; border:none; cursor:pointer;">
                             <input type="file" accept="image/*" onchange="handleUpload(event, 'appBgImage')">
                             <button onclick="state.appBgImage=null; applyCoreSettings();" style="font-size:0.9rem; padding:5px 10px; text-transform:none;">Clear Image</button>
+                            
+                            <!-- NEW APP FONT SELECTOR -->
+                            <h3 style="margin-top: 15px; color:#333;">App Font</h3>
+                            <select id="dash-font-sel" onchange="state.appFont = this.value; applyCoreSettings();" style="width:100%; border:2px solid #CCC; margin-bottom:5px;">
+                                <option value="'Century Gothic', sans-serif">Century Gothic</option>
+                                <option value="'Comic Sans MS', 'Comic Sans', cursive">Comic Sans</option>
+                                <option value="'Quicksand', sans-serif">Quicksand</option>
+                                <option value="'Patrick Hand', cursive">Patrick Hand</option>
+                                <option value="'Balsamiq Sans', cursive">Balsamiq Sans</option>
+                                <option value="'Boogaloo', cursive">Boogaloo</option>
+                                <option value="'Bubblegum Sans', cursive">Bubble Gum Sans</option>
+                                <option value="'Short Stack', cursive">Short Stack</option>
+                                <option value="'Fredoka One', cursive">Fredoka One</option>
+                                <option value="'Chewy', cursive">Chewy</option>
+                            </select>
                         </div>
                         
                         <div class="dash-section" style="background:#FFF9C4; border-color:#FFF59D;">
@@ -741,7 +767,8 @@
 
                         <h4 style="margin:0 0 5px 0; color:#333;">Your Saved Media:</h4>
                         <div id="media-list" style="background:#FFF; padding:10px; border-radius:10px; border:2px solid #EEE; max-height:450px; overflow-y:auto; display:flex; flex-direction:column; gap:5px;">
-                            </div>
+                            <!-- Media List populated by JS -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -807,7 +834,6 @@
             sanxing: { bg: '#E8F5E9', c1: '#A5D6A7', c2: '#C5E1A5', c3: '#81C784', c4: '#AED581', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/2.jpg' },
             neon: { bg: '#1A1A2E', c1: '#5F27CD', c2: '#FECA57', c3: '#1DD1A1', c4: '#FF9FF3', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/3.jpg' },
             pastel: { bg: '#B5EAEA', c1: '#FFB6B9', c2: '#FFE082', c3: '#C8E3D4', c4: '#D1C4E9', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/4.jpg' },
-            // NEW COUNTRY FLAG PALETTES ADDED HERE
             flag_us: { bg: '#0A3161', c1: '#B31942', c2: '#FFFFFF', c3: '#0A3161', c4: '#B31942', img: 'https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg' },
             flag_uk: { bg: '#012169', c1: '#C8102E', c2: '#FFFFFF', c3: '#012169', c4: '#C8102E', img: 'https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg' },
             flag_ca: { bg: '#FF0000', c1: '#D52B1E', c2: '#FFFFFF', c3: '#FF0000', c4: '#D52B1E', img: 'https://upload.wikimedia.org/wikipedia/commons/c/cf/Flag_of_Canada.svg' },
@@ -823,7 +849,7 @@
 
         // PRE-LOADED CUSTOM DATA 
         let state = {
-            appBgColor: "#0F0C29", appBgImage: null, 
+            appBgColor: "#0F0C29", appBgImage: null, appFont: "'Century Gothic', sans-serif",
             classes: {}, activeClass: null,
             teams: [{name:"GROUP 1", score:0, rank:null, time:null}, {name:"GROUP 2", score:0, rank:null, time:null}],
             scoreStyle: 'burger', goal: 10,
@@ -850,14 +876,13 @@
         };
         let memStud = []; 
 
-        // --- 2. AUDIO & TTS ---
+        // --- 2. AUDIO ---
         const Actx = window.AudioContext || window.webkitAudioContext; let actx;
         function initAudio() { if(!actx) actx = new Actx(); if(actx.state === 'suspended') actx.resume(); }
         function playTone(f, t, d, v=0.1) { initAudio(); const o = actx.createOscillator(); const g = actx.createGain(); o.type = t; o.frequency.value = f; g.gain.setValueAtTime(v, actx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + d); o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime + d); }
         function beep() { playTone(600, 'sine', 0.1); } function buzz() { playTone(150, 'sawtooth', 0.5, 0.3); } function pop() { playTone(800, 'triangle', 0.1); }
         function cheer() { playTone(400, 'square', 0.15); setTimeout(()=>playTone(500, 'square', 0.15), 100); setTimeout(()=>playTone(700, 'square', 0.4), 200); }
         function playAlarm() { let i=0; let int = setInterval(()=>{ playTone(900, 'square', 0.2, 0.5); i++; if(i>5) clearInterval(int); }, 400); }
-        function speak(text) { if('speechSynthesis' in window) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.rate = 0.9; window.speechSynthesis.speak(u); } }
 
         // HYBRID MUSIC CONTROLLER
         let currentMusicType = 'none';
@@ -934,7 +959,8 @@
                     if (data && data.classes) {
                         state = data;
                         if(!state.scoreThemes) state.scoreThemes = { burger: [], icecream: [], pizza: [], fries: [] };
-                        
+                        if(!state.appFont) state.appFont = "'Century Gothic', sans-serif";
+
                         // Handle legacy score_images migration if they existed
                         if(state.media && state.media.score_images && state.media.score_images.length > 0) {
                             state.media.score_images.forEach(img => {
@@ -981,6 +1007,12 @@
             if(state.appBgImage) { document.body.style.backgroundImage = `url('${state.appBgImage}')`; document.body.style.backgroundSize = 'cover'; document.body.style.backgroundPosition = 'center'; document.body.style.backgroundAttachment = 'fixed'; document.body.style.backgroundColor = 'transparent'; } 
             else { document.body.style.backgroundImage = 'none'; document.body.style.backgroundColor = state.appBgColor; } 
             const wBg = document.getElementById('wb-bg-img'); if(state.wbBgImage){wBg.src=state.wbBgImage; wBg.style.display='block';}else{wBg.style.display='none';} 
+
+            // Apply Font Globally
+            let fontToApply = state.appFont || "'Century Gothic', sans-serif";
+            document.documentElement.style.setProperty('--app-font', fontToApply);
+            const dashFontSel = document.getElementById('dash-font-sel');
+            if(dashFontSel) dashFontSel.value = fontToApply;
         }
         function toggleW(id) { beep(); const w = document.getElementById(id); if(w.style.display === 'flex') { w.style.display = 'none'; } else { w.style.display = 'flex'; document.querySelectorAll('.widget').forEach(x=>x.style.zIndex=100); w.style.zIndex=1000; if(id==='w-whiteboard') setTimeout(resizeCvs, 50); } }
         function switchTab(id) { beep(); document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active')); document.getElementById(id).classList.add('active'); }
@@ -1542,20 +1574,12 @@
 
                             if (type === 'date' || type === 'month') {
                                 beep();
-                                let dDrop = document.querySelector('#date-day-drop .dd-item');
-                                let mDrop = document.querySelector('#date-month-drop .dd-item');
-                                if(dDrop && mDrop) {
-                                    setTimeout(() => speak(`It is the ${dDrop.innerText.trim()} day of ${mDrop.innerText.trim()}.`), 300);
-                                }
                             } else if (type === 'day') {
                                 beep();
-                                setTimeout(() => speak(`Today is ${el.dataset.w}.`), 300);
                             } else if(type === 'feeling') { 
                                 cheer(); 
-                                setTimeout(() => speak(`I am ${el.dataset.w}.`), 300); 
                             } else { 
                                 beep(); 
-                                setTimeout(() => speak(`It is ${el.dataset.w} today.`), 300); 
                             } 
                         } else { 
                             bZ.appendChild(el); 
@@ -1580,6 +1604,10 @@
         function openDashboard() { 
             beep(); 
             document.getElementById('dash-bg-color').value = state.appBgColor; 
+            
+            // Set font dropdown to match state
+            if(state.appFont) document.getElementById('dash-font-sel').value = state.appFont;
+            
             document.getElementById('dash-feelings').value = state.feelings.map(f=>`${f.emoji},${f.word}`).join('\n'); 
             updateClassDropdowns(); 
             handleMediaCatChange(); 
