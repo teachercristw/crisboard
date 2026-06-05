@@ -605,6 +605,7 @@
             </div>
         </div>
 
+        <!-- NEW criSTORY WIDGET -->
         <div class="widget" id="w-cristory" style="width: 700px; height: 500px;">
             <div class="widget-header"><span style="background:#8E44AD; padding:5px 15px; border-radius:15px; color:#FFF;">📖 criSTORY E-Library</span><button class="widget-close" onclick="toggleW('w-cristory')">X</button></div>
             <div class="widget-content">
@@ -1662,16 +1663,26 @@
             updateDrops(); 
         }
         
-        function editMediaName(cat, i) {
+        function editMediaItem(cat, i) {
             beep();
             let m = state.media[cat][i];
             let newName = prompt("Edit media name:", m.title);
             if (newName !== null && newName.trim() !== "") {
                 let newFolder = prompt("Edit folder name (leave blank for no folder):", m.folder || "");
-                m.title = newName.trim();
-                if(newFolder !== null) {
+                if (newFolder !== null) {
                     m.folder = newFolder.trim();
                 }
+                
+                if (m.url && !m.url.startsWith('data:')) {
+                    let newUrl = prompt("Edit link or embed code (leave as is if no change):", m.url);
+                    if (newUrl !== null && newUrl.trim() !== "") {
+                        m.url = fmtURL(newUrl.trim(), cat);
+                    }
+                } else if (m.url && m.url.startsWith('data:')) {
+                    alert("Note: This is a locally uploaded file. The link cannot be edited directly.");
+                }
+
+                m.title = newName.trim();
                 renderMediaList();
                 updateDrops();
             }
@@ -1693,7 +1704,7 @@
                 <div class="list-item">
                     <span>${m.folder ? `<strong style="color:var(--c1);">[${m.folder}]</strong> ` : ''}${m.title}</span>
                     <div>
-                        <button onclick="editMediaName('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c2); color:#FFF; border:none; border-radius:5px; margin-right:5px;" title="Edit Name/Folder">✎</button>
+                        <button onclick="editMediaItem('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c2); color:#FFF; border:none; border-radius:5px; margin-right:5px;" title="Edit Item">✎</button>
                         <button onclick="remMedia('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c4); color:#FFF; border:none; border-radius:5px;" title="Delete">X</button>
                     </div>
                 </div>`).join(''); 
