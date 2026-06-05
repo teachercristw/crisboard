@@ -363,8 +363,8 @@
             <button class="bottom-btn" style="background:var(--c2);" onclick="toggleW('w-learning')">📚 Learning</button>
             <button class="bottom-btn" style="background:var(--c4); color:#FFF;" onclick="toggleW('w-activities')">🕹️ Fun Activities</button>
             <button class="bottom-btn" style="background:var(--c3); color:#FFF;" onclick="toggleW('w-exit')">🚪 Exit Ticket</button>
-            <button class="bottom-btn" style="background:#8E44AD; color:#FFF;" onclick="toggleW('w-cristory')">📖 criSTORY</button>
-            <button class="bottom-btn" style="background:#2D3436; color:#FFF;" onclick="openDashboard()">⚙️ Settings</button>
+            <button class="bottom-btn" style="background:var(--c4); color:#FFF;" onclick="toggleW('w-cristory')">📖 criSTORY</button>
+            <button class="bottom-btn" style="background:var(--c1); color:#FFF;" onclick="openDashboard()">⚙️ Settings</button>
         </div>
 
         <div class="widget" id="w-theme" style="top: 160px; right: 20px; left: auto; width: 300px;">
@@ -630,11 +630,11 @@
         </div>
 
         <div class="widget" id="w-cristory" style="width: 700px; height: 500px;">
-            <div class="widget-header"><span style="background:#8E44AD; padding:5px 15px; border-radius:15px; color:#FFF;">📖 criSTORY E-Library</span><button class="widget-close" onclick="toggleW('w-cristory')">X</button></div>
+            <div class="widget-header"><span style="background:var(--c4); padding:5px 15px; border-radius:15px; color:#FFF;">📖 criSTORY E-Library</span><button class="widget-close" onclick="toggleW('w-cristory')">X</button></div>
             <div class="widget-content">
                 <div style="display:flex; gap:10px; width:100%; margin-bottom:10px;">
                     <button onclick="document.getElementById('cristory-iframe').src='https://teachercristw.github.io/cristory/'" style="flex:1; font-size:1rem; text-transform:none;">Reload Library</button>
-                    <button onclick="togglePseudoFS('cristory-wrapper')" style="background:#8E44AD; color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
+                    <button onclick="togglePseudoFS('cristory-wrapper')" style="background:var(--c4); color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
                 </div>
                 <div class="iframe-wrapper" id="cristory-wrapper">
                     <div class="fs-controls">
