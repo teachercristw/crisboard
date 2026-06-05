@@ -355,6 +355,7 @@
             <button class="bottom-btn" style="background:var(--c2);" onclick="toggleW('w-learning')">📚 Learning</button>
             <button class="bottom-btn" style="background:var(--c4); color:#FFF;" onclick="toggleW('w-activities')">🕹️ Fun Activities</button>
             <button class="bottom-btn" style="background:var(--c3); color:#FFF;" onclick="toggleW('w-exit')">🚪 Exit Ticket</button>
+            <button class="bottom-btn" style="background:#8E44AD; color:#FFF;" onclick="toggleW('w-cristory')">📖 criSTORY</button>
             <button class="bottom-btn" style="background:#2D3436; color:#FFF;" onclick="openDashboard()">⚙️ Settings</button>
         </div>
 
@@ -604,6 +605,25 @@
             </div>
         </div>
 
+        <div class="widget" id="w-cristory" style="width: 700px; height: 500px;">
+            <div class="widget-header"><span style="background:#8E44AD; padding:5px 15px; border-radius:15px; color:#FFF;">📖 criSTORY E-Library</span><button class="widget-close" onclick="toggleW('w-cristory')">X</button></div>
+            <div class="widget-content">
+                <div style="display:flex; gap:10px; width:100%; margin-bottom:10px;">
+                    <button onclick="document.getElementById('cristory-iframe').src='https://teachercristw.github.io/cristory/'" style="flex:1; font-size:1rem; text-transform:none;">Reload Library</button>
+                    <button onclick="togglePseudoFS('cristory-wrapper')" style="background:#8E44AD; color:#FFF; border:none; padding:5px 10px; border-radius:10px; font-size:1rem;" title="Maximize">⛶</button>
+                </div>
+                <div class="iframe-wrapper" id="cristory-wrapper">
+                    <div class="fs-controls">
+                        <div class="drag-handle-fs">⠿</div>
+                        <button class="fs-btn-shared fs-anno" onclick="toggleAnnotation()" title="Draw on Screen">🖍️</button>
+                        <button class="fs-btn-shared fs-close" onclick="togglePseudoFS('cristory-wrapper')" title="Close Fullscreen">✖</button>
+                    </div>
+                    <div class="iframe-cover"></div>
+                    <iframe id="cristory-iframe" class="iframe-container" src="https://teachercristw.github.io/cristory/" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-downloads" allow="autoplay; camera; microphone; display-capture; clipboard-read; clipboard-write"></iframe>
+                </div>
+            </div>
+        </div>
+
         <div id="dashboard-modal">
             <div class="dash-content">
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:4px solid #EEE; padding-bottom:15px; margin-bottom:20px;">
@@ -683,7 +703,10 @@
                             <label style="font-size: 0.9rem; color: #333; font-weight: bold;">1. Name your media:</label>
                             <input type="text" id="m-title" placeholder="e.g., G1 Storytelling">
                             
-                            <label style="font-size: 0.9rem; color: #333; font-weight: bold;">2. Paste your link or code here:</label>
+                            <label style="font-size: 0.9rem; color: #333; font-weight: bold;">2. Folder (Optional):</label>
+                            <input type="text" id="m-folder" placeholder="e.g., Unit 1">
+                            
+                            <label style="font-size: 0.9rem; color: #333; font-weight: bold;">3. Paste your link or code here:</label>
                             <input type="text" id="m-url" placeholder="Paste link or full <iframe> code...">
                             
                             <p style="margin:5px 0; text-align:center; font-size:0.8rem; color:#666;">-- OR LOCAL UPLOAD (Images/Audio only) --</p>
@@ -776,15 +799,15 @@
             media: { 
                 wbBackgrounds: [], 
                 learning: [
-                    { title: "Virtual Library", url: "https://teachercristw.github.io/cristory" }
+                    { title: "Virtual Library", url: "https://teachercristw.github.io/cristory", folder: "Resources" }
                 ], 
                 activities: [
-                    { title: "Race to the Moon", url: "https://teachercristw.github.io/moonrace/" },
-                    { title: "Snakes and Ladders", url: "https://teachercristw.github.io/snakesandladders/" },
-                    { title: "Sorting Game", url: "https://teachercristw.github.io/sortinggame" },
-                    { title: "Tilt and Choose", url: "https://teachercristw.github.io/tiltandchoose" },
-                    { title: "Tug of War Game", url: "https://teachercristw.github.io/tug-of-war" },
-                    { title: "Word Race", url: "https://teachercristw.github.io/wordrace/" }
+                    { title: "Race to the Moon", url: "https://teachercristw.github.io/moonrace/", folder: "Games" },
+                    { title: "Snakes and Ladders", url: "https://teachercristw.github.io/snakesandladders/", folder: "Games" },
+                    { title: "Sorting Game", url: "https://teachercristw.github.io/sortinggame", folder: "Games" },
+                    { title: "Tilt and Choose", url: "https://teachercristw.github.io/tiltandchoose", folder: "Games" },
+                    { title: "Tug of War Game", url: "https://teachercristw.github.io/tug-of-war", folder: "Games" },
+                    { title: "Word Race", url: "https://teachercristw.github.io/wordrace/", folder: "Games" }
                 ], 
                 video: [], 
                 music: [], 
@@ -1142,6 +1165,14 @@
         function restartTimer() { resetTimer(); setTimeout(toggleTimer, 100); }
         
         // --- SCOREBOARD ---
+        function sortGroups() {
+            state.teams.sort((a, b) => {
+                const nA = parseInt((a.name.match(/\d+/) || [9999])[0]);
+                const nB = parseInt((b.name.match(/\d+/) || [9999])[0]);
+                return nA - nB;
+            });
+        }
+
         function resetAllScores() {
             beep();
             state.teams.forEach(t => { t.score = 0; t.time = null; t.rank = null; });
@@ -1151,7 +1182,17 @@
 
         function setScoreStyle(s) { beep(); state.scoreStyle = s; document.getElementById('digital-goal').style.display = s === 'digital' ? 'block' : 'none'; evalRanks(); renderScores(); }
         function updateGoal(v) { beep(); state.goal = Math.max(1, parseInt(v)||10); evalRanks(); renderScores(); }
-        function addGrp() { state.teams.push({name:`GROUP ${state.teams.length+1}`, score:0, rank:null, time:null}); renderScores(); beep(); }
+        
+        function addGrp() { 
+            let existingNumbers = state.teams.map(t => parseInt((t.name.match(/\d+/) || [0])[0])).filter(n => !isNaN(n));
+            let nextNum = 1;
+            while(existingNumbers.includes(nextNum)) nextNum++;
+            state.teams.push({name:`GROUP ${nextNum}`, score:0, rank:null, time:null});
+            sortGroups();
+            renderScores(); 
+            beep(); 
+        }
+
         function evalRanks() {
             let g = state.scoreStyle === 'digital' ? state.goal : themeGoals[state.scoreStyle];
             state.teams.forEach(t => { if(t.score < g) t.time = null; else if(!t.time) t.time = Date.now(); });
@@ -1293,8 +1334,8 @@
                     rankOverlay = `<div style="position:absolute; top:45px; right:10px; background:rgba(0,0,0,0.85); border-radius:15px; padding:10px; display:flex; justify-content:center; align-items:center; z-index:1000; flex-direction:column; animation: dropIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid #F5AF19; box-shadow: 0 4px 10px rgba(0,0,0,0.5); min-width: 80px;"><div style="display:flex; align-items:center; gap:5px;"><span style="font-size:2rem;">${mText.split(' ')[0]}</span><span style="font-size:1.4rem; color:#FFF; font-weight:bold;">${mText.split(' ')[1]}</span></div><button onclick="mS(${i}, -1)" style="margin-top:5px; font-size:0.85rem; padding:3px 10px; background:var(--c4); color:#FFF; border:2px solid #FFF; border-radius: 8px;">Undo</button></div>`;
                 }
                 
-                card.innerHTML = `${rankOverlay}<button class="card-del" onclick="state.teams.splice(${i},1); renderScores();">X</button>
-                    <input type="text" value="${t.name}" onchange="state.teams[${i}].name=this.value" style="flex:0 0 auto;">
+                card.innerHTML = `${rankOverlay}<button class="card-del" onclick="state.teams.splice(${i},1); sortGroups(); renderScores();">X</button>
+                    <input type="text" value="${t.name}" onchange="state.teams[${i}].name=this.value; sortGroups(); renderScores();" style="flex:0 0 auto;">
                     <div style="flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; width: 100%; min-height: 0; padding-bottom: 5px;">
                         ${vis}
                     </div>
@@ -1591,6 +1632,7 @@
             beep(); 
             const cat = document.getElementById('media-cat').value; 
             let t = document.getElementById('m-title').value.trim(); 
+            let fD = document.getElementById('m-folder').value.trim(); 
             let rU = document.getElementById('m-url').value.trim(); 
             const fI = document.getElementById('m-file'); 
             
@@ -1600,12 +1642,12 @@
             if(fI.files.length > 0) { 
                 const r = new FileReader(); 
                 r.onload = (e) => { 
-                    state.media[cat].push({ title: t, url: e.target.result }); 
+                    state.media[cat].push({ title: t, url: e.target.result, folder: fD }); 
                     finishAdd(); 
                 }; 
                 r.readAsDataURL(fI.files[0]); 
             } else if(rU) { 
-                state.media[cat].push({ title: t, url: fmtURL(rU, cat) }); 
+                state.media[cat].push({ title: t, url: fmtURL(rU, cat), folder: fD }); 
                 finishAdd(); 
             } else { 
                 alert("Provide URL or file."); 
@@ -1613,6 +1655,7 @@
         }
         function finishAdd() { 
             document.getElementById('m-title').value = ''; 
+            document.getElementById('m-folder').value = ''; 
             document.getElementById('m-url').value = ''; 
             document.getElementById('m-file').value = ''; 
             renderMediaList(); 
@@ -1621,10 +1664,14 @@
         
         function editMediaName(cat, i) {
             beep();
-            let currentName = state.media[cat][i].title;
-            let newName = prompt("Edit media name:", currentName);
+            let m = state.media[cat][i];
+            let newName = prompt("Edit media name:", m.title);
             if (newName !== null && newName.trim() !== "") {
-                state.media[cat][i].title = newName.trim();
+                let newFolder = prompt("Edit folder name (leave blank for no folder):", m.folder || "");
+                m.title = newName.trim();
+                if(newFolder !== null) {
+                    m.folder = newFolder.trim();
+                }
                 renderMediaList();
                 updateDrops();
             }
@@ -1637,8 +1684,53 @@
             updateDrops(); 
         }
         
-        function renderMediaList() { const cat = document.getElementById('media-cat').value; const c = document.getElementById('media-list'); c.innerHTML = (!state.media[cat] || state.media[cat].length === 0) ? '<p style="text-align:center; color:#888; margin-top:20px;">No links saved here yet.</p>' : state.media[cat].map((m,i)=>`<div class="list-item"><span>${m.title}</span><div><button onclick="editMediaName('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c2); color:#FFF; border:none; border-radius:5px; margin-right:5px;" title="Edit Name">✎</button><button onclick="remMedia('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c4); color:#FFF; border:none; border-radius:5px;" title="Delete">X</button></div></div>`).join(''); }
-        function updateDrops() { ['learning', 'activities', 'video', 'music', 'exit', 'wbBackgrounds'].forEach(cat => { const s = document.getElementById(cat === 'wbBackgrounds' ? 'wbBackgrounds-select' : `${cat}-select`); if(s && state.media[cat]) { s.innerHTML = `<option value="">-- Choose Item --</option>` + state.media[cat].map((m,i)=>`<option value="${i}">${m.title}</option>`).join(''); } }); }
+        function renderMediaList() { 
+            const cat = document.getElementById('media-cat').value; 
+            const c = document.getElementById('media-list'); 
+            c.innerHTML = (!state.media[cat] || state.media[cat].length === 0) ? 
+                '<p style="text-align:center; color:#888; margin-top:20px;">No links saved here yet.</p>' : 
+                state.media[cat].map((m,i)=>`
+                <div class="list-item">
+                    <span>${m.folder ? `<strong style="color:var(--c1);">[${m.folder}]</strong> ` : ''}${m.title}</span>
+                    <div>
+                        <button onclick="editMediaName('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c2); color:#FFF; border:none; border-radius:5px; margin-right:5px;" title="Edit Name/Folder">✎</button>
+                        <button onclick="remMedia('${cat}', ${i})" style="padding:2px 8px; font-size:0.9rem; background:var(--c4); color:#FFF; border:none; border-radius:5px;" title="Delete">X</button>
+                    </div>
+                </div>`).join(''); 
+        }
+        
+        function updateDrops() { 
+            ['learning', 'activities', 'video', 'music', 'exit', 'wbBackgrounds'].forEach(cat => { 
+                const s = document.getElementById(cat === 'wbBackgrounds' ? 'wbBackgrounds-select' : `${cat}-select`); 
+                if(s && state.media[cat]) { 
+                    let grouped = {};
+                    let ungrouped = [];
+                    state.media[cat].forEach((m, i) => {
+                        if(m.folder && m.folder.trim() !== "") {
+                            let f = m.folder.trim();
+                            if(!grouped[f]) grouped[f] = [];
+                            grouped[f].push({m, i});
+                        } else {
+                            ungrouped.push({m, i});
+                        }
+                    });
+
+                    let html = `<option value="">-- Choose Item --</option>`;
+                    ungrouped.forEach(item => {
+                        html += `<option value="${item.i}">${item.m.title}</option>`;
+                    });
+                    for(let f in grouped) {
+                        html += `<optgroup label="${f}">`;
+                        grouped[f].forEach(item => {
+                            html += `<option value="${item.i}">${item.m.title}</option>`;
+                        });
+                        html += `</optgroup>`;
+                    }
+                    s.innerHTML = html;
+                } 
+            }); 
+        }
+        
         function loadMedia(cat, id, isImg=false) { beep(); const v = document.getElementById(cat === 'wbBackgrounds' ? 'wbBackgrounds-select' : `${cat}-select`).value; const el = document.getElementById(id); if(v === "") { if(isImg) el.style.display = 'none'; else el.src = "about:blank"; } else { el.src = state.media[cat][v].url; if(isImg) el.style.display = 'block'; } }
 
         // --- EXPORT/IMPORT ---
