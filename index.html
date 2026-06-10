@@ -770,6 +770,31 @@
     </div>
 
     <script>
+        // ==========================================
+        // SECURITY: DOMAIN LOCK
+        // ==========================================
+        (function() {
+            const allowedDomain = "teachercristw.github.io"; 
+            const currentHost = window.location.hostname;
+            
+            // Check if the host is NOT your GitHub and NOT a local testing environment
+            if (currentHost !== allowedDomain && currentHost !== "localhost" && currentHost !== "127.0.0.1" && currentHost !== "") {
+                
+                // Wipe the entire screen clean and show a warning
+                document.body.innerHTML = `
+                    <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #0F0C29; color: white; font-family: 'Century Gothic', sans-serif; text-align: center; padding: 20px;">
+                        <div>
+                            <h1 style="color: #F10086; font-size: 3rem; margin-bottom: 10px;">Unauthorized Access</h1>
+                            <p style="font-size: 1.5rem;">This application is the intellectual property of Teacher Cris Saranza for Sanxing English Village.</p>
+                        </div>
+                    </div>`;
+                
+                // Throw a fatal error to stop all remaining JavaScript (widgets, canvas, etc.) from running
+                throw new Error("Security Exception: Unauthorized domain execution blocked."); 
+            }
+        })();
+        // ==========================================
+
         // --- SMART DOUBLE-TAP INTERCEPTOR ---
         let lastTouchEnd = 0;
         document.addEventListener('touchend', function (event) {
