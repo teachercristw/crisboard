@@ -109,14 +109,22 @@
         .time-input::-webkit-outer-spin-button, .time-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .time-input:disabled { background: transparent; color: var(--c4); opacity: 1; -webkit-text-fill-color: var(--c4);}
 
-        /* Scoreboard */
-        #score-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 5px; height: 100%;}
-        .score-card { background: var(--c3); padding: 10px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; border: 4px solid #FFF; position: relative; overflow: hidden; min-height: 0;}
+        /* Scoreboard & Individual Scoring Additions */
+        #score-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 5px; flex: 1; align-content: start;}
+        .score-card { background: var(--c3); padding: 10px; border-radius: 15px; display: flex; flex-direction: column; align-items: center; border: 4px solid #FFF; position: relative; overflow: hidden; min-height: 200px;}
         .score-card input { position: relative; z-index: 20; color: #FFF; text-shadow: 0 2px 0 rgba(0,0,0,0.3); text-align: center; border: none; background: transparent; font-size: 1.4rem; font-family: inherit; font-weight: bold; width: 100%; outline: none; padding: 0;}
         .card-del { position: absolute; top: -10px; right: -10px; background: var(--c1); color: #FFF; border-radius: 50%; width: 30px; height: 30px; padding: 0; font-size: 1rem; border: 2px solid #FFF; z-index: 25;}
         
         .theme-stack { display: flex; flex-direction: column-reverse; align-items: center; justify-content: flex-start; margin: 0; width: 100%; flex: 1 1 auto; min-height: 0;}
         
+        /* Individual Score Row Styles */
+        .indiv-row { display: flex; justify-content: space-between; align-items: center; background: #FFF; padding: 8px 15px; border-radius: 10px; margin-bottom: 8px; border: 2px solid #DDD; color: #333; font-size: 1.2rem; }
+        .indiv-row .pts-controls { display: flex; align-items: center; gap: 15px; }
+        .indiv-row button { background: var(--c4); color: #FFF; border: none; width: 40px; height: 40px; font-size: 1.5rem; border-radius: 10px; box-shadow: 0 4px 0 rgba(0,0,0,0.2); display:flex; justify-content:center; align-items:center; }
+        .indiv-row button:active { transform: translateY(4px); box-shadow: 0 0px 0 rgba(0,0,0,0.2); }
+        .indiv-row button.plus { background: var(--c2); color: #222; }
+        .indiv-score-val { font-size: 1.8rem; font-weight: bold; width: 50px; text-align: center; color: var(--c1); }
+
         /* CSS Default Ingredients Scaled Up */
         .ing { position: relative; animation: dropIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 1; box-shadow: 0 4px 6px rgba(0,0,0,0.3); border: 2px solid rgba(0,0,0,0.15); max-width: 100%; flex-shrink: 1; min-height: 5px; }
         /* Burger */
@@ -447,21 +455,42 @@
         </div>
 
         <div class="widget" id="w-score" style="width: 700px; height: 500px;">
-            <div class="widget-header">
-                <span>🍔 Scoreboard</span>
-                <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">
-                    <button onclick="resetAllScores()" style="padding:5px 10px; font-size:0.9rem; background:var(--c4); color:#FFF; text-transform:none;">Reset</button>
-                    <button onclick="addGrp()" style="padding:5px 10px; font-size:0.9rem; text-transform:none;">Add Group</button>
-                    <button onclick="setScoreStyle('burger')" style="padding:5px 10px; font-size:0.9rem; background:#E6A15C; color:#FFF; text-transform:none;" title="Goal: 10">🍔 10</button>
-                    <button onclick="setScoreStyle('icecream')" style="padding:5px 10px; font-size:0.9rem; background:#FF9FF3; color:#FFF; text-transform:none;" title="Goal: 15">🍦 15</button>
-                    <button onclick="setScoreStyle('pizza')" style="padding:5px 10px; font-size:0.9rem; background:#FF9F43; color:#FFF; text-transform:none;" title="Goal: 12">🍕 12</button>
-                    <button onclick="setScoreStyle('fries')" style="padding:5px 10px; font-size:0.9rem; background:#EE5253; color:#FFF; text-transform:none;" title="Goal: 20">🍟 20</button>
-                    <button onclick="setScoreStyle('digital')" style="padding:5px 10px; font-size:0.9rem; background:var(--c1); color:#FFF; text-transform:none;">Digital</button>
-                    <input type="number" id="digital-goal" value="10" onchange="updateGoal(this.value)" style="width:55px; padding:5px; margin:0; display:none; border:2px solid #FFF;" title="Set Target Goal">
+            <div class="widget-header" style="flex-direction: column; align-items: stretch; padding: 10px 20px;">
+                <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                    <span>🍔 Scoreboard</span>
                     <button class="widget-close" onclick="toggleW('w-score')">X</button>
                 </div>
+                <div style="display:flex; gap:5px; margin-top: 10px;">
+                    <button id="st-group" class="picker-tab-btn active" onclick="switchScoreTab('group')">Group Scores</button>
+                    <button id="st-indiv" class="picker-tab-btn" style="background:var(--c1);" onclick="switchScoreTab('indiv')">Individual Scores</button>
+                </div>
             </div>
-            <div class="widget-content" id="score-container"></div>
+            
+            <div class="widget-content" style="padding:0; overflow:hidden;">
+                <div id="score-group-view" style="display:flex; flex-direction:column; height:100%;">
+                    <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap; padding:10px; background:#F9F9F9; border-bottom:2px solid #EEE;">
+                        <button onclick="resetAllScores()" style="padding:5px 10px; font-size:0.9rem; background:var(--c4); color:#FFF; text-transform:none;">Reset</button>
+                        <button onclick="addGrp()" style="padding:5px 10px; font-size:0.9rem; text-transform:none;">Add Group</button>
+                        <button onclick="setScoreStyle('burger')" style="padding:5px 10px; font-size:0.9rem; background:#E6A15C; color:#FFF; text-transform:none;" title="Goal: 10">🍔 10</button>
+                        <button onclick="setScoreStyle('icecream')" style="padding:5px 10px; font-size:0.9rem; background:#FF9FF3; color:#FFF; text-transform:none;" title="Goal: 15">🍦 15</button>
+                        <button onclick="setScoreStyle('pizza')" style="padding:5px 10px; font-size:0.9rem; background:#FF9F43; color:#FFF; text-transform:none;" title="Goal: 12">🍕 12</button>
+                        <button onclick="setScoreStyle('fries')" style="padding:5px 10px; font-size:0.9rem; background:#EE5253; color:#FFF; text-transform:none;" title="Goal: 20">🍟 20</button>
+                        <button onclick="setScoreStyle('digital')" style="padding:5px 10px; font-size:0.9rem; background:var(--c1); color:#FFF; text-transform:none;">Digital</button>
+                        <input type="number" id="digital-goal" value="10" onchange="updateGoal(this.value)" style="width:55px; padding:5px; margin:0; display:none; border:2px solid #FFF;" title="Set Target Goal">
+                    </div>
+                    <div id="score-container" style="flex:1; overflow-y:auto; padding:10px;"></div>
+                </div>
+
+                <div id="score-indiv-view" style="display:none; flex-direction:column; height:100%;">
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:10px; background:#F9F9F9; border-bottom:2px solid #EEE;">
+                        <select id="score-class-sel" onchange="state.activeClass=this.value; updateClassDropdowns();" style="margin:0; width:150px; padding:5px;"></select>
+                        <input type="text" id="score-session-name" placeholder="Meeting/Date" onchange="loadIndivScores()" style="margin:0; width:150px; padding:5px;">
+                        <button onclick="exportIndivCSV()" style="padding:5px 10px; font-size:0.9rem; background:var(--c3); color:#FFF; text-transform:none; margin-left:auto;">📥 Download Excel</button>
+                    </div>
+                    <div id="indiv-score-container" style="flex:1; overflow-y:auto; padding:10px; background:#EEE;">
+                        </div>
+                </div>
+            </div>
         </div>
 
         <div class="widget" id="w-picker" style="width: 400px; min-height: 380px;">
@@ -871,6 +900,7 @@
             appBgColor: "#0F0C29", appBgImage: null, appFont: "'Century Gothic', sans-serif",
             classes: {}, activeClass: null,
             teams: [{name:"GROUP 1", score:0, rank:null, time:null}, {name:"GROUP 2", score:0, rank:null, time:null}],
+            studentRecords: {}, // NEW: Individul class records
             scoreStyle: 'burger', goal: 10,
             scoreThemes: { burger: [], icecream: [], pizza: [], fries: [] },
             feelings: [{ emoji: "😊", word: "happy" }, { emoji: "😢", word: "sad" }, { emoji: "😡", word: "angry" }, { emoji: "😴", word: "sleepy" }, { emoji: "🤢", word: "sick" }, { emoji: "🥶", word: "cold" }],
@@ -977,6 +1007,7 @@
                     const data = await response.json();
                     if (data && data.classes) {
                         state = data;
+                        if(!state.studentRecords) state.studentRecords = {};
                         if(!state.scoreThemes) state.scoreThemes = { burger: [], icecream: [], pizza: [], fries: [] };
                         if(!state.appFont) state.appFont = "'Century Gothic', sans-serif";
 
@@ -1255,6 +1286,122 @@
         function restartTimer() { resetTimer(); setTimeout(toggleTimer, 100); }
         
         // --- SCOREBOARD ---
+        function switchScoreTab(tab) {
+            beep();
+            document.getElementById('st-group').classList.toggle('active', tab === 'group');
+            document.getElementById('st-group').style.background = tab === 'group' ? 'var(--c4)' : 'var(--c2)';
+            document.getElementById('st-indiv').classList.toggle('active', tab === 'indiv');
+            document.getElementById('st-indiv').style.background = tab === 'indiv' ? 'var(--c4)' : 'var(--c1)';
+            
+            document.getElementById('score-group-view').style.display = tab === 'group' ? 'flex' : 'none';
+            document.getElementById('score-indiv-view').style.display = tab === 'indiv' ? 'flex' : 'none';
+            
+            if (tab === 'indiv') {
+                if (!document.getElementById('score-session-name').value) {
+                    document.getElementById('score-session-name').value = new Date().toLocaleDateString();
+                }
+                loadIndivScores();
+            }
+        }
+
+        // --- INDIVIDUAL SCORE SYSTEM ---
+        function loadIndivScores() {
+            const cls = document.getElementById('score-class-sel').value;
+            let session = document.getElementById('score-session-name').value.trim();
+            const container = document.getElementById('indiv-score-container');
+            
+            if(!cls || !state.classes[cls]) {
+                container.innerHTML = '<p style="text-align:center; color:#888; margin-top:20px;">Please create and select a class in settings.</p>';
+                return;
+            }
+            if(!session) { 
+                session = new Date().toLocaleDateString(); 
+                document.getElementById('score-session-name').value = session; 
+            }
+            
+            if(!state.studentRecords) state.studentRecords = {};
+            if(!state.studentRecords[cls]) state.studentRecords[cls] = {};
+            if(!state.studentRecords[cls][session]) state.studentRecords[cls][session] = {};
+            
+            const students = state.classes[cls] || [];
+            container.innerHTML = '';
+            
+            students.forEach((s, idx) => {
+                let pts = state.studentRecords[cls][session][s] || 0;
+                let div = document.createElement('div');
+                div.className = 'indiv-row';
+                div.innerHTML = `
+                    <span style="flex:1; font-weight:bold;">${s}</span>
+                    <div class="pts-controls">
+                        <button onclick="changeIndivScore(${idx}, -1)">-</button>
+                        <span class="indiv-score-val" id="indiv-pts-${idx}">${pts}</span>
+                        <button class="plus" onclick="changeIndivScore(${idx}, 1)">+</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function changeIndivScore(idx, delta) {
+            beep();
+            const cls = document.getElementById('score-class-sel').value;
+            const session = document.getElementById('score-session-name').value.trim();
+            const student = state.classes[cls][idx];
+            
+            if(!state.studentRecords[cls][session]) state.studentRecords[cls][session] = {};
+            
+            let current = state.studentRecords[cls][session][student] || 0;
+            state.studentRecords[cls][session][student] = current + delta;
+            
+            const el = document.getElementById(`indiv-pts-${idx}`);
+            if(el) {
+                el.innerText = state.studentRecords[cls][session][student];
+            }
+        }
+
+        function exportIndivCSV() {
+            beep();
+            const cls = document.getElementById('score-class-sel').value;
+            if(!cls || !state.classes[cls]) return alert('No class selected.');
+            
+            const students = state.classes[cls];
+            if(students.length === 0) return alert('This class has no students.');
+            
+            if(!state.studentRecords) state.studentRecords = {};
+            const records = state.studentRecords[cls] || {};
+            const sessions = Object.keys(records);
+            
+            let csv = "Student Name,Total Points";
+            sessions.forEach(sess => { csv += "," + `"${sess.replace(/"/g, '""')}"`; });
+            csv += "\r\n";
+            
+            students.forEach(s => {
+                let total = 0;
+                let row = `"${s.replace(/"/g, '""')}"`;
+                let sessionScores = [];
+                
+                sessions.forEach(sess => {
+                    let pts = records[sess][s] || 0;
+                    total += pts;
+                    sessionScores.push(pts);
+                });
+                
+                row += `,${total}`;
+                sessionScores.forEach(pts => { row += `,${pts}`; });
+                csv += row + "\r\n";
+            });
+            
+            // Add UTF-8 BOM so Excel opens it with correct characters automatically
+            const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csv], { type: "text/csv;charset=utf-8;" }); 
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${cls}_ClassRecord.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
         function sortGroups() {
             state.teams.sort((a, b) => {
                 const nA = parseInt((a.name.match(/\d+/) || [9999])[0]);
@@ -1438,13 +1585,28 @@
         
         // --- 7. CLASS MANAGER ---
         function updateClassDropdowns() {
-            const pSel = document.getElementById('picker-class-sel'); const dSel = document.getElementById('dash-class-sel');
-            pSel.innerHTML = ''; dSel.innerHTML = '';
+            const pSel = document.getElementById('picker-class-sel'); 
+            const dSel = document.getElementById('dash-class-sel');
+            const sSel = document.getElementById('score-class-sel');
+            pSel.innerHTML = ''; dSel.innerHTML = ''; sSel.innerHTML = '';
             const keys = Object.keys(state.classes);
-            if(keys.length === 0) { pSel.innerHTML = `<option value="">No Classes</option>`; dSel.innerHTML = `<option value="">No Classes</option>`; state.activeClass = null; document.getElementById('dash-students').value = ''; return; }
-            for(let c in state.classes) { pSel.innerHTML += `<option value="${c}">${c}</option>`; dSel.innerHTML += `<option value="${c}">${c}</option>`; }
+            if(keys.length === 0) { 
+                pSel.innerHTML = `<option value="">No Classes</option>`; 
+                dSel.innerHTML = `<option value="">No Classes</option>`; 
+                sSel.innerHTML = `<option value="">No Classes</option>`; 
+                state.activeClass = null; 
+                document.getElementById('dash-students').value = ''; 
+                return; 
+            }
+            for(let c in state.classes) { 
+                pSel.innerHTML += `<option value="${c}">${c}</option>`; 
+                dSel.innerHTML += `<option value="${c}">${c}</option>`; 
+                sSel.innerHTML += `<option value="${c}">${c}</option>`; 
+            }
             if(!state.classes[state.activeClass]) state.activeClass = keys[0];
-            pSel.value = state.activeClass; dSel.value = state.activeClass; loadDashClass();
+            pSel.value = state.activeClass; dSel.value = state.activeClass; sSel.value = state.activeClass;
+            loadDashClass();
+            loadIndivScores();
         }
         function autoSaveClass() { const cls = document.getElementById('dash-class-sel').value; if(cls) { state.classes[cls] = document.getElementById('dash-students').value.split(/[\n,\t]+/).map(s=>s.trim()).filter(s=>s); } }
         function loadDashClass() { const cls = document.getElementById('dash-class-sel').value; document.getElementById('dash-students').value = (cls && state.classes[cls]) ? state.classes[cls].join('\n') : ""; }
