@@ -1271,38 +1271,24 @@
         function clearAnno() { beep(); aCtx.clearRect(0,0,aCvs.width,aCvs.height); dCtx.clearRect(0,0,dCvs.width,dCvs.height); }
 
         // --- 5. WIDGET DRAG ---
+       // --- 5. WIDGET DRAG & RESIZE FIX ---
         document.querySelectorAll('.widget').forEach(w => {
             const h = w.querySelector('.widget-header');
             if(h) { h.addEventListener('pointerdown', (e) => { if(e.target.classList.contains('widget-close') || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return; e.preventDefault(); document.querySelectorAll('.widget').forEach(x=>x.style.zIndex=100); w.style.zIndex=1000; document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='block'); let sX = e.clientX, sY = e.clientY; const move = (ev) => { w.style.left = (w.offsetLeft - (sX - ev.clientX)) + "px"; w.style.top = (w.offsetTop - (sY - ev.clientY)) + "px"; sX = ev.clientX; sY = ev.clientY; }; const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='none'); }; document.addEventListener('pointermove', move); document.addEventListener('pointerup', up); }); }
-            w.addEventListener('mousedown', (e) => { if(e.offsetX > w.offsetWidth - 20 && e.offsetY > w.offsetHeight - 20) { document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='block'); const up = () => { document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='none'); document.removeEventListener('mouseup', up); }; document.addEventListener('mouseup', up); } });
-        });
-
-        function initIframeScalers() {
-            const ro = new ResizeObserver(entries => {
-                for(let e of entries) {
-                    const wrap = e.target;
-                    const iframe = wrap.querySelector('iframe');
-                    if(!iframe || document.fullscreenElement === iframe) continue; 
-                    
-                    if (wrap.classList.contains('pseudo-fullscreen')) {
-                        iframe.style.width = '100%';
-                        iframe.style.height = '100%';
-                        iframe.style.transform = 'none';
-                        iframe.style.transformOrigin = 'top left';
-                        continue;
-                    }
-                    
-                    let w = wrap.clientWidth; let h = wrap.clientHeight;
-                    if(w === 0 || h === 0) continue;
-                    let vW = 1024; let scale = w / vW;
-                    iframe.style.width = vW + 'px'; 
-                    iframe.style.height = (h / scale) + 'px'; 
-                    iframe.style.transform = `scale(${scale})`;
-                }
+            
+            // FIX: Changed mousedown/mouseup to pointerdown/pointerup to safely cover iframes during native CSS resize
+            w.addEventListener('pointerdown', (e) => { 
+                if(e.offsetX > w.offsetWidth - 20 && e.offsetY > w.offsetHeight - 20) { 
+                    document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='block'); 
+                    const up = () => { 
+                        document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='none'); 
+                        document.removeEventListener('pointerup', up); 
+                    }; 
+                    document.addEventListener('pointerup', up); 
+                } 
             });
-            document.querySelectorAll('.iframe-wrapper').forEach(w => ro.observe(w));
-        }
-
+        });
+   
         // --- 6. TIMER ---
         let tT = 300, tI = null, isR = false, defaultT = 300;
         const minEl = document.getElementById('t-min'); const secEl = document.getElementById('t-sec');
