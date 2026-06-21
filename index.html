@@ -379,6 +379,7 @@
             <button class="side-btn" style="background:var(--c4); color:#FFF;" onclick="toggleW('w-picker')">🎯</button>
             <button class="side-btn" style="background:#FFF;" onclick="toggleW('w-music')">🎵</button>
             <button class="side-btn" style="background:#FFF;" onclick="toggleW('w-video')">🎬</button>
+            <button class="side-btn" style="background:#2C3E50; color:#FFF;" onclick="toggleW('w-ai-hub')" title="AI Assistants">🤖</button>
         </div>
 
         <div id="bottom-bar">
@@ -691,6 +692,27 @@
                     <div class="iframe-cover"></div>
                     <iframe id="cristory-iframe" class="iframe-container" src="https://teachercristw.github.io/cristory/" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-downloads" allow="autoplay; camera; microphone; display-capture; clipboard-read; clipboard-write"></iframe>
                 </div>
+            </div>
+        </div>
+
+        <div class="widget" id="w-ai-hub" style="width: 400px; height: 350px;">
+            <div class="widget-header" style="background:#2C3E50; color:#FFF;">
+                <span>🤖 AI Assistant Hub</span>
+                <button class="widget-close" onclick="toggleW('w-ai-hub')">X</button>
+            </div>
+            <div class="widget-content" style="display: flex; flex-direction: column; gap: 15px; padding: 20px; text-align: center; justify-content: center;">
+                <p style="margin: 0 0 10px 0; color: #333; font-size: 1.1rem; line-height: 1.4;">
+                    Launch an AI Assistant in a floating mini-window without leaving the whiteboard!
+                </p>
+                <button onclick="openAIPopup('https://gemini.google.com/')" style="background: linear-gradient(90deg, #1A73E8, #8E44AD); color: #FFF; padding: 15px; border-radius: 15px; border: none; font-size: 1.3rem; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+                    ✨ Launch Google Gemini
+                </button>
+                <button onclick="openAIPopup('https://chatgpt.com/')" style="background: #10A37F; color: #FFF; padding: 15px; border-radius: 15px; border: none; font-size: 1.3rem; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+                    🟢 Launch ChatGPT
+                </button>
+                <button onclick="openAIPopup('https://claude.ai/')" style="background: #D97757; color: #FFF; padding: 15px; border-radius: 15px; border: none; font-size: 1.3rem; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+                    🧠 Launch Claude
+                </button>
             </div>
         </div>
 
@@ -2097,6 +2119,22 @@
         // --- EXPORT/IMPORT ---
         function exportJSON() { beep(); const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); a.download = "config.json"; a.click(); }
         function importJSON(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = (ev) => { try { const importedState = JSON.parse(ev.target.result); if(importedState && importedState.classes) { state = importedState; if(!state.scoreThemes) state.scoreThemes = { burger: [], icecream: [], pizza: [], fries: [] }; alert("Loaded successfully!"); applyCoreSettings(); updateClassDropdowns(); evalRanks(); renderScores(); renderGreetings(); updateDrops(); document.getElementById('dashboard-modal').style.display='none'; } else { alert("Invalid config file."); } } catch(err) { console.error(err); alert("Error loading file."); } }; r.readAsText(f); e.target.value = ''; }
+        
+        // --- AI POPUP ENGINE ---
+        function openAIPopup(url) {
+            beep(); // play your existing click sound
+            
+            // Define the size of the floating window
+            const width = 450;
+            const height = 700;
+            
+            // Calculate position to open it on the right side of the screen
+            const left = window.screen.width - width - 50; 
+            const top = 50;
+
+            // Open the floating pop-up window
+            window.open(url, 'AI_Popup', `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`);
+        }
     </script>
 </body>
 </html>
