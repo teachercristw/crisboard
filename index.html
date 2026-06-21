@@ -379,7 +379,6 @@
             <button class="side-btn" style="background:var(--c4); color:#FFF;" onclick="toggleW('w-picker')">🎯</button>
             <button class="side-btn" style="background:#FFF;" onclick="toggleW('w-music')">🎵</button>
             <button class="side-btn" style="background:#FFF;" onclick="toggleW('w-video')">🎬</button>
-            <button class="side-btn" style="background:#2C3E50; color:#FFF;" onclick="toggleW('w-ai-hub')" title="AI Assistants">🤖</button>
         </div>
 
         <div id="bottom-bar">
@@ -695,27 +694,6 @@
             </div>
         </div>
 
-        <div class="widget" id="w-ai-hub" style="width: 400px; height: 350px;">
-            <div class="widget-header" style="background:#2C3E50; color:#FFF;">
-                <span>🤖 AI Assistant Hub</span>
-                <button class="widget-close" onclick="toggleW('w-ai-hub')">X</button>
-            </div>
-            <div class="widget-content" style="display: flex; flex-direction: column; gap: 15px; padding: 20px; text-align: center; justify-content: center;">
-                <p style="margin: 0 0 10px 0; color: #333; font-size: 1.1rem; line-height: 1.4;">
-                    Launch an AI Assistant in a floating mini-window without leaving the whiteboard!
-                </p>
-                <button onclick="openAIPopup('https://gemini.google.com/')" style="background: linear-gradient(90deg, #1A73E8, #8E44AD); color: #FFF; padding: 15px; border-radius: 15px; border: none; font-size: 1.3rem; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
-                    ✨ Launch Google Gemini
-                </button>
-                <button onclick="openAIPopup('https://chatgpt.com/')" style="background: #10A37F; color: #FFF; padding: 15px; border-radius: 15px; border: none; font-size: 1.3rem; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
-                    🟢 Launch ChatGPT
-                </button>
-                <button onclick="openAIPopup('https://claude.ai/')" style="background: #D97757; color: #FFF; padding: 15px; border-radius: 15px; border: none; font-size: 1.3rem; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
-                    🧠 Launch Claude
-                </button>
-            </div>
-        </div>
-
         <div id="dashboard-modal">
             <div class="dash-content">
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:4px solid #EEE; padding-bottom:15px; margin-bottom:20px;">
@@ -932,7 +910,7 @@
             appBgColor: "#0F0C29", appBgImage: null, appFont: "'Century Gothic', sans-serif",
             classes: {}, activeClass: null,
             teams: [{name:"GROUP 1", score:0, rank:null, time:null}, {name:"GROUP 2", score:0, rank:null, time:null}],
-            studentRecords: {}, // NEW: Individul class records
+            studentRecords: {}, 
             scoreStyle: 'burger', goal: 10,
             scoreThemes: { burger: [], icecream: [], pizza: [], fries: [] },
             feelings: [{ emoji: "😊", word: "happy" }, { emoji: "😢", word: "sad" }, { emoji: "😡", word: "angry" }, { emoji: "😴", word: "sleepy" }, { emoji: "🤢", word: "sick" }, { emoji: "🥶", word: "cold" }],
@@ -1270,13 +1248,33 @@
         }
         function clearAnno() { beep(); aCtx.clearRect(0,0,aCvs.width,aCvs.height); dCtx.clearRect(0,0,dCvs.width,dCvs.height); }
 
-        // --- 5. WIDGET DRAG ---
-       // --- 5. WIDGET DRAG & RESIZE FIX ---
+        // --- 5. WIDGET DRAG & RESIZE FIX ---
         document.querySelectorAll('.widget').forEach(w => {
             const h = w.querySelector('.widget-header');
-            if(h) { h.addEventListener('pointerdown', (e) => { if(e.target.classList.contains('widget-close') || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return; e.preventDefault(); document.querySelectorAll('.widget').forEach(x=>x.style.zIndex=100); w.style.zIndex=1000; document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='block'); let sX = e.clientX, sY = e.clientY; const move = (ev) => { w.style.left = (w.offsetLeft - (sX - ev.clientX)) + "px"; w.style.top = (w.offsetTop - (sY - ev.clientY)) + "px"; sX = ev.clientX; sY = ev.clientY; }; const up = () => { document.removeEventListener('pointermove', move); document.removeEventListener('pointerup', up); document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='none'); }; document.addEventListener('pointermove', move); document.addEventListener('pointerup', up); }); }
+            if(h) { 
+                h.addEventListener('pointerdown', (e) => { 
+                    if(e.target.classList.contains('widget-close') || e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return; 
+                    e.preventDefault(); 
+                    document.querySelectorAll('.widget').forEach(x=>x.style.zIndex=100); 
+                    w.style.zIndex=1000; 
+                    document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='block'); 
+                    let sX = e.clientX, sY = e.clientY; 
+                    const move = (ev) => { 
+                        w.style.left = (w.offsetLeft - (sX - ev.clientX)) + "px"; 
+                        w.style.top = (w.offsetTop - (sY - ev.clientY)) + "px"; 
+                        sX = ev.clientX; sY = ev.clientY; 
+                    }; 
+                    const up = () => { 
+                        document.removeEventListener('pointermove', move); 
+                        document.removeEventListener('pointerup', up); 
+                        document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='none'); 
+                    }; 
+                    document.addEventListener('pointermove', move); 
+                    document.addEventListener('pointerup', up); 
+                }); 
+            }
             
-            // FIX: Changed mousedown/mouseup to pointerdown/pointerup to safely cover iframes during native CSS resize
+            // FIX: Uses modern pointer events to safely block the iframe "black hole" during native corner dragging
             w.addEventListener('pointerdown', (e) => { 
                 if(e.offsetX > w.offsetWidth - 20 && e.offsetY > w.offsetHeight - 20) { 
                     document.querySelectorAll('.iframe-cover').forEach(c=>c.style.display='block'); 
@@ -1288,7 +1286,42 @@
                 } 
             });
         });
-   
+
+        // --- NEW LETTERBOX IFRAME SCALER FIX ---
+        function initIframeScalers() {
+            const ro = new ResizeObserver(entries => {
+                for(let e of entries) {
+                    const wrap = e.target;
+                    const iframe = wrap.querySelector('iframe');
+                    if(!iframe) continue; 
+                    
+                    let w = wrap.clientWidth; 
+                    let h = wrap.clientHeight;
+                    if(w === 0 || h === 0) continue;
+
+                    // This forces all Canva/Slides/Games to render as if they are on a standard 16:9 monitor
+                    let vW = 1280; 
+                    let vH = 720; 
+
+                    // Calculates exact scale to fit the entire presentation inside your widget box without scrollbars
+                    let scale = Math.min(w / vW, h / vH);
+
+                    iframe.style.width = vW + 'px'; 
+                    iframe.style.height = vH + 'px'; 
+                    iframe.style.transformOrigin = 'top left';
+                    iframe.style.transform = `scale(${scale})`;
+                    iframe.style.position = 'absolute';
+                    
+                    // Centers the iframe perfectly inside the box
+                    let offsetX = (w - (vW * scale)) / 2;
+                    let offsetY = (h - (vH * scale)) / 2;
+                    iframe.style.left = offsetX + 'px';
+                    iframe.style.top = offsetY + 'px';
+                }
+            });
+            document.querySelectorAll('.iframe-wrapper').forEach(w => ro.observe(w));
+        }
+
         // --- 6. TIMER ---
         let tT = 300, tI = null, isR = false, defaultT = 300;
         const minEl = document.getElementById('t-min'); const secEl = document.getElementById('t-sec');
@@ -2106,21 +2139,6 @@
         function exportJSON() { beep(); const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); a.download = "config.json"; a.click(); }
         function importJSON(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = (ev) => { try { const importedState = JSON.parse(ev.target.result); if(importedState && importedState.classes) { state = importedState; if(!state.scoreThemes) state.scoreThemes = { burger: [], icecream: [], pizza: [], fries: [] }; alert("Loaded successfully!"); applyCoreSettings(); updateClassDropdowns(); evalRanks(); renderScores(); renderGreetings(); updateDrops(); document.getElementById('dashboard-modal').style.display='none'; } else { alert("Invalid config file."); } } catch(err) { console.error(err); alert("Error loading file."); } }; r.readAsText(f); e.target.value = ''; }
         
-        // --- AI POPUP ENGINE ---
-        function openAIPopup(url) {
-            beep(); // play your existing click sound
-            
-            // Define the size of the floating window
-            const width = 450;
-            const height = 700;
-            
-            // Calculate position to open it on the right side of the screen
-            const left = window.screen.width - width - 50; 
-            const top = 50;
-
-            // Open the floating pop-up window
-            window.open(url, 'AI_Popup', `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`);
-        }
     </script>
 </body>
 </html>
