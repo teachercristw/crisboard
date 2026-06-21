@@ -379,6 +379,7 @@
             <button class="side-btn" style="background:var(--c4); color:#FFF;" onclick="toggleW('w-picker')">🎯</button>
             <button class="side-btn" style="background:#FFF;" onclick="toggleW('w-music')">🎵</button>
             <button class="side-btn" style="background:#FFF;" onclick="toggleW('w-video')">🎬</button>
+            <button class="side-btn" style="background:#3498DB; color:#FFF;" onclick="toggleW('w-web')" title="Web Browser">🌐</button>
         </div>
 
         <div id="bottom-bar">
@@ -694,6 +695,24 @@
             </div>
         </div>
 
+        <div class="widget" id="w-web" style="width: 400px; height: 300px;">
+            <div class="widget-header" style="background:#3498DB; color:#FFF;">
+                <span>🌐 Web Search</span>
+                <button class="widget-close" onclick="toggleW('w-web')">X</button>
+            </div>
+            <div class="widget-content" style="display: flex; flex-direction: column; gap: 15px; padding: 20px; justify-content: center; text-align: center;">
+                <p style="margin: 0; color: #333; font-size: 1.1rem; line-height: 1.4;">
+                    Search the web or open Google in a floating window!
+                </p>
+                
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="web-search-input" placeholder="Search Google..." style="margin: 0; flex: 1; border: 3px solid #EEE;" onkeydown="if(event.key==='Enter') document.getElementById('web-search-btn').click();">
+                    <button id="web-search-btn" onclick="let q = document.getElementById('web-search-input').value; if(q) openAIPopup('https://www.google.com/search?q=' + encodeURIComponent(q)); else openAIPopup('https://www.google.com/');" style="background: #3498DB; color: #FFF; border: none; padding: 10px 20px; text-transform: none;">🔍 Search</button>
+                </div>
+                
+                <button onclick="openAIPopup('https://www.google.com/')" style="background: #EEE; color: #333; border: 2px solid #CCC; padding: 10px; font-size: 1rem; text-transform: none;">Just open Google.com</button>
+            </div>
+        </div>
         <div id="dashboard-modal">
             <div class="dash-content">
                 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:4px solid #EEE; padding-bottom:15px; margin-bottom:20px;">
@@ -910,7 +929,7 @@
             appBgColor: "#0F0C29", appBgImage: null, appFont: "'Century Gothic', sans-serif",
             classes: {}, activeClass: null,
             teams: [{name:"GROUP 1", score:0, rank:null, time:null}, {name:"GROUP 2", score:0, rank:null, time:null}],
-            studentRecords: {}, 
+            studentRecords: {}, // NEW: Individul class records
             scoreStyle: 'burger', goal: 10,
             scoreThemes: { burger: [], icecream: [], pizza: [], fries: [] },
             feelings: [{ emoji: "😊", word: "happy" }, { emoji: "😢", word: "sad" }, { emoji: "😡", word: "angry" }, { emoji: "😴", word: "sleepy" }, { emoji: "🤢", word: "sick" }, { emoji: "🥶", word: "cold" }],
@@ -2139,6 +2158,21 @@
         function exportJSON() { beep(); const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state)); a.download = "config.json"; a.click(); }
         function importJSON(e) { const f = e.target.files[0]; if(!f) return; const r = new FileReader(); r.onload = (ev) => { try { const importedState = JSON.parse(ev.target.result); if(importedState && importedState.classes) { state = importedState; if(!state.scoreThemes) state.scoreThemes = { burger: [], icecream: [], pizza: [], fries: [] }; alert("Loaded successfully!"); applyCoreSettings(); updateClassDropdowns(); evalRanks(); renderScores(); renderGreetings(); updateDrops(); document.getElementById('dashboard-modal').style.display='none'; } else { alert("Invalid config file."); } } catch(err) { console.error(err); alert("Error loading file."); } }; r.readAsText(f); e.target.value = ''; }
         
+        // --- WEB POPUP ENGINE ---
+        function openAIPopup(url) {
+            beep(); // play your existing click sound
+            
+            // Define the size of the floating window
+            const width = 450;
+            const height = 700;
+            
+            // Calculate position to open it on the right side of the screen
+            const left = window.screen.width - width - 50; 
+            const top = 50;
+
+            // Open the floating pop-up window
+            window.open(url, 'AI_Popup', `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`);
+        }
     </script>
 </body>
 </html>
