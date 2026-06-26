@@ -324,7 +324,7 @@
         /* Media List Accordion & Inline Edit Styles */
         .folder-header { cursor: pointer; background: #EBF4FA; padding: 10px 15px; border-radius: 8px; margin-bottom: 5px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border: 2px solid #BBDEFB; color: #1565C0; transition: background 0.2s;}
         .folder-header:hover { background: #BBDEFB; }
-        .list-item { display: flex; justify-content: space-between; align-items: center; background: #FFF; padding: 8px 12px; border-radius: 8px; margin-bottom: 5px; border: 2px solid #EEE; transition: border-color 0.2s;}
+        .list-item { display: flex; justify-content: space-between; align-items: center; background: #FFF; padding: 8px 12px; border-radius: 8px; margin-bottom: 5px; border: 2px solid #EEE; transition: border-color 0.2s; user-select: none;}
         .list-item:hover { border-color: #BBDEFB; }
         .inline-edit-form { display: flex; flex-direction: column; gap: 8px; background: #FFF9C4; padding: 12px; border-radius: 10px; border: 2px dashed #FBC02D; margin-bottom: 5px; }
     </style>
@@ -796,14 +796,17 @@
                                 <p style="font-size:0.8rem; color:#444; margin:0;">In OneDrive or Canva, click <strong>Share > Embed</strong>. You can safely paste the <strong>ENTIRE code</strong> into the URL box below!</p>
                             </div>
                             
-                            <select id="media-cat" style="background:var(--c2); font-weight:bold; margin-bottom:15px;" onchange="handleMediaCatChange()">
-                                <option value="wbBackgrounds">🖍️ Category: Whiteboard BGs</option>
-                                <option value="learning">📚 Category: Learning (Slides/Web)</option>
-                                <option value="activities">🕹️ Category: Fun Activities</option>
-                                <option value="video">🎬 Category: Videos (YouTube/MP4)</option>
-                                <option value="music">🎵 Category: Music Tracks</option>
-                                <option value="exit">🚪 Category: Exit Tickets</option>
-                            </select>
+                            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                                <select id="media-cat" style="background:var(--c2); font-weight:bold; margin:0; flex:1;" onchange="handleMediaCatChange()">
+                                    <option value="wbBackgrounds">🖍️ Category: Whiteboard BGs</option>
+                                    <option value="learning">📚 Category: Learning (Slides/Web)</option>
+                                    <option value="activities">🕹️ Category: Fun Activities</option>
+                                    <option value="video">🎬 Category: Videos (YouTube/MP4)</option>
+                                    <option value="music">🎵 Category: Music Tracks</option>
+                                    <option value="exit">🚪 Category: Exit Tickets</option>
+                                </select>
+                                <button onclick="sortMediaAlphabetically()" style="background:var(--c4); color:#FFF; font-size:0.9rem; padding:10px; border:none; border-radius:10px; text-transform:none;">🔤 Sort A-Z</button>
+                            </div>
 
                             <label style="font-size: 0.9rem; color: #333; font-weight: bold;">1. Name your media:</label>
                             <input type="text" id="m-title" placeholder="e.g., G1 Storytelling">
@@ -1975,6 +1978,21 @@
             list.innerHTML = Array.from(folders).map(f => `<option value="${f}">`).join('');
         }
         
+        function sortMediaAlphabetically() {
+            beep();
+            const cat = document.getElementById('media-cat').value;
+            if (!state.media[cat]) return;
+            state.media[cat].sort((a, b) => {
+                let fA = (a.folder || "").toLowerCase();
+                let fB = (b.folder || "").toLowerCase();
+                if (fA < fB) return -1;
+                if (fA > fB) return 1;
+                return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+            });
+            renderMediaList();
+            updateDrops();
+        }
+
         function addMedia() { 
             beep(); 
             const cat = document.getElementById('media-cat').value; 
@@ -2054,6 +2072,31 @@
             updateDrops(); 
         }
         
+        // --- DRAG AND DROP FOR MEDIA LIST ---
+        let mDragIndex = null;
+        function mDragStart(e, cat, i) {
+            mDragIndex = i;
+            e.dataTransfer.effectAllowed = 'move';
+            setTimeout(() => e.target.style.opacity = '0.5', 0);
+        }
+        function mDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+        function mDrop(e, cat, targetIndex) {
+            e.preventDefault();
+            if(e.target.closest('.list-item')) e.target.closest('.list-item').style.opacity = '1';
+            if (mDragIndex === null || mDragIndex === targetIndex) return;
+            beep();
+            
+            let item = state.media[cat].splice(mDragIndex, 1)[0];
+            state.media[cat].splice(targetIndex, 0, item);
+            
+            mDragIndex = null;
+            renderMediaList();
+            updateDrops();
+        }
+
         function renderMediaList() { 
             const cat = document.getElementById('media-cat').value; 
             const c = document.getElementById('media-list'); 
@@ -2107,8 +2150,11 @@
                             </div>`;
                         } else {
                             html += `
-                            <div class="list-item">
-                                <span style="font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:200px;" title="${m.title.replace(/"/g, '&quot;')}">${m.title}</span>
+                            <div class="list-item" draggable="true" ondragstart="mDragStart(event, '${cat}', ${i})" ondragover="mDragOver(event)" ondrop="mDrop(event, '${cat}', ${i})" ondragend="this.style.opacity='1'">
+                                <div style="display:flex; align-items:center; gap:10px; overflow:hidden;">
+                                    <span style="cursor:grab; color:#888; font-size:1.2rem; padding-right:5px; user-select:none;" title="Drag to reorder">☰</span>
+                                    <span style="font-size:0.95rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px;" title="${m.title.replace(/"/g, '&quot;')}">${m.title}</span>
+                                </div>
                                 <div style="display:flex; gap:5px; flex-shrink:0;">
                                     <button onclick="editMediaInline(${i})" style="padding:4px 10px; font-size:0.9rem; background:var(--c2); color:#FFF; border:none; border-radius:5px; box-shadow:0 2px 0 rgba(0,0,0,0.1);" title="Edit">✎</button>
                                     <button onclick="remMedia('${cat}', ${i})" style="padding:4px 10px; font-size:0.9rem; background:var(--c4); color:#FFF; border:none; border-radius:5px; box-shadow:0 2px 0 rgba(0,0,0,0.1);" title="Delete">X</button>
@@ -2128,18 +2174,15 @@
                 if(s && state.media[cat]) { 
                     let grouped = {};
                     let ungrouped = [];
-                    
-                    // 1. Sort items alphabetically first
-                    let mapped = state.media[cat].map((m, i) => ({m, i}))
-                                     .sort((a, b) => a.m.title.localeCompare(b.m.title));
-                    
-                    mapped.forEach((item) => {
-                        if(item.m.folder && item.m.folder.trim() !== "") {
-                            let f = item.m.folder.trim();
-                            if(!grouped[f]) grouped[f] = [];
-                            grouped[f].push(item);
+                    let orderOfFolders = []; // Preserve exact visual sequence created by dragging
+
+                    state.media[cat].forEach((m, i) => {
+                        if(m.folder && m.folder.trim() !== "") {
+                            let f = m.folder.trim();
+                            if(!grouped[f]) { grouped[f] = []; orderOfFolders.push(f); }
+                            grouped[f].push({m, i});
                         } else {
-                            ungrouped.push(item);
+                            ungrouped.push({m, i});
                         }
                     });
 
@@ -2148,10 +2191,7 @@
                         html += `<option value="${item.i}">${item.m.title}</option>`;
                     });
                     
-                    // 2. Sort folders alphabetically
-                    let sortedFolders = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
-                    
-                    sortedFolders.forEach(f => {
+                    orderOfFolders.forEach(f => {
                         html += `<optgroup label="${f}">`;
                         grouped[f].forEach(item => {
                             html += `<option value="${item.i}">${item.m.title}</option>`;
