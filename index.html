@@ -104,10 +104,12 @@
         #wb-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 0; display: none; }
         #whiteboard { position: absolute; inset: 0; z-index: 1; cursor: crosshair; }
 
-        /* Timer */
-        .time-input { width: 90px; font-size: 5rem; text-align: center; border: none; background: transparent; color: var(--c4); font-family: inherit; font-weight: bold; outline: none; padding: 0; margin-bottom: 10px;}
+        /* Scalable Timer */
+        .timer-scale-container { display: flex; justify-content: center; align-items: center; flex: 1; width: 100%; container-type: inline-size; }
+        .time-input { width: 1.25em; font-size: clamp(4rem, 25cqw, 20rem); text-align: center; border: none; background: transparent; color: var(--c4); font-family: inherit; font-weight: bold; outline: none; padding: 0; margin-bottom: 0;}
         .time-input::-webkit-outer-spin-button, .time-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .time-input:disabled { background: transparent; color: var(--c4); opacity: 1; -webkit-text-fill-color: var(--c4);}
+        .time-colon { font-size: clamp(3.5rem, 22cqw, 18rem); color: var(--c4); margin-bottom: 2cqw; font-weight: bold; }
 
         /* Scoreboard & Individual Scoring Additions */
         #score-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 5px; flex: 1; align-content: start;}
@@ -452,9 +454,9 @@
         <div class="widget" id="w-timer" style="width: 320px; min-height: 250px;">
             <div class="widget-header"><span>⏳ Timer</span><button class="widget-close" onclick="toggleW('w-timer')">X</button></div>
             <div class="widget-content" style="justify-content:center; align-items:center;">
-                <div style="display:flex; justify-content:center; align-items:center;">
+                <div class="timer-scale-container">
                     <input type="number" id="t-min" class="time-input" value="05" min="0" max="99" onchange="updateDefaultTime()">
-                    <span style="font-size: 4rem; color: var(--c4); margin-bottom: 15px;">:</span>
+                    <span class="time-colon">:</span>
                     <input type="number" id="t-sec" class="time-input" value="00" min="0" max="59" onchange="updateDefaultTime()">
                 </div>
                 <button id="btn-timer" style="background:var(--c2); width:100%; margin-bottom:10px;" onclick="toggleTimer()">Start</button>
@@ -2126,13 +2128,18 @@
                 if(s && state.media[cat]) { 
                     let grouped = {};
                     let ungrouped = [];
-                    state.media[cat].forEach((m, i) => {
-                        if(m.folder && m.folder.trim() !== "") {
-                            let f = m.folder.trim();
+                    
+                    // 1. Sort items alphabetically first
+                    let mapped = state.media[cat].map((m, i) => ({m, i}))
+                                     .sort((a, b) => a.m.title.localeCompare(b.m.title));
+                    
+                    mapped.forEach((item) => {
+                        if(item.m.folder && item.m.folder.trim() !== "") {
+                            let f = item.m.folder.trim();
                             if(!grouped[f]) grouped[f] = [];
-                            grouped[f].push({m, i});
+                            grouped[f].push(item);
                         } else {
-                            ungrouped.push({m, i});
+                            ungrouped.push(item);
                         }
                     });
 
@@ -2140,13 +2147,18 @@
                     ungrouped.forEach(item => {
                         html += `<option value="${item.i}">${item.m.title}</option>`;
                     });
-                    for(let f in grouped) {
+                    
+                    // 2. Sort folders alphabetically
+                    let sortedFolders = Object.keys(grouped).sort((a, b) => a.localeCompare(b));
+                    
+                    sortedFolders.forEach(f => {
                         html += `<optgroup label="${f}">`;
                         grouped[f].forEach(item => {
                             html += `<option value="${item.i}">${item.m.title}</option>`;
                         });
                         html += `</optgroup>`;
-                    }
+                    });
+                    
                     s.innerHTML = html;
                 } 
             }); 
