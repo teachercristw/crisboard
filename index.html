@@ -322,7 +322,7 @@
         .dash-section { margin-bottom: 15px; background: #F9F9F9; padding: 15px; border-radius: 15px; border: 3px solid #EEE; }
         
         /* Media List Accordion & Inline Edit Styles */
-        .folder-header { cursor: pointer; background: #EBF4FA; padding: 10px 15px; border-radius: 8px; margin-bottom: 5px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border: 2px solid #BBDEFB; color: #1565C0; transition: background 0.2s;}
+        .folder-header { background: #EBF4FA; padding: 10px 15px; border-radius: 8px; margin-bottom: 5px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border: 2px solid #BBDEFB; color: #1565C0; transition: background 0.2s;}
         .folder-header:hover { background: #BBDEFB; }
         .list-item { display: flex; justify-content: space-between; align-items: center; background: #FFF; padding: 8px 12px; border-radius: 8px; margin-bottom: 5px; border: 2px solid #EEE; transition: border-color 0.2s; user-select: none;}
         .list-item:hover { border-color: #BBDEFB; }
@@ -805,7 +805,10 @@
                                     <option value="music">🎵 Category: Music Tracks</option>
                                     <option value="exit">🚪 Category: Exit Tickets</option>
                                 </select>
-                                <button onclick="sortMediaAlphabetically()" style="background:var(--c4); color:#FFF; font-size:0.9rem; padding:10px; border:none; border-radius:10px; text-transform:none;">🔤 Sort A-Z</button>
+                                <div style="display: flex; gap: 5px;">
+                                    <button onclick="sortFolders()" style="background:var(--c3); color:#FFF; font-size:0.8rem; padding:8px 10px; border:none; border-radius:10px; text-transform:none;" title="Toggle A-Z / Z-A">📁 Sort Folders</button>
+                                    <button onclick="sortItems()" style="background:var(--c4); color:#FFF; font-size:0.8rem; padding:8px 10px; border:none; border-radius:10px; text-transform:none;" title="Toggle A-Z / Z-A">📄 Sort Items</button>
+                                </div>
                             </div>
 
                             <label style="font-size: 0.9rem; color: #333; font-weight: bold;">1. Name your media:</label>
@@ -1978,17 +1981,69 @@
             list.innerHTML = Array.from(folders).map(f => `<option value="${f}">`).join('');
         }
         
-        function sortMediaAlphabetically() {
+        let folderSortDir = 1;
+        let itemSortDir = 1;
+
+        function sortFolders() {
             beep();
             const cat = document.getElementById('media-cat').value;
             if (!state.media[cat]) return;
-            state.media[cat].sort((a, b) => {
-                let fA = (a.folder || "").toLowerCase();
-                let fB = (b.folder || "").toLowerCase();
-                if (fA < fB) return -1;
-                if (fA > fB) return 1;
-                return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+            
+            let uniqueFolders = [];
+            state.media[cat].forEach(m => {
+                let f = (m.folder && m.folder.trim() !== "") ? m.folder.trim() : "Ungrouped";
+                if(!uniqueFolders.includes(f)) uniqueFolders.push(f);
             });
+            
+            uniqueFolders.sort((a, b) => {
+                if (a === "Ungrouped") return 1; 
+                if (b === "Ungrouped") return -1;
+                return a.localeCompare(b) * folderSortDir;
+            });
+            
+            folderSortDir *= -1; 
+            
+            let newMediaArray = [];
+            uniqueFolders.forEach(f => {
+                let itemsInFolder = state.media[cat].filter(m => {
+                    let mf = (m.folder && m.folder.trim() !== "") ? m.folder.trim() : "Ungrouped";
+                    return mf === f;
+                });
+                newMediaArray.push(...itemsInFolder);
+            });
+            
+            state.media[cat] = newMediaArray;
+            renderMediaList();
+            updateDrops();
+        }
+
+        function sortItems() {
+            beep();
+            const cat = document.getElementById('media-cat').value;
+            if (!state.media[cat]) return;
+            
+            let uniqueFolders = [];
+            state.media[cat].forEach(m => {
+                let f = (m.folder && m.folder.trim() !== "") ? m.folder.trim() : "Ungrouped";
+                if(!uniqueFolders.includes(f)) uniqueFolders.push(f);
+            });
+            
+            let newMediaArray = [];
+            uniqueFolders.forEach(f => {
+                let itemsInFolder = state.media[cat].filter(m => {
+                    let mf = (m.folder && m.folder.trim() !== "") ? m.folder.trim() : "Ungrouped";
+                    return mf === f;
+                });
+                
+                itemsInFolder.sort((a, b) => {
+                    return a.title.toLowerCase().localeCompare(b.title.toLowerCase()) * itemSortDir;
+                });
+                
+                newMediaArray.push(...itemsInFolder);
+            });
+            
+            itemSortDir *= -1; 
+            state.media[cat] = newMediaArray;
             renderMediaList();
             updateDrops();
         }
@@ -2072,29 +2127,112 @@
             updateDrops(); 
         }
         
-        // --- DRAG AND DROP FOR MEDIA LIST ---
+        // --- DRAG AND DROP LOGIC ---
         let mDragIndex = null;
-        function mDragStart(e, cat, i) {
-            mDragIndex = i;
+        let fDragFolder = null;
+
+        function fDragStart(e, folderName) {
+            e.stopPropagation(); 
+            fDragFolder = folderName;
+            mDragIndex = null; 
             e.dataTransfer.effectAllowed = 'move';
             setTimeout(() => e.target.style.opacity = '0.5', 0);
         }
+
+        function mDragStart(e, cat, i) {
+            e.stopPropagation(); 
+            mDragIndex = i;
+            fDragFolder = null; 
+            e.dataTransfer.effectAllowed = 'move';
+            setTimeout(() => e.target.style.opacity = '0.5', 0);
+        }
+
+        function fDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
         function mDragOver(e) {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
         }
-        function mDrop(e, cat, targetIndex) {
+
+        function fDrop(e, cat, targetFolder) {
             e.preventDefault();
-            if(e.target.closest('.list-item')) e.target.closest('.list-item').style.opacity = '1';
-            if (mDragIndex === null || mDragIndex === targetIndex) return;
+            e.stopPropagation();
+            if(e.target.closest('.folder-header')) e.target.closest('.folder-header').style.opacity = '1';
+            
+            // If dropping an ITEM onto a FOLDER HEADER
+            if (mDragIndex !== null) {
+                beep();
+                let item = state.media[cat][mDragIndex];
+                item.folder = targetFolder === "Ungrouped" ? "" : targetFolder;
+                
+                state.media[cat].splice(mDragIndex, 1);
+                
+                let insertIdx = state.media[cat].findLastIndex(m => {
+                    let mf = (m.folder && m.folder.trim() !== "") ? m.folder.trim() : "Ungrouped";
+                    return mf === targetFolder;
+                });
+                if (insertIdx === -1) insertIdx = state.media[cat].length; else insertIdx++;
+                
+                state.media[cat].splice(insertIdx, 0, item);
+                mDragIndex = null;
+                renderMediaList();
+                updateDrops();
+                return;
+            }
+
+            // If dropping a FOLDER onto another FOLDER
+            if (!fDragFolder || fDragFolder === targetFolder) return;
             beep();
             
-            let item = state.media[cat].splice(mDragIndex, 1)[0];
-            state.media[cat].splice(targetIndex, 0, item);
+            let uniqueFolders = [];
+            state.media[cat].forEach(m => {
+                let f = (m.folder && m.folder.trim() !== "") ? m.folder.trim() : "Ungrouped";
+                if(!uniqueFolders.includes(f)) uniqueFolders.push(f);
+            });
             
-            mDragIndex = null;
+            let fromIdx = uniqueFolders.indexOf(fDragFolder);
+            let toIdx = uniqueFolders.indexOf(targetFolder);
+            uniqueFolders.splice(fromIdx, 1);
+            uniqueFolders.splice(toIdx, 0, fDragFolder);
+            
+            let newMediaArray = [];
+            uniqueFolders.forEach(f => {
+                let itemsInFolder = state.media[cat].filter(m => {
+                    let mf = (m.folder && m.folder.trim() !== "") ? m.folder.trim() : "Ungrouped";
+                    return mf === f;
+                });
+                newMediaArray.push(...itemsInFolder);
+            });
+            
+            state.media[cat] = newMediaArray;
+            fDragFolder = null;
             renderMediaList();
             updateDrops();
+        }
+
+        function mDrop(e, cat, targetIndex) {
+            e.preventDefault();
+            e.stopPropagation();
+            if(e.target.closest('.list-item')) e.target.closest('.list-item').style.opacity = '1';
+            
+            if (mDragIndex !== null) {
+                if (mDragIndex === targetIndex) return;
+                beep();
+                let targetFolder = state.media[cat][targetIndex].folder || "Ungrouped";
+                state.media[cat][mDragIndex].folder = targetFolder === "Ungrouped" ? "" : targetFolder;
+
+                let item = state.media[cat].splice(mDragIndex, 1)[0];
+                let adjustedTarget = targetIndex > mDragIndex ? targetIndex - 1 : targetIndex;
+                
+                state.media[cat].splice(adjustedTarget, 0, item);
+                
+                mDragIndex = null;
+                renderMediaList();
+                updateDrops();
+            }
         }
 
         function renderMediaList() { 
@@ -2118,9 +2256,12 @@
             let html = '';
             for (let f in grouped) {
                 let isExpanded = expandedFolders[f] || false;
-                html += `<div class="folder-header" onclick="toggleFolder('${f.replace(/'/g, "\\'")}')">
-                            <span>📁 ${f} (${grouped[f].length})</span>
-                            <span style="color:#1976D2;">${isExpanded ? '▼' : '▶'}</span>
+                html += `<div class="folder-header" draggable="true" ondragstart="fDragStart(event, '${f.replace(/'/g, "\\'")}')" ondragover="fDragOver(event)" ondrop="fDrop(event, '${cat}', '${f.replace(/'/g, "\\'")}')" ondragend="this.style.opacity='1'">
+                            <div style="display:flex; align-items:center; gap:10px; flex:1;">
+                                <span style="cursor:grab; font-size:1.2rem; user-select:none;" title="Drag to reorder folder">☰</span>
+                                <span onclick="toggleFolder('${f.replace(/'/g, "\\'")}')" style="flex:1; cursor:pointer;">📁 ${f} (${grouped[f].length})</span>
+                            </div>
+                            <span onclick="toggleFolder('${f.replace(/'/g, "\\'")}')" style="color:#1976D2; cursor:pointer; padding:5px;">${isExpanded ? '▼' : '▶'}</span>
                          </div>`;
                 
                 if (isExpanded) {
@@ -2174,7 +2315,7 @@
                 if(s && state.media[cat]) { 
                     let grouped = {};
                     let ungrouped = [];
-                    let orderOfFolders = []; // Preserve exact visual sequence created by dragging
+                    let orderOfFolders = []; 
 
                     state.media[cat].forEach((m, i) => {
                         if(m.folder && m.folder.trim() !== "") {
