@@ -885,73 +885,6 @@
             lastTouchEnd = now;
         }, false);
 
-        // --- GLOBAL CLOCK UPDATER ---
-        function updateGlobalClock() {
-            const now = new Date();
-            let h = now.getHours();
-            let m = now.getMinutes();
-            let ampm = h >= 12 ? 'PM' : 'AM';
-            h = h % 12;
-            h = h ? h : 12; // the hour '0' should be '12'
-            m = m < 10 ? '0' + m : m;
-            const clk = document.getElementById('clock-time');
-            if (clk) clk.innerText = h + ':' + m + ' ' + ampm;
-
-            // Class Countdown logic - ADDED SAFETY CHECK HERE
-            const cd = document.getElementById('class-countdown');
-            if (cd && typeof state !== 'undefined' && state.classSchedule) {
-                const currentMins = now.getHours() * 60 + now.getMinutes();
-                let activePeriod = null;
-                for(let p of state.classSchedule) {
-                    if(!p.start || !p.end) continue;
-                    let sParts = p.start.split(':');
-                    let eParts = p.end.split(':');
-                    let sMins = parseInt(sParts[0])*60 + parseInt(sParts[1]);
-                    let eMins = parseInt(eParts[0])*60 + parseInt(eParts[1]);
-                    if (currentMins >= sMins && currentMins < eMins) {
-                        activePeriod = p;
-                        activePeriod.left = eMins - currentMins;
-                        break;
-                    }
-                }
-                if (activePeriod) {
-                    cd.style.display = 'inline-block';
-                    cd.innerText = `${activePeriod.name}: ${activePeriod.left}mins`;
-                } else {
-                    cd.style.display = 'none';
-                }
-            }
-        }
-        setInterval(updateGlobalClock, 1000);
-        updateGlobalClock();
-
-        // --- FULLSCREEN CONTROLS DRAG LOGIC ---
-        document.querySelectorAll('.fs-controls').forEach(ctrl => {
-            let isDragging = false, oX = 0, oY = 0;
-            ctrl.addEventListener('pointerdown', (e) => {
-                if(e.target.tagName === 'BUTTON') return;
-                isDragging = true;
-                ctrl.style.cursor = 'grabbing';
-                const rect = ctrl.getBoundingClientRect();
-                oX = e.clientX - rect.left;
-                oY = e.clientY - rect.top;
-                ctrl.style.left = rect.left + 'px';
-                ctrl.style.top = rect.top + 'px';
-                ctrl.style.right = 'auto'; 
-                ctrl.setPointerCapture(e.pointerId);
-            });
-            ctrl.addEventListener('pointermove', (e) => {
-                if(!isDragging) return;
-                ctrl.style.left = (e.clientX - oX) + 'px';
-                ctrl.style.top = (e.clientY - oY) + 'px';
-            });
-            ctrl.addEventListener('pointerup', (e) => {
-                isDragging = false;
-                ctrl.style.cursor = 'grab';
-                ctrl.releasePointerCapture(e.pointerId);
-            });
-        });
-
         // --- 1. STATE & DATA ---
         const palettes = {
             space: { bg: '#0F0C29', c1: '#302B63', c2: '#F5AF19', c3: '#24243E', c4: '#F10086', img: 'https://raw.githubusercontent.com/teachercristw/crisboard/main/1.jpg' },
@@ -1010,6 +943,73 @@
             }
         };
         let memStud = []; 
+
+        // --- GLOBAL CLOCK UPDATER ---
+        function updateGlobalClock() {
+            const now = new Date();
+            let h = now.getHours();
+            let m = now.getMinutes();
+            let ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            h = h ? h : 12; // the hour '0' should be '12'
+            m = m < 10 ? '0' + m : m;
+            const clk = document.getElementById('clock-time');
+            if (clk) clk.innerText = h + ':' + m + ' ' + ampm;
+
+            // Class Countdown logic
+            const cd = document.getElementById('class-countdown');
+            if (cd && state.classSchedule) {
+                const currentMins = now.getHours() * 60 + now.getMinutes();
+                let activePeriod = null;
+                for(let p of state.classSchedule) {
+                    if(!p.start || !p.end) continue;
+                    let sParts = p.start.split(':');
+                    let eParts = p.end.split(':');
+                    let sMins = parseInt(sParts[0])*60 + parseInt(sParts[1]);
+                    let eMins = parseInt(eParts[0])*60 + parseInt(eParts[1]);
+                    if (currentMins >= sMins && currentMins < eMins) {
+                        activePeriod = p;
+                        activePeriod.left = eMins - currentMins;
+                        break;
+                    }
+                }
+                if (activePeriod) {
+                    cd.style.display = 'inline-block';
+                    cd.innerText = `${activePeriod.name}: ${activePeriod.left}mins`;
+                } else {
+                    cd.style.display = 'none';
+                }
+            }
+        }
+        setInterval(updateGlobalClock, 1000);
+        updateGlobalClock();
+
+        // --- FULLSCREEN CONTROLS DRAG LOGIC ---
+        document.querySelectorAll('.fs-controls').forEach(ctrl => {
+            let isDragging = false, oX = 0, oY = 0;
+            ctrl.addEventListener('pointerdown', (e) => {
+                if(e.target.tagName === 'BUTTON') return;
+                isDragging = true;
+                ctrl.style.cursor = 'grabbing';
+                const rect = ctrl.getBoundingClientRect();
+                oX = e.clientX - rect.left;
+                oY = e.clientY - rect.top;
+                ctrl.style.left = rect.left + 'px';
+                ctrl.style.top = rect.top + 'px';
+                ctrl.style.right = 'auto'; 
+                ctrl.setPointerCapture(e.pointerId);
+            });
+            ctrl.addEventListener('pointermove', (e) => {
+                if(!isDragging) return;
+                ctrl.style.left = (e.clientX - oX) + 'px';
+                ctrl.style.top = (e.clientY - oY) + 'px';
+            });
+            ctrl.addEventListener('pointerup', (e) => {
+                isDragging = false;
+                ctrl.style.cursor = 'grab';
+                ctrl.releasePointerCapture(e.pointerId);
+            });
+        });
 
         // --- 2. AUDIO ---
         const Actx = window.AudioContext || window.webkitAudioContext; let actx;
