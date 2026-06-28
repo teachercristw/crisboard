@@ -897,9 +897,9 @@
             const clk = document.getElementById('clock-time');
             if (clk) clk.innerText = h + ':' + m + ' ' + ampm;
 
-            // Class Countdown logic
+            // Class Countdown logic - ADDED SAFETY CHECK HERE
             const cd = document.getElementById('class-countdown');
-            if (cd && state.classSchedule) {
+            if (cd && typeof state !== 'undefined' && state.classSchedule) {
                 const currentMins = now.getHours() * 60 + now.getMinutes();
                 let activePeriod = null;
                 for(let p of state.classSchedule) {
