@@ -366,7 +366,10 @@
     </div>
 
     <div id="app">
-        <div id="global-clock">12:00 AM</div>
+        <div id="global-clock">
+            <span id="clock-time">12:00 AM</span>
+            <span id="class-countdown" style="margin-left: 10px; padding-left: 10px; border-left: 2px solid #EEE; color: var(--c4); display: none;"></span>
+        </div>
 
         <button id="fs-global-btn" onclick="toggleGlobalFullscreen()" title="Toggle Global Fullscreen">🖵</button>
         <button id="anno-global-btn" onclick="toggleAnnotation()" title="Screen Annotate">🖍️</button>
@@ -762,17 +765,28 @@
                             </div>
                         </div>
 
-                        <div class="dash-section" style="background:#E8F5E9; border-color:#C8E6C9;">
-                            <h3 style="color:#2E7D32;">🍔 Scoreboard Custom Images</h3>
-                            <p style="font-size:0.8rem; margin:0 0 10px 0;">Select a theme, upload images (bottom to top), and precisely calibrate their sizes and offsets!</p>
-                            <select id="score-theme-sel" style="background:#FFF; border:2px solid #4CAF50;" onchange="renderScoreThemeList()">
-                                <option value="burger">🍔 Burger (Stack)</option>
-                                <option value="icecream">🍦 Ice Cream (Stack)</option>
-                                <option value="pizza">🍕 Pizza (Circular)</option>
-                                <option value="fries">🍟 Fries (Box Fill)</option>
-                            </select>
-                            <input type="file" id="theme-file" accept="image/*" onchange="addScoreThemeImg(event)">
-                            <div id="theme-img-list" style="display:flex; flex-direction:column; gap:10px; margin-top:10px;"></div>
+                        <div class="dash-section" style="background:#E3F2FD; border-color:#BBDEFB;">
+                            <h3 style="color:#1565C0; margin-top:0;">⏱️ Class Schedule</h3>
+                            <div id="dash-schedule-container" style="display:flex; flex-direction:column; gap:5px;"></div>
+                            <button onclick="saveSchedule()" style="margin-top:10px; font-size:0.9rem; padding:5px 10px; background:var(--c2); color:#222;">Apply Schedule</button>
+                        </div>
+
+                        <div class="dash-section" style="background:#E8F5E9; border-color:#C8E6C9; padding:0; overflow:hidden;">
+                            <div class="folder-header" style="background:transparent; margin:0; border:none; padding:15px; cursor:pointer;" onclick="toggleScoreImgSettings()">
+                                <h3 style="color:#2E7D32; margin:0; display:inline-block;">🍔 Scoreboard Custom Images</h3>
+                                <span id="score-img-toggle-icon" style="color:#2E7D32; float:right;">▶</span>
+                            </div>
+                            <div id="score-img-settings-content" style="display:none; padding:0 15px 15px 15px;">
+                                <p style="font-size:0.8rem; margin:0 0 10px 0;">Select a theme, upload images (bottom to top), and precisely calibrate their sizes and offsets!</p>
+                                <select id="score-theme-sel" style="background:#FFF; border:2px solid #4CAF50;" onchange="renderScoreThemeList()">
+                                    <option value="burger">🍔 Burger (Stack)</option>
+                                    <option value="icecream">🍦 Ice Cream (Stack)</option>
+                                    <option value="pizza">🍕 Pizza (Circular)</option>
+                                    <option value="fries">🍟 Fries (Box Fill)</option>
+                                </select>
+                                <input type="file" id="theme-file" accept="image/*" onchange="addScoreThemeImg(event)">
+                                <div id="theme-img-list" style="display:flex; flex-direction:column; gap:10px; margin-top:10px;"></div>
+                            </div>
                         </div>
 
                         <div class="dash-section">
@@ -880,8 +894,33 @@
             h = h % 12;
             h = h ? h : 12; // the hour '0' should be '12'
             m = m < 10 ? '0' + m : m;
-            const clk = document.getElementById('global-clock');
+            const clk = document.getElementById('clock-time');
             if (clk) clk.innerText = h + ':' + m + ' ' + ampm;
+
+            // Class Countdown logic
+            const cd = document.getElementById('class-countdown');
+            if (cd && state.classSchedule) {
+                const currentMins = now.getHours() * 60 + now.getMinutes();
+                let activePeriod = null;
+                for(let p of state.classSchedule) {
+                    if(!p.start || !p.end) continue;
+                    let sParts = p.start.split(':');
+                    let eParts = p.end.split(':');
+                    let sMins = parseInt(sParts[0])*60 + parseInt(sParts[1]);
+                    let eMins = parseInt(eParts[0])*60 + parseInt(eParts[1]);
+                    if (currentMins >= sMins && currentMins < eMins) {
+                        activePeriod = p;
+                        activePeriod.left = eMins - currentMins;
+                        break;
+                    }
+                }
+                if (activePeriod) {
+                    cd.style.display = 'inline-block';
+                    cd.innerText = `${activePeriod.name}: ${activePeriod.left}mins`;
+                } else {
+                    cd.style.display = 'none';
+                }
+            }
         }
         setInterval(updateGlobalClock, 1000);
         updateGlobalClock();
@@ -935,6 +974,16 @@
         // PRE-LOADED CUSTOM DATA 
         let state = {
             appBgColor: "#0F0C29", appBgImage: null, appFont: "'Century Gothic', sans-serif",
+            classSchedule: [
+                { name: "1st Period", start: "08:45", end: "09:25" },
+                { name: "2nd Period", start: "09:35", end: "10:15" },
+                { name: "3rd Period", start: "10:30", end: "11:10" },
+                { name: "4th Period", start: "11:20", end: "12:00" },
+                { name: "Lunch break", start: "12:00", end: "13:20" },
+                { name: "5th Period", start: "13:20", end: "14:00" },
+                { name: "6th Period", start: "14:10", end: "14:50" },
+                { name: "7th Period", start: "15:15", end: "15:55" }
+            ],
             classes: {}, activeClass: null,
             teams: [{name:"GROUP 1", score:0, rank:null, time:null}, {name:"GROUP 2", score:0, rank:null, time:null}],
             studentRecords: {}, // NEW: Individul class records
@@ -1047,6 +1096,18 @@
                         if(!state.studentRecords) state.studentRecords = {};
                         if(!state.scoreThemes) state.scoreThemes = { burger: [], icecream: [], pizza: [], fries: [] };
                         if(!state.appFont) state.appFont = "'Century Gothic', sans-serif";
+                        if(!state.classSchedule) {
+                            state.classSchedule = [
+                                { name: "1st Period", start: "08:45", end: "09:25" },
+                                { name: "2nd Period", start: "09:35", end: "10:15" },
+                                { name: "3rd Period", start: "10:30", end: "11:10" },
+                                { name: "4th Period", start: "11:20", end: "12:00" },
+                                { name: "Lunch break", start: "12:00", end: "13:20" },
+                                { name: "5th Period", start: "13:20", end: "14:00" },
+                                { name: "6th Period", start: "14:10", end: "14:50" },
+                                { name: "7th Period", start: "15:15", end: "15:55" }
+                            ];
+                        }
 
                         // Handle legacy score_images migration if they existed
                         if(state.media && state.media.score_images && state.media.score_images.length > 0) {
@@ -1860,6 +1921,40 @@
         }
 
         // --- 10. DASHBOARD & SETTINGS ---
+        function renderSchedule() {
+            const c = document.getElementById('dash-schedule-container');
+            if(!c) return;
+            c.innerHTML = state.classSchedule.map((p, i) => `
+                <div style="display:flex; gap:5px; align-items:center;">
+                    <input type="text" id="sch-name-${i}" value="${p.name}" style="flex:1; margin:0; padding:5px;" placeholder="Name (e.g. 1st)">
+                    <input type="time" id="sch-start-${i}" value="${p.start}" style="flex:1; margin:0; padding:5px;">
+                    <span>-</span>
+                    <input type="time" id="sch-end-${i}" value="${p.end}" style="flex:1; margin:0; padding:5px;">
+                </div>
+            `).join('');
+        }
+        function saveSchedule() {
+            beep();
+            for(let i=0; i<state.classSchedule.length; i++) {
+                state.classSchedule[i].name = document.getElementById(`sch-name-${i}`).value;
+                state.classSchedule[i].start = document.getElementById(`sch-start-${i}`).value;
+                state.classSchedule[i].end = document.getElementById(`sch-end-${i}`).value;
+            }
+            updateGlobalClock();
+            alert("Schedule saved!");
+        }
+        function toggleScoreImgSettings() {
+            beep();
+            const content = document.getElementById('score-img-settings-content');
+            const icon = document.getElementById('score-img-toggle-icon');
+            if(content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.innerText = '▼';
+            } else {
+                content.style.display = 'none';
+                icon.innerText = '▶';
+            }
+        }
         function openDashboard() { 
             beep(); 
             document.getElementById('dash-bg-color').value = state.appBgColor; 
@@ -1869,11 +1964,27 @@
             
             document.getElementById('dash-feelings').value = state.feelings.map(f=>`${f.emoji},${f.word}`).join('\n'); 
             updateClassDropdowns(); 
+            renderSchedule();
             handleMediaCatChange(); 
             renderScoreThemeList();
             document.getElementById('dashboard-modal').style.display = 'flex'; 
         }
-        function saveSettings() { beep(); state.appBgColor = document.getElementById('dash-bg-color').value; autoSaveClass(); let nF = []; document.getElementById('dash-feelings').value.split('\n').forEach(l => { const p = l.split(','); if(p.length===2 && p[0].trim() && p[1].trim()) nF.push({ emoji: p[0].trim(), word: p[1].trim().toLowerCase() }); }); if(nF.length>0) state.feelings = nF; applyCoreSettings(); resetPicker(); renderGreetings(); document.getElementById('dashboard-modal').style.display = 'none'; }
+        function saveSettings() { 
+            beep(); 
+            state.appBgColor = document.getElementById('dash-bg-color').value; 
+            autoSaveClass(); 
+            
+            if (document.getElementById('sch-name-0')) {
+                for(let i=0; i<state.classSchedule.length; i++) {
+                    state.classSchedule[i].name = document.getElementById(`sch-name-${i}`).value;
+                    state.classSchedule[i].start = document.getElementById(`sch-start-${i}`).value;
+                    state.classSchedule[i].end = document.getElementById(`sch-end-${i}`).value;
+                }
+                updateGlobalClock();
+            }
+
+            let nF = []; document.getElementById('dash-feelings').value.split('\n').forEach(l => { const p = l.split(','); if(p.length===2 && p[0].trim() && p[1].trim()) nF.push({ emoji: p[0].trim(), word: p[1].trim().toLowerCase() }); }); if(nF.length>0) state.feelings = nF; applyCoreSettings(); resetPicker(); renderGreetings(); document.getElementById('dashboard-modal').style.display = 'none'; 
+        }
 
         // --- SCORE THEME CALIBRATION EDITOR ---
         function addScoreThemeImg(e) {
